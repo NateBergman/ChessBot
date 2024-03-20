@@ -1,41 +1,41 @@
 import java.util.*;
 public class Positions {
-    char[] board;
+    byte[] board;
     byte boardState;
 
     ArrayList<ArrayList<Integer>> whitePieces;
     public Positions() {
-        board = new char[] {'a','a','a','a','a','a','a','a','a','a',
-                'a','a','a','a','a','a','a','a','a','a',
-                'a','R','N','B','Q','K','B','N','R','a',
-                'a','P','P','P','P','P','P','P','P','a',
-                'a',' ',' ',' ',' ',' ',' ',' ',' ','a',
-                'a',' ',' ',' ',' ',' ',' ',' ',' ','a',
-                'a',' ',' ',' ',' ',' ',' ',' ',' ','a',
-                'a',' ',' ',' ',' ',' ',' ',' ',' ','a',
-                'a','p','p','p','p','p','p','p','p','a',
-                'a','r','n','b','q','k','b','n','r','a',
-                'a','a','a','a','a','a','a','a','a','a',
-                'a','a','a','a','a','a','a','a','a','a'};
-        boardState = (byte) 240;
+        board = new byte[] {7,7,7,7,7,7,7,7,7,7,
+                7,7,7,7,7,7,7,7,7,7,
+                7,4,2,3,5,6,3,2,4,7,
+                7,1,1,1,1,1,1,1,1,7,
+                7,0,0,0,0,0,0,0,0,7,
+                7,0,0,0,0,0,0,0,0,7,
+                7,0,0,0,0,0,0,0,0,7,
+                7,0,0,0,0,0,0,0,0,7,
+                7,9,9,9,9,9,9,9,9,7,
+                7,12,10,11,13,14,11,10,12,7,
+                7,7,7,7,7,7,7,7,7,7,
+                7,7,7,7,7,7,7,7,7,7};
+        boardState = (byte) 0b11111000;
     }
-    public void makeMove (int to, int from, byte special) {
-
+    public void makeMove(int move) {
+        int to = move & 0b1111111;
+        int from = (move>>8) & 0b1111111;
         board[to] = board[from];
-        board[from] = ' ';
 
-        //special coding (4 bits)
-        //promotion | capture | special1 | special0
-        //promotion + capture + combo of specials(showing what type) = promotion capture
-        //promotion + combo of specials = promotion
-        //capture = capture
-        //capture + special1 = en passant
-        //special0 = double pawn push (set en passant)
-        //special1 = kingside castle
-        //special2 = queenside castle
+        if ((move>>19 & 1) == 1) { //promotion
+            board[to] = (byte) (((byte) (move>>16) & 0b11) + 2);
+        } else {
+            board[to] = board[from];
+        }
+        board[from] = 0;
+
     }
-    public void unMakeMove (int to, int from, byte special, char fromPiece) {
+    public void unMakeMove(int move) {
+        int to = move & 0b1111111;
+        int from = (move>>8) & 0b1111111;
         board[from] = board[to];
-        board[to] = fromPiece;
+        //changes with ep board[to] = ;
     }
 }
