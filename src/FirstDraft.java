@@ -1,6 +1,6 @@
 import java.util.*;
-import java.io.*;
-public class Main {
+
+public class FirstDraft {
     public static void main(String[] args) {
         char[] board = new char[] {'P','P','P','P','P','P','P','P','R','N','B','Q','K','B','N','R',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '
                 ,' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','p','p','p','p','p','p','p','p','r','n','b','q','k','b','n','r'};
@@ -15,6 +15,7 @@ public class Main {
         //'A' = 65
         //'a' = 97
         // ' ' = 32
+
     }
     public static ArrayList<int[]> getMoves(char[] board, byte boardState, boolean whiteMove) {
         if (whiteMove) {
