@@ -7,15 +7,14 @@ Board State: represented by 1 byte (8 bits):
 Moves: turned into 32 bit integer
     side moving: represented by bit 1 (0 is white, 1 is black)
     to: bits 2-8, represents coordinates (0-119), can get by %128
-    from: bits 9-16, represents coordinates (0-119)
+    from: bits 9-15, represents coordinates (0-119)
+    bit 16 is unused (can be used for other stuff later)
     special: bits 17-20
         bit 20: promotion
         bit 19: capture
         bits 17/18: special 1 and 2
-            promotion: represent piece (knight, bishop, rook, queen)
+            promotion: represent piece (knight0, bishop1, rook2, queen3)
             capture and no promotion: special 1 represents ep
             else special 1 represents pawn push, 2 kingside castle, both queenside castle
     captured piece: bits 21-24 (piece originally on from)
-    board state: bits 25-32 NOT EQUIVALENT TO OVERALL BOARD STATE
-        bits 25-28: en passant ability in PREVIOUS POSITION (to unmake move)
-        bits 29-32: shows indexes of where castling ability was had and then lost THIS MOVE.
+    board state: bits 25-32 represent board state before this move
