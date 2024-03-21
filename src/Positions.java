@@ -81,7 +81,7 @@ public class Positions {
         int move = 0;
         move += (board[from]>>3) & 1;
         move += to<<1;
-        move += to<<8;
+        move += from<<8;
         move += board[to]<<20;
         move += boardState<<24;
         if (board[to] != 0) {
@@ -93,7 +93,7 @@ public class Positions {
             } else if ((to > 50 && from < 40) || (to < 70 && from > 80)) { //push
                 move += 1<<16;
             }
-            else if ((boardState & 0b1111) + 60 - (10 * ((board[from]>>3) & 1)) == to) { //ep
+            else if ((boardState & 0b1111) + 60 - (10 * ((board[to]>>3) & 1)) == to) { //ep
                 move += 0b101<<16;
             }
         } else if ((board[from] & 0b111) == 6 && from%10 == 5) { //castling

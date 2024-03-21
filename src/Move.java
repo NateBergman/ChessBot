@@ -1,13 +1,11 @@
 public class Move {
-    boolean blackMove;
     int to;
     int from;
-    byte promotedPiece;
-    byte capture;
-    boolean promotion;
-    boolean shortCastle;
+    byte captured;
     boolean longCastle;
+    boolean shortCastle;
+    boolean promotion;
+    byte promotionPiece;
+    boolean whiteMove;
     boolean enPassant;
-    boolean push;
-    byte previousBoardState;
 }

@@ -4,11 +4,29 @@ public class FirstDraft {
    public static void main (String[] args) {
        Positions positions = new Positions();
        Map<Byte,Character> displayMap = buildDisplayMap();
-       positions.printBoard(displayMap);
+       /*positions.printBoard(displayMap);
        positions.makeMove(0b11110000000000010010001101101110);
        positions.printBoard(displayMap);
        positions.unMakeMove(0b11110000000000010010001101101110);
        positions.printBoard(displayMap);
+       System.out.println(0b11110000000000010010001101101110);
+       System.out.println(positions.encodeMove(55,35));*/
+       Scanner console = new Scanner(System.in);
+       ArrayList<Integer> moves = new ArrayList<>();
+       while(true) {
+           positions.printBoard(displayMap);
+           System.out.print("0 move 1 unmove");
+           if (console.nextInt() == 1) {
+               positions.unMakeMove(moves.get(moves.size()-1));
+               moves.remove(moves.get(moves.size()-1));
+           } else {
+               int from = console.nextInt();
+               int to = console.nextInt();
+               int move = positions.encodeMove(to,from);
+               positions.makeMove(move);
+               moves.add(move);
+           }
+       }
    }
 
     public static Map<Byte,Character> buildDisplayMap () {
