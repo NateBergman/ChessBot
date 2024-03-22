@@ -2,10 +2,10 @@ import java.util.*;
 public class Positions {
     byte[] board;
     byte boardState;
-
-    ArrayList<ArrayList<Integer>> whitePieces;
+    ArrayList<Integer> whitePieces;
+    ArrayList<Integer> blackPieces;
     public Positions() {
-        board = new byte[] {7,7,7,7,7,7,7,7,7,7,
+        board = new byte[] {7,7,7,7,7,7,7,7,7,7, //looks upside down in this view
                 7,7,7,7,7,7,7,7,7,7,
                 7,4,2,3,5,6,3,2,4,7,
                 7,1,1,1,1,1,1,1,1,7,
@@ -18,6 +18,40 @@ public class Positions {
                 7,7,7,7,7,7,7,7,7,7,
                 7,7,7,7,7,7,7,7,7,7};
         boardState = (byte) 0b11110000;
+    }
+    public ArrayList<Integer> getWhiteMoves() {
+        ArrayList<Integer> moves = new ArrayList<>();
+        for (int p : whitePieces) {
+            byte piece = board[p];
+            if (piece == 2) { //knight
+                int[] potential = new int[] {21,19,12,8,-8,-12,-19,-21};
+                for (int i : potential) {
+                    byte target = board[p + i];
+                    if (target == 0 || target > 8) {
+                        moves.add(boardState<<24 + target<<20 + p<<8 + target<<1);
+                    }
+                }
+            } else if (piece == 1) { //pawn
+
+            } else if (piece == 6) { //king
+                int[] potential = new int[] {21,19,12,8,-8,-12,-19,-21};
+                for (int i : potential) {
+                    byte target = board[p + i];
+                    if (target == 0 || target > 8) {
+                        moves.add(boardState<<24 + target<<20 + p<<8 + target<<1);
+                    }
+                }
+            } else {
+                if (piece == 3 || piece == 5) { //diagonal bishop/queen
+
+                }
+                if (piece == 4 || piece == 5) { //horizontal rook/queen
+
+                }
+            }
+
+        }
+        return moves;
     }
     public void makeMove(int move) {
         int to = (move>>1) & 0b1111111; //records to and from indexes
@@ -93,7 +127,7 @@ public class Positions {
             } else if ((to > 50 && from < 40) || (to < 70 && from > 80)) { //push
                 move += 1<<16;
             }
-            else if ((boardState & 0b1111) + 60 - (10 * ((board[to]>>3) & 1)) == to) { //ep
+            else if ((boardState & 0b1111) + 60 - (10 * ((board[from]>>3) & 1)) == to) { //ep
                 move += 0b101<<16;
             }
         } else if ((board[from] & 0b111) == 6 && from%10 == 5) { //castling

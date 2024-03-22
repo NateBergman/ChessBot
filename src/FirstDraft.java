@@ -1,5 +1,4 @@
 import java.util.*;
-
 public class FirstDraft {
    public static void main (String[] args) {
        Positions positions = new Positions();
@@ -10,13 +9,18 @@ public class FirstDraft {
        positions.unMakeMove(0b11110000000000010010001101101110);
        positions.printBoard(displayMap);
        System.out.println(0b11110000000000010010001101101110);
-       System.out.println(positions.encodeMove(55,35));*/
+       System.out.println(positions.encodeMove(55,35));*/ //1946173844
+       System.out.println(0b01110100000001010100000110010100);
        Scanner console = new Scanner(System.in);
        ArrayList<Integer> moves = new ArrayList<>();
        while(true) {
            positions.printBoard(displayMap);
-           System.out.print("0 move 1 unmove");
-           if (console.nextInt() == 1) {
+           System.out.print("0 move 1 unmove 2 show moves");
+           int x = console.nextInt();
+           if (x == 2) {
+               System.out.println(moves);
+           }
+           else if (x == 1) {
                positions.unMakeMove(moves.get(moves.size()-1));
                moves.remove(moves.get(moves.size()-1));
            } else {
