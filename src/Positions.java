@@ -19,14 +19,51 @@ public class Positions {
         /*Collections.addAll(whitePieces,21,22,23,24,25,26,27,28,31,32,33,34,35,36,37,38);
         Collections.addAll(blackPieces,81,82,83,84,85,86,87,88,91,92,93,94,95,96,97,98); not using for now - too much to keep track of */
     }
-    public boolean isAttacked(int square) {
-        return true;
-        //pawns diagonal forward
-        //knights/kings at preset spots
-        //scan diagonals for queen/bishop
-        //scan ranks/files for rook/queen
+    public boolean isAttacked(int square, boolean whiteControl) {
+        int[] knight = new int[] {21,19,12,8,-8,-12,-19,-21};
+        for (int i : knight) {
+            byte piece = board[i + square];
+            if ((whiteControl && piece == 10) || (!whiteControl && piece == 2)) {
+                return true;
+            }
+        }
+        int[] king = new int[] {11,10,9,1,-1,-9,-10,-11};
+        for (int i : king) {
+            byte piece = board[i + square];
+            if ((whiteControl && piece == 14) || (!whiteControl && piece == 6)) {
+                return true;
+            }
+        }
+        if (whiteControl && (board[square + 11] == 9 || board[square + 9] == 9) || (!whiteControl && (board[square - 11] == 1 || board[square - 9] == 1))) {
+            return true;
+        }
+        int[] diagonals = new int[] {-11,-9,9,11};
+        for (int i : diagonals) {
+            for (int j = square + i; true; j += i) {
+                byte piece = board[j];
+                if (piece != 0) {
+                    if ((whiteControl && (piece == 11 || piece == 13)) || (!whiteControl && (piece == 3 || piece == 5))) {
+                        return true;
+                    }
+                    break;
+                }
+            }
+        }
+        int[] horizontals = new int[] {-11,-9,9,11};
+        for (int i : horizontals) {
+            for (int j = square + i; true; j += i) {
+                byte piece = board[j];
+                if (piece != 0) {
+                    if ((whiteControl && (piece == 12 || piece == 13)) || (!whiteControl && (piece == 4 || piece == 5))) {
+                        return true;
+                    }
+                    break;
+                }
+            }
+        }
+        return false;
     }
-    public ArrayList<Integer> getWhiteMoves() {
+    public ArrayList<Integer> getMoves(boolean black) { //just does white for now
         ArrayList<Integer> moves = new ArrayList<>();
         for (int p = 21; p < 99; p++) {
             byte piece = board[p];
@@ -41,7 +78,47 @@ public class Positions {
                     }
                 }
             } else if (piece == 1) { //pawn
+                if (p/10 == 8) { //promotions
+                    if (board[p + 10] == 0) {//forward
+                        moves.add(boardState << 23 + 0b1000000000000000000 + p << 8 + (p + 10) << 1);
+                        moves.add(boardState << 23 + 0b1001000000000000000 + p << 8 + (p + 10) << 1);
+                        moves.add(boardState << 23 + 0b1010000000000000000 + p << 8 + (p + 10) << 1);
+                        moves.add(boardState << 23 + 0b1011000000000000000 + p << 8 + (p + 10) << 1);
+                    }
+                    if (board[p + 9] > 8) { //captures
+                        moves.add(boardState << 23 + board[p + 9] << 19 + 0b1000000000000000000 + p << 8 + (p + 9) << 1);
+                        moves.add(boardState << 23 + board[p + 9] << 19 + 0b1001000000000000000 + p << 8 + (p + 9) << 1);
+                        moves.add(boardState << 23 + board[p + 9] << 19 + 0b1010000000000000000 + p << 8 + (p + 9) << 1);
+                        moves.add(boardState << 23 + board[p + 9] << 19 + 0b1011000000000000000 + p << 8 + (p + 9) << 1);
+                    }
+                    if (board[p + 11] > 8) {
+                        moves.add(boardState << 23 + board[p + 11] << 19 + 0b1000000000000000000 << 17 + p << 8 + (p + 11) << 1);
+                        moves.add(boardState << 23 + board[p + 11] << 19 + 0b1001000000000000000 << 17 + p << 8 + (p + 11) << 1);
+                        moves.add(boardState << 23 + board[p + 11] << 19 + 0b1010000000000000000 << 17 + p << 8 + (p + 11) << 1);
+                        moves.add(boardState << 23 + board[p + 11] << 19 + 0b1011000000000000000 << 17 + p << 8 + (p + 11) << 1);
 
+                    }
+                } else {
+                    if (board[p + 10] == 0) {//normal moves forward
+                        moves.add(boardState << 23 + p << 8 + (p + 10) << 1);
+                        if (p/10 == 2 && board[p+20] == 0) { //pushes
+                            moves.add(boardState << 23 + 0b1000000000000000 + p << 8 + (p + 20) << 1);
+                        }
+                    }
+                    if (board[p + 9] > 8) { //captures diagonal and stuff
+                        moves.add(boardState << 23 + board[p + 9] << 19 + 1 << 17 + p << 8 + (p + 9) << 1);
+                    }
+                    if (board[p + 11] > 8) {
+                        moves.add(boardState << 23 + board[p + 11] << 19 + 1 << 17 + p << 8 + (p + 11) << 1);
+                    }
+                    if (p / 10 == 6) { //en passants
+                        if (p % 10 == (boardState & 0b1111) + 1) {
+                            moves.add(boardState << 23 + 0b101 << 15 + p << 8 + (p + 9) << 1);
+                        } else if (p % 10 == (boardState & 0b1111) - 1) {
+                            moves.add(boardState << 23 + 0b101 << 15 + p << 8 + (p + 11) << 1);
+                        }
+                    }
+                }
             } else if (piece == 6) { //king
                 int[] potential = new int[] {11,10,9,1,-1,-9,-10,-11};
                 for (int i : potential) {
@@ -50,10 +127,10 @@ public class Positions {
                         moves.add(boardState<<23 + target<<19 + (target & 0b1000)<<14 + p<<8 + (p+i)<<1);
                     }
                 }
-                if ((boardState & 0b00010000) == 0b00010000 && board[26] == 0 && board[27] == 0 && !isAttacked(25) && !isAttacked(26)) {
+                if ((boardState & 0b00010000) == 0b00010000 && board[26] == 0 && board[27] == 0 && !isAttacked(25,true) && !isAttacked(26,true)) {
                     moves.add(boardState<<23 + 0b10001100100110110); //short castle - checks for destination are in eval/actual making
                 }
-                if ((boardState & 0b00100000) == 0b00100000 && board[24] == 0 && board[23] == 0 && board[22] == 0 && !isAttacked(25) && !isAttacked(24)) {
+                if ((boardState & 0b00100000) == 0b00100000 && board[24] == 0 && board[23] == 0 && board[22] == 0 && !isAttacked(25,true) && !isAttacked(24,true)) {
                     moves.add(boardState<<23 + 0b11001100100101110); //long castle
                 }
             } else {

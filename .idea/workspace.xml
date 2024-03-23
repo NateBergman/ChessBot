@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="Ok moving and unmoving SHOULD work but untested (bits are getting kinda messy tbh)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FirstDraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FirstDraft.java" afterDir="false" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="Moving + unmoving works with ep; need to test castling but starting on legal move + check generation">
       <change beforePath="$PROJECT_DIR$/src/Positions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Positions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Reference" beforeDir="false" afterPath="$PROJECT_DIR$/src/Reference" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +72,14 @@
       <option name="project" value="LOCAL" />
       <updated>1710738081973</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Moving + unmoving works with ep; need to test castling but starting on legal move + check generation">
+      <created>1711165273901</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1711165273902</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -92,6 +96,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="using bytes" />
     <MESSAGE value="redoing stuff" />
-    <option name="LAST_COMMIT_MESSAGE" value="redoing stuff" />
+    <MESSAGE value="Moving + unmoving works with ep; need to test castling but starting on legal move + check generation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Moving + unmoving works with ep; need to test castling but starting on legal move + check generation" />
   </component>
 </project>
