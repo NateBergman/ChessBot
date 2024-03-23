@@ -9,8 +9,7 @@ public class FirstDraft {
        positions.unMakeMove(0b11110000000000010010001101101110);
        positions.printBoard(displayMap);
        System.out.println(0b11110000000000010010001101101110);
-       System.out.println(positions.encodeMove(55,35));*/ //1946173844
-       System.out.println(0b01110100000001010100000110010100);
+       System.out.println(positions.encodeMove(55,35));*/
        Scanner console = new Scanner(System.in);
        ArrayList<Integer> moves = new ArrayList<>();
        while(true) {
