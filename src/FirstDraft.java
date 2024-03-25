@@ -3,13 +3,6 @@ public class FirstDraft {
    public static void main (String[] args) {
        Positions positions = new Positions();
        Map<Byte,Character> displayMap = buildDisplayMap();
-       /*positions.printBoard(displayMap);
-       positions.makeMove(0b11110000000000010010001101101110);
-       positions.printBoard(displayMap);
-       positions.unMakeMove(0b11110000000000010010001101101110);
-       positions.printBoard(displayMap);
-       System.out.println(0b11110000000000010010001101101110);
-       System.out.println(positions.encodeMove(55,35));*/
        Scanner console = new Scanner(System.in);
        ArrayList<Integer> moves = new ArrayList<>();
        while(true) {
@@ -23,9 +16,14 @@ public class FirstDraft {
                positions.unMakeMove(moves.get(moves.size()-1));
                moves.remove(moves.get(moves.size()-1));
            } else {
-               int from = console.nextInt();
-               int to = console.nextInt();
-               int move = positions.encodeMove(to,from);
+               ArrayList<Integer> possibleMoves = positions.getMoves(false);
+               int move = 0;
+               while (!possibleMoves.contains(move)) {
+                   System.out.println("Enter Move:");
+                   int from = console.nextInt();
+                   int to = console.nextInt();
+                   move = positions.encodeMove(to,from);
+               }
                positions.makeMove(move);
                moves.add(move);
            }
