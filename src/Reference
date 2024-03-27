@@ -9,12 +9,14 @@ Moves: turned into 32 bit integer (sign bit unused b/ painful)
     to: bits 2-8, represents coordinates (0-119), can get by %128
     from: bits 9-15, represents coordinates (0-119)
     special: bits 16-19
-        bit 19: promotion
-        bit 18: capture
-        bits 16/17: special 1 and 2
-            promotion: represent piece (knight0, bishop1, rook2, queen3)
-            capture and no promotion: special 1 represents ep
-            else special 1 represents pawn push, 2 kingside castle, both queenside castle
+        1000 = knight promotion
+        1001 = bishop promotion
+        1010 = rook promotion
+        1011 = queen promotion
+        0101 = en passant
+        0001 = pawn push
+        0011 = long castle
+        0010 = short castle
     captured piece: bits 20-23 (piece originally on from)
     board state: bits 24-31 represent board state before this move
 Piece Lists (50 long): result is coordinate of the piece

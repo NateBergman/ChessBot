@@ -7,16 +7,18 @@ public class FirstDraft {
        ArrayList<Integer> moves = new ArrayList<>();
        while(true) {
            positions.printBoard(displayMap);
-           System.out.print("0 move 1 unmove 2 show moves");
+           System.out.print("0 white move, 1 black move, 2 undo move");
            int x = console.nextInt();
            if (x == 2) {
-               System.out.println(moves);
-           }
-           else if (x == 1) {
                positions.unMakeMove(moves.get(moves.size()-1));
                moves.remove(moves.get(moves.size()-1));
            } else {
-               ArrayList<Integer> possibleMoves = positions.getMoves(false);
+               ArrayList<Integer> possibleMoves;
+               if (x == 1) {
+                   possibleMoves = positions.getBlackMoves();
+               } else {
+                   possibleMoves = positions.getWhiteMoves();
+               }
                int move = 0;
                while (!possibleMoves.contains(move)) {
                    System.out.println("Enter Move:");
