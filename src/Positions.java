@@ -6,6 +6,8 @@ public class Positions {
     int[] kingMoves;
     int[] diagonalMoves;
     int[] horizontalMoves;
+    int[] whitePieces;
+    int[] blackPieces;
     public Positions() {
         board = new byte[] {7,7,7,7,7,7,7,7,7,7, //looks upside down in this view
                 7,7,7,7,7,7,7,7,7,7,
@@ -24,19 +26,17 @@ public class Positions {
         kingMoves = new int[] {11,10,9,1,-1,-9,-10,-11};
         diagonalMoves = new int[] {11,9,-9,-11};
         horizontalMoves = new int[] {1,-1,10,-10};
-        /*Collections.addAll(whitePieces,21,22,23,24,25,26,27,28,31,32,33,34,35,36,37,38);
-        Collections.addAll(blackPieces,81,82,83,84,85,86,87,88,91,92,93,94,95,96,97,98); not using for now - too much to keep track of */
+        whitePieces = new int[] {31,32,33,34,35,36,37,38,-1,-1,22,27,-1,-1,-1,-1,-1,-1,-1,-1,23,26,-1,-1,-1,-1,-1,-1,-1,-1,21,28,-1,-1,-1,-1,-1,-1,-1,-1,24,-1,-1,-1,-1,-1,-1,-1,-1,25};
+        blackPieces = new int[] {81,82,83,84,85,86,87,88,-1,-1,92,97,-1,-1,-1,-1,-1,-1,-1,-1,93,96,-1,-1,-1,-1,-1,-1,-1,-1,91,98,-1,-1,-1,-1,-1,-1,-1,-1,94,-1,-1,-1,-1,-1,-1,-1,-1,95};;
     }
     public boolean isAttacked(int square, boolean whiteControl) {
-        int[] knight = new int[] {21,19,12,8,-8,-12,-19,-21};
-        for (int i : knight) {
+        for (int i : knightMoves) {
             byte piece = board[i + square];
             if ((whiteControl && piece == 10) || (!whiteControl && piece == 2)) {
                 return true;
             }
         }
-        int[] king = new int[] {11,10,9,1,-1,-9,-10,-11};
-        for (int i : king) {
+        for (int i : kingMoves) {
             byte piece = board[i + square];
             if ((whiteControl && piece == 14) || (!whiteControl && piece == 6)) {
                 return true;
@@ -45,8 +45,7 @@ public class Positions {
         if (whiteControl && (board[square + 11] == 9 || board[square + 9] == 9) || (!whiteControl && (board[square - 11] == 1 || board[square - 9] == 1))) {
             return true;
         }
-        int[] diagonals = new int[] {-11,-9,9,11};
-        for (int i : diagonals) {
+        for (int i : diagonalMoves) {
             for (int j = square + i; true; j += i) {
                 byte piece = board[j];
                 if (piece != 0) {
@@ -57,8 +56,7 @@ public class Positions {
                 }
             }
         }
-        int[] horizontals = new int[] {-11,-9,9,11};
-        for (int i : horizontals) {
+        for (int i : horizontalMoves) {
             for (int j = square + i; true; j += i) {
                 byte piece = board[j];
                 if (piece != 0) {

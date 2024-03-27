@@ -17,3 +17,10 @@ Moves: turned into 32 bit integer (sign bit unused b/ painful)
             else special 1 represents pawn push, 2 kingside castle, both queenside castle
     captured piece: bits 20-23 (piece originally on from)
     board state: bits 24-31 represent board state before this move
+Piece Lists (50 long): result is coordinate of the piece
+    0-9 pawns
+    10-19 knights
+    20-29 bishops
+    30-39 rooks
+    40-48 queens
+    49 king
