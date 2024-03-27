@@ -9,7 +9,7 @@ public class Positions {
     int[] whitePieces;
     int[] blackPieces;
     public Positions() {
-        board = new byte[] {7,7,7,7,7,7,7,7,7,7, //looks upside down in this view
+        board = new byte[] {7,7,7,7,7,7,7,7,7,7, //looks upside down in this view, 7s are borders
                 7,7,7,7,7,7,7,7,7,7,
                 7,4,2,3,5,6,3,2,4,7,
                 7,1,1,1,1,1,1,1,1,7,
