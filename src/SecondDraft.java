@@ -44,6 +44,18 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             else if (x == 2) {
                 unMakeMove(gameMoves.get(gameMoves.size() - 1));
                 gameMoves.remove(gameMoves.size() - 1);
+            } else if (x == 1) {
+                ArrayList<Integer> possibleMoves = getBlackMoves();
+                int move = 0;
+                while (!possibleMoves.contains(move)) {
+                    System.out.print("From : ");
+                    int from = console.nextInt();
+                    System.out.print("To : ");
+                    int to = console.nextInt();
+                    move = encodeMove(to,from);
+                }
+                makeMove(move);
+                gameMoves.add(move);
             } else {
                 ArrayList<Integer> possibleMoves = getWhiteMoves();
                 int move = 0;
@@ -214,56 +226,56 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                     int toPiece = board[toCoordinate];
                     if (toPiece == 0) {
                         moves.add((boardState << 23) + 0b1000000000000000000 + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                        moves.add((boardState << 23) + 0b1001000000000000000 + (fromCoordinate << 8) + (toCoordinate << 1));
-                        moves.add((boardState << 23) + 0b1010000000000000000 + (fromCoordinate << 8) + (toCoordinate << 1));
-                        moves.add((boardState << 23) + 0b1011000000000000000 + (fromCoordinate << 8) + (toCoordinate << 1));
+                        moves.add((boardState << 23) + 0b1001000000000000000 + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
+                        moves.add((boardState << 23) + 0b1010000000000000000 + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
+                        moves.add((boardState << 23) + 0b1011000000000000000 + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
                     }
 
-                    toCoordinate = fromCoordinate + 9;
+                    toCoordinate = fromCoordinate - 9;
                     toPiece = board[toCoordinate];
                     if (toPiece != 0) {
-                        moves.add((boardState << 23) + 0b1000000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        moves.add((boardState << 23) + 0b1001000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        moves.add((boardState << 23) + 0b1010000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        moves.add((boardState << 23) + 0b1011000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
+                        moves.add((boardState << 23) + 0b1000000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
+                        moves.add((boardState << 23) + 0b1001000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
+                        moves.add((boardState << 23) + 0b1010000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
+                        moves.add((boardState << 23) + 0b1011000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
                     }
 
-                    toCoordinate = fromCoordinate + 11;
+                    toCoordinate = fromCoordinate - 11;
                     toPiece = board[toCoordinate];
                     if (toPiece != 0) {
-                        moves.add((boardState << 23) + 0b1000000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        moves.add((boardState << 23) + 0b1001000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        moves.add((boardState << 23) + 0b1010000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        moves.add((boardState << 23) + 0b1011000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
+                        moves.add((boardState << 23) + 0b1000000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
+                        moves.add((boardState << 23) + 0b1001000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
+                        moves.add((boardState << 23) + 0b1010000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
+                        moves.add((boardState << 23) + 0b1011000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
                     }
                 }
                 else {
-                    int toCoordinate = fromCoordinate + 10;
+                    int toCoordinate = fromCoordinate - 10;
                     if (board[toCoordinate] == 0) {//normal moves forward
-                        moves.add((boardState << 23) + (fromCoordinate << 8) + ((toCoordinate) << 1));
-                        toCoordinate += 10;
-                        if (fromCoordinate/10 == 3 && board[toCoordinate] == 0) { //pushes
-                            moves.add((boardState << 23) + 0b1000000000000000 + (fromCoordinate << 8) + ((toCoordinate) << 1));
+                        moves.add((boardState << 23) + (fromCoordinate << 8) + ((toCoordinate) << 1) + 1);
+                        toCoordinate -= 10;
+                        if (fromCoordinate/10 == 8 && board[toCoordinate] == 0) { //pushes
+                            moves.add((boardState << 23) + 0b1000000000000000 + (fromCoordinate << 8) + ((toCoordinate) << 1) + 1);
                         }
                     }
 
-                    toCoordinate = fromCoordinate + 9;
+                    toCoordinate = fromCoordinate - 9;
                     int toPiece = board[toCoordinate];
                     if (toPiece > 8) {
-                        moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
+                        moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
                     }
 
-                    toCoordinate = fromCoordinate + 11;
+                    toCoordinate = fromCoordinate - 11;
                     toPiece = board[toCoordinate];
                     if (toPiece > 8) {
-                        moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
+                        moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
                     }
 
-                    if (fromCoordinate / 10 == 6) { //ep
+                    if (fromCoordinate / 10 == 5) { //ep
                         if (fromCoordinate % 10 == (boardState & 0b1111) + 1) {
-                            moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate + 9) << 1));
+                            moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate - 11) << 1) + 1);
                         } else if (fromCoordinate % 10 == (boardState & 0b1111) - 1) {
-                            moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate + 11) << 1));
+                            moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate - 9) << 1) + 1);
                         }
                     }
                 }
@@ -274,24 +286,24 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                     int toCoordinate = fromCoordinate + o;
                     do {
                         byte toPiece = board[toCoordinate];
-                        if (toPiece > 8) {
-                            moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1) + (toPiece << 19));
+                        if (toPiece < 7 && toPiece != 0) {
+                            moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1) + (toPiece << 19) + 1);
                             break;
                         }
                         if (toPiece != 0) {
                             break;
                         }
-                        moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1));
+                        moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
                         toCoordinate += o;
                     } while (slide);
                 }
             }
         }
-        if ((boardState & 0b00010000) == 0b00010000 && board[26] == 0 && board[27] == 0 && !isAttacked(25,true) && !isAttacked(26,true)) {
-            moves.add((boardState<<23) + 0b10001100100110110); //short castle - checks for destination are in eval/actual making
+        if ((boardState & 0b01000000) == 0b01000000 && board[96] == 0 && board[97] == 0 && !isAttacked(95,false) && !isAttacked(96,false)) {
+            moves.add((boardState<<23) + 0b10101111111000011); //short castle
         }
-        if ((boardState & 0b00100000) == 0b00100000 && board[24] == 0 && board[23] == 0 && board[22] == 0 && !isAttacked(25,true) && !isAttacked(24,true)) {
-            moves.add((boardState<<23) + 0b11001100100101110); //long castle
+        if ((boardState & 0b10000000) == 0b10000000 && board[94] == 0 && board[93] == 0 && board[92] == 0 && !isAttacked(95,false) && !isAttacked(94,false)) {
+            moves.add((boardState<<23) + 0b11101111110111011); //long castle
         }
         return moves;
     }
