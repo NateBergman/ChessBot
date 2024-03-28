@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="working on piece lists">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="basic eval working">
+      <change afterPath="$PROJECT_DIR$/src/SecondDraft.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FirstDraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FirstDraft.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Positions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Positions.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,7 +80,14 @@
       <option name="project" value="LOCAL" />
       <updated>1711165273902</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="basic eval working">
+      <created>1711594000036</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1711594000036</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -99,6 +105,7 @@
     <MESSAGE value="using bytes" />
     <MESSAGE value="redoing stuff" />
     <MESSAGE value="Moving + unmoving works with ep; need to test castling but starting on legal move + check generation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Moving + unmoving works with ep; need to test castling but starting on legal move + check generation" />
+    <MESSAGE value="basic eval working" />
+    <option name="LAST_COMMIT_MESSAGE" value="basic eval working" />
   </component>
 </project>
