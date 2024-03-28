@@ -29,7 +29,6 @@ public class Positions { //basically does everything
         horizontalMoves = new int[] {1,-1,10,-10};
         whitePieces = new int[] {31,32,33,34,35,36,37,38,-1,-1,22,27,-1,-1,-1,-1,-1,-1,-1,-1,23,26,-1,-1,-1,-1,-1,-1,-1,-1,21,28,-1,-1,-1,-1,-1,-1,-1,-1,24,-1,-1,-1,-1,-1,-1,-1,-1,25};
         blackPieces = new int[] {81,82,83,84,85,86,87,88,-1,-1,92,97,-1,-1,-1,-1,-1,-1,-1,-1,93,96,-1,-1,-1,-1,-1,-1,-1,-1,91,98,-1,-1,-1,-1,-1,-1,-1,-1,94,-1,-1,-1,-1,-1,-1,-1,-1,95};
-        material = new int[] {0,10,30,30,45,95,10000,0,0,-10,-30,-30,-45,-95,-10000};
     }
     public boolean isAttacked(int square, boolean whiteControl) {
         for (int i : knightMoves) {
@@ -362,6 +361,9 @@ public class Positions { //basically does everything
         if ((board[from] & 0b111) == 1) { //if a pawn (they have a lot of special moves)
             if (to > 90 || to < 30) { //promote
                 move += 1<<18;
+                Scanner console = new Scanner(System.in);
+                System.out.println("promote to what? 0 knight, 1 bishop, 2 rook, 3 queen :");
+                move += console.nextInt() << 15;
             } else if ((to > 50 && from < 40) || (to < 70 && from > 80)) { //push
                 move += 1<<15;
             }
