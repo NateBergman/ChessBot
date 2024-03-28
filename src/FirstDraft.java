@@ -1,5 +1,5 @@
 import java.util.*;
-public class FirstDraft {
+public class FirstDraft { //really just the front-end
    public static void main (String[] args) {
        Positions positions = new Positions();
        Map<Byte,Character> displayMap = buildDisplayMap();
@@ -7,11 +7,19 @@ public class FirstDraft {
        ArrayList<Integer> moves = new ArrayList<>();
        while(true) {
            positions.printBoard(displayMap);
-           System.out.print("0 white move, 1 black move, 2 undo move");
+           System.out.print("0 white move, 1 black move, 2 undo move, 3 evaluate, 4 coded move");
            int x = console.nextInt();
            if (x == 2) {
-               positions.unMakeMove(moves.get(moves.size()-1));
-               moves.remove(moves.get(moves.size()-1));
+               positions.unMakeMove(moves.get(moves.size() - 1));
+               moves.remove(moves.get(moves.size() - 1));
+           } else if (x == 3) {
+               System.out.print("Depth: ");
+               int depth = console.nextInt();
+               System.out.println(positions.search(depth, depth, true));
+           } else if (x == 4) {
+               int move = console.nextInt();
+               positions.makeMove(move);
+               moves.add(move);
            } else {
                ArrayList<Integer> possibleMoves;
                if (x == 1) {

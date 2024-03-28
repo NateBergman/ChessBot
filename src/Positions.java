@@ -1,5 +1,5 @@
 import java.util.*;
-public class Positions {
+public class Positions { //basically does everything
     byte[] board;
     byte boardState;
     int[] knightMoves;
@@ -8,6 +8,7 @@ public class Positions {
     int[] horizontalMoves;
     int[] whitePieces;
     int[] blackPieces;
+    int[] material;
     public Positions() {
         board = new byte[] {7,7,7,7,7,7,7,7,7,7, //looks upside down in this view, 7s are borders
                 7,7,7,7,7,7,7,7,7,7,
@@ -27,7 +28,8 @@ public class Positions {
         diagonalMoves = new int[] {11,9,-9,-11};
         horizontalMoves = new int[] {1,-1,10,-10};
         whitePieces = new int[] {31,32,33,34,35,36,37,38,-1,-1,22,27,-1,-1,-1,-1,-1,-1,-1,-1,23,26,-1,-1,-1,-1,-1,-1,-1,-1,21,28,-1,-1,-1,-1,-1,-1,-1,-1,24,-1,-1,-1,-1,-1,-1,-1,-1,25};
-        blackPieces = new int[] {81,82,83,84,85,86,87,88,-1,-1,92,97,-1,-1,-1,-1,-1,-1,-1,-1,93,96,-1,-1,-1,-1,-1,-1,-1,-1,91,98,-1,-1,-1,-1,-1,-1,-1,-1,94,-1,-1,-1,-1,-1,-1,-1,-1,95};;
+        blackPieces = new int[] {81,82,83,84,85,86,87,88,-1,-1,92,97,-1,-1,-1,-1,-1,-1,-1,-1,93,96,-1,-1,-1,-1,-1,-1,-1,-1,91,98,-1,-1,-1,-1,-1,-1,-1,-1,94,-1,-1,-1,-1,-1,-1,-1,-1,95};
+        material = new int[] {0,10,30,30,45,95,10000,0,0,-10,-30,-30,-45,-95,-10000};
     }
     public boolean isAttacked(int square, boolean whiteControl) {
         for (int i : knightMoves) {
@@ -383,5 +385,56 @@ public class Positions {
             System.out.println("\n------------------------------------------");
         }
         System.out.println(boardState);
+    }
+    public int evaluate() { //just material for now
+        int score = 0;
+        for (int i = 21; i < 99; i++) {
+            score += material[board[i]];
+        }
+        return score;
+    }
+    public int search (int initDepth, int currentDepth, boolean whiteMove) {
+        if (currentDepth == 0) {
+            return evaluate();
+        }
+        else {
+            if (whiteMove) {
+                ArrayList<Integer> moves = getWhiteMoves();
+                int bestScore = Integer.MIN_VALUE;
+                int bestMove = 0;
+                for (int m : moves) {
+                    makeMove(m);
+                    int score = search(initDepth,currentDepth-1,false);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = m;
+                    }
+                    unMakeMove(m);
+                }
+                if (initDepth == currentDepth) {
+                    return bestMove;
+                } else {
+                    return bestScore;
+                }
+            } else {
+                ArrayList<Integer> moves = getBlackMoves();
+                int bestScore = Integer.MAX_VALUE;
+                int bestMove = 0;
+                for (int m : moves) {
+                    makeMove(m);
+                    int score = search(initDepth,currentDepth-1,true);
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestMove = m;
+                    }
+                    unMakeMove(m);
+                }
+                if (initDepth == currentDepth) {
+                    return bestMove;
+                } else {
+                    return bestScore;
+                }
+            }
+        }
     }
 }
