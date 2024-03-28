@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="basic eval working">
-      <change afterPath="$PROJECT_DIR$/src/SecondDraft.java" afterDir="false" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="ok doing new draft with cool stuff like piece list and tapered eval">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SecondDraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SecondDraft.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +87,14 @@
       <option name="project" value="LOCAL" />
       <updated>1711594000036</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="ok doing new draft with cool stuff like piece list and tapered eval">
+      <created>1711596744588</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1711596744588</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -106,6 +113,7 @@
     <MESSAGE value="redoing stuff" />
     <MESSAGE value="Moving + unmoving works with ep; need to test castling but starting on legal move + check generation" />
     <MESSAGE value="basic eval working" />
-    <option name="LAST_COMMIT_MESSAGE" value="basic eval working" />
+    <MESSAGE value="ok doing new draft with cool stuff like piece list and tapered eval" />
+    <option name="LAST_COMMIT_MESSAGE" value="ok doing new draft with cool stuff like piece list and tapered eval" />
   </component>
 </project>
