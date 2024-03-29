@@ -11,6 +11,18 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
 
     static boolean[] moveGenSlide = {false,false,true,true,true,false};
     static int[][] moveGenOffset = {{},{-21, -19,-12, -8, 8, 12, 19, 21},{-11,  -9,  9, 11},{-10,  -1,  1, 10},{-11, -10, -9, -1, 1,  9, 10, 11},{-11, -10, -9, -1, 1,  9, 10, 11}};
+
+    int[] evalPawnOpening = {
+            0,   0,   0,   0,   0,   0,  0,   0,
+            180, 216,  143,  177,  150, 208, 116, 71,
+            76,   89,  108,  113,  147,  138, 107, 62,
+            68,  95,   88,  103,  105,  94, 99, 59,
+            55,  80,  77,  94,  99, 88, 92, 57,
+            56,  78,  78, 72, 85, 85, 115, 70,
+            47,  81, 62, 59, 67, 106, 120, 60,
+            0,   0,   0,   0,   0,   0,  0,   0,
+    };
+
     public static void main(String[] args) {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
                 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
@@ -359,7 +371,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
 
         pieceLists[moveColor].remove(from);
         pieceLists[moveColor].add(to);
-        if ((move & 0b11110000000000000000) != 0) {
+        if ((move & 0b11110000000000000000000) != 0) {
             pieceLists[1-moveColor].remove(to);
         }
 
@@ -406,7 +418,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
 
         pieceLists[moveColor].add(from);
         pieceLists[moveColor].remove(to);
-        if ((move & 0b11110000000000000000) != 0) {
+        if ((move & 0b11110000000000000000000) != 0) {
             pieceLists[1-moveColor].add(to);
         }
     }
