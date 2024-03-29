@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="made white psts, need to just make eval function with them" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="have to redo psts because i made them wrong way and white only :(">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PSTMaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PSTMaker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SecondDraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SecondDraft.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -112,7 +116,14 @@
       <option name="project" value="LOCAL" />
       <updated>1711730358785</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="have to redo psts because i made them wrong way and white only :(">
+      <created>1711735273837</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1711735273837</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -135,6 +146,7 @@
     <MESSAGE value="ok move gen works but captures and en passants with piece lists don't" />
     <MESSAGE value="fixed move gen/gameplay problems, starting piece square eval" />
     <MESSAGE value="made white psts, need to just make eval function with them" />
-    <option name="LAST_COMMIT_MESSAGE" value="made white psts, need to just make eval function with them" />
+    <MESSAGE value="have to redo psts because i made them wrong way and white only :(" />
+    <option name="LAST_COMMIT_MESSAGE" value="have to redo psts because i made them wrong way and white only :(" />
   </component>
 </project>
