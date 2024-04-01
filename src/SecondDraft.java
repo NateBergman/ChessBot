@@ -93,7 +93,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 int move = startSearch(SEARCH_DEPTH,true);
                 makeMove(move);
                 gameMoves.add(move);
-            } else if (x == 5) {
+            } else if (x == 5) { //
                 int move = startSearch(SEARCH_DEPTH,false);
                 makeMove(move);
                 gameMoves.add(move);
