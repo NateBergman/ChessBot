@@ -61,7 +61,8 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
         Collections.addAll(pieceLists[0],21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38);
         Collections.addAll(pieceLists[1], 81, 82, 83, 84, 85, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98);
 
-        Map<Byte,Character> displayMap = buildDisplayMap();
+        //Map<Byte,Character> displayMap = buildDisplayMap();
+        Map<Byte,Character> displayMap = laptopDisplayMap();
         Scanner console = new Scanner(System.in);
         ArrayList<Integer> gameMoves = new ArrayList<>();
         while (true) {
@@ -96,10 +97,8 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 int move = startSearch(SEARCH_DEPTH,true);
                 makeMove(move);
                 gameMoves.add(move);
-                System.out.println(move);
             } else if (x == 5) {
                 int move = startSearch(SEARCH_DEPTH,false);
-                System.out.println(move);
                 makeMove(move);
                 gameMoves.add(move);
             } else {
@@ -141,6 +140,23 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
         display.put((byte) 13, '\u2655');
         display.put((byte) 6, '\u265A');
         display.put((byte) 14, '\u2654');
+        return display;
+    }
+    public static Map<Byte,Character> laptopDisplayMap () {
+        Map<Byte,Character> display = new HashMap<>();
+        display.put((byte) 0,' ');
+        display.put((byte) 1,'P');
+        display.put((byte) 9, 'p');
+        display.put((byte) 2, 'N');
+        display.put((byte) 10, 'n');
+        display.put((byte) 3, 'B');
+        display.put((byte) 11, 'b');
+        display.put((byte) 4, 'R');
+        display.put((byte) 12, 'r');
+        display.put((byte) 5, 'Q');
+        display.put((byte) 13, 'q');
+        display.put((byte) 6, 'K');
+        display.put((byte) 14, 'k');
         return display;
     }
     public static int encodeMove(int to, int from) {
@@ -226,7 +242,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                         moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
                     }
 
-                    if (fromCoordinate / 10 == 6) { //ep
+                    if (fromCoordinate / 10 == 6 && (boardState & 0b1111) != 0) { //ep
                         if (fromCoordinate % 10 == (boardState & 0b1111) + 1) {
                             moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate + 9) << 1));
                         } else if (fromCoordinate % 10 == (boardState & 0b1111) - 1) {
@@ -317,7 +333,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                         moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
                     }
 
-                    if (fromCoordinate / 10 == 5) { //ep
+                    if (fromCoordinate / 10 == 5  && (boardState & 0b1111) != 0) { //ep
                         if (fromCoordinate % 10 == (boardState & 0b1111) + 1) {
                             moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate - 11) << 1) + 1);
                         } else if (fromCoordinate % 10 == (boardState & 0b1111) - 1) {
@@ -373,10 +389,13 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
         }
         return ((white && (board[square + 9] == 9 || board[square + 11] == 9))) || (!white && (board[square - 9] == 1 || board[square - 11] == 1));
     }
-    public static void makeMove(int move) {
+    public static boolean makeMove(int move) {
         int to = (move>>1) & 0b1111111; //records to and from indexes
         int from = (move>>8) & 0b1111111;
         int moveColor = move & 1;
+        if (board[to] % 8 == 6) { //taking the king
+            return true;
+        }
         boardState = (byte) (boardState & 0b11110000); //resets en passantables
         if ((move>>18 & 1) == 1) { //if promotion, place correct piece
             board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor))); //first part gets type, second half color
@@ -423,6 +442,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
         if(from == 98 || from == 95 || to == 98) {
             boardState = (byte)(boardState & 0b10111111);
         }
+        return false;
     }
     public static void unMakeMove(int move) {
         int to = (move>>1) & 0b1111111; //records to and from indexes
@@ -462,22 +482,10 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
     public static double evaluatePosition() {
         double score = 0;
         for (int i : pieceLists[0]) {
-            int p = board[i] - 1;
-            if (p > 6 || p < 0) {
-                printBoard(buildDisplayMap());
-                throw new IllegalArgumentException();
-            } else {
-                score += whiteOpening[board[i] - 1][i]; //((whiteOpening[board[i]-1][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[board[i]-1][i]) * phase / 24.0);
-            }
+            score += ((whiteOpening[board[i]-1][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[board[i]-1][i]) * phase / 24.0);
         }
         for (int i : pieceLists[1]) { //24 phase points total
-            int p = board[i] - 9;
-            if (p > 6 || p < 0) {
-                printBoard(buildDisplayMap());
-                throw new IllegalArgumentException();
-            } else {
-                score -= blackOpening[board[i] - 9][i]; //((blackOpening[board[i]-9][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[board[i]-9][i]) * phase / 24.0);
-            }
+            score -= ((blackOpening[board[i]-9][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[board[i]-9][i]) * phase / 24.0);
         }
         return score;
     }
@@ -487,7 +495,10 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             double bestScore = -99999.0;
             int bestMove = 0;
             for (int m : moves) {
-                makeMove(m);
+                if (makeMove(m)) {
+                    unMakeMove(m);
+                    return m;
+                }
                 double score = search(depth - 1, false);
                 if (score > bestScore) {
                     bestScore = score;
@@ -501,7 +512,10 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             double bestScore = 99999.0;
             int bestMove = 0;
             for (int m : moves) {
-                makeMove(m);
+                if (makeMove(m)) {
+                    unMakeMove(m);
+                    return m;
+                }
                 double score = search(depth - 1, true);
                 if (score < bestScore) {
                     bestScore = score;
@@ -521,7 +535,10 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 ArrayList<Integer> moves = getWhiteMoves();
                 double bestScore = -99999.0;
                 for (int m : moves) {
-                    makeMove(m);
+                    if (makeMove(m)) {
+                        unMakeMove(m);
+                        return 9999.0;
+                    }
                     double score = search(depth - 1, false);
                     if (score > bestScore) {
                         bestScore = score;
@@ -533,7 +550,10 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 ArrayList<Integer> moves = getBlackMoves();
                 double bestScore = 99999.0;
                 for (int m : moves) {
-                    makeMove(m);
+                    if (makeMove(m)) {
+                        unMakeMove(m);
+                        return -9999.0;
+                    }
                     double score = search(depth - 1, true);
                     if (score < bestScore) {
                         bestScore = score;

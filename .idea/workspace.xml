@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="ok move gen works but captures and en passants with piece lists don't">
-      <change afterPath="$PROJECT_DIR$/src/PieceSquareTableCombiner.java" afterDir="false" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="attempting to push again because it didn't work">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SecondDraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SecondDraft.java" afterDir="false" />
     </list>
@@ -102,7 +101,35 @@
       <option name="project" value="LOCAL" />
       <updated>1711651340646</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="fixed move gen/gameplay problems, starting piece square eval">
+      <created>1711728069633</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1711728069635</updated>
+    </task>
+    <task id="LOCAL-00008" summary="made white psts, need to just make eval function with them">
+      <created>1711730358785</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1711730358785</updated>
+    </task>
+    <task id="LOCAL-00009" summary="have to redo psts because i made them wrong way and white only :(">
+      <created>1711735273837</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1711735273837</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Piece square tables made, just have to implement eval">
+      <created>1711746311081</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1711746311081</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -123,6 +150,10 @@
     <MESSAGE value="basic eval working" />
     <MESSAGE value="ok doing new draft with cool stuff like piece list and tapered eval" />
     <MESSAGE value="ok move gen works but captures and en passants with piece lists don't" />
-    <option name="LAST_COMMIT_MESSAGE" value="ok move gen works but captures and en passants with piece lists don't" />
+    <MESSAGE value="fixed move gen/gameplay problems, starting piece square eval" />
+    <MESSAGE value="made white psts, need to just make eval function with them" />
+    <MESSAGE value="have to redo psts because i made them wrong way and white only :(" />
+    <MESSAGE value="Piece square tables made, just have to implement eval" />
+    <option name="LAST_COMMIT_MESSAGE" value="Piece square tables made, just have to implement eval" />
   </component>
 </project>
