@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="attempting to push again because it didn't work">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="fixed problem, eval should now do checks/mates but untested">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SecondDraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SecondDraft.java" afterDir="false" />
     </list>
@@ -129,7 +129,14 @@
       <option name="project" value="LOCAL" />
       <updated>1711746311081</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="fixed problem, eval should now do checks/mates but untested">
+      <created>1712000935020</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1712000935020</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -154,6 +161,7 @@
     <MESSAGE value="made white psts, need to just make eval function with them" />
     <MESSAGE value="have to redo psts because i made them wrong way and white only :(" />
     <MESSAGE value="Piece square tables made, just have to implement eval" />
-    <option name="LAST_COMMIT_MESSAGE" value="Piece square tables made, just have to implement eval" />
+    <MESSAGE value="fixed problem, eval should now do checks/mates but untested" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed problem, eval should now do checks/mates but untested" />
   </component>
 </project>

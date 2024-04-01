@@ -42,7 +42,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
     static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
 
-    static final int SEARCH_DEPTH = 6;
+    static final int SEARCH_DEPTH = 4;
 
     public static void main(String[] args) {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
@@ -496,7 +496,6 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             int bestMove = 0;
             for (int m : moves) {
                 if (makeMove(m)) {
-                    unMakeMove(m);
                     return m;
                 }
                 double score = search(depth - 1, false);
@@ -513,7 +512,6 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             int bestMove = 0;
             for (int m : moves) {
                 if (makeMove(m)) {
-                    unMakeMove(m);
                     return m;
                 }
                 double score = search(depth - 1, true);
@@ -536,7 +534,6 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 double bestScore = -99999.0;
                 for (int m : moves) {
                     if (makeMove(m)) {
-                        unMakeMove(m);
                         return 9999.0;
                     }
                     double score = search(depth - 1, false);
@@ -551,7 +548,6 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 double bestScore = 99999.0;
                 for (int m : moves) {
                     if (makeMove(m)) {
-                        unMakeMove(m);
                         return -9999.0;
                     }
                     double score = search(depth - 1, true);
