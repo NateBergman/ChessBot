@@ -42,7 +42,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
     static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
 
-    static final int SEARCH_DEPTH = 4;
+    static final int SEARCH_DEPTH = 6;
 
     public static void main(String[] args) {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
@@ -66,9 +66,12 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
         ArrayList<Integer> gameMoves = new ArrayList<>();
         while (true) {
             printBoard(displayMap);
-            System.out.print("0 for white move, 1 for black move, 2 undo move, 3 manual move, 4 white engine move, 5 black engine move");
+            System.out.print("0 for white move, 1 for black move, 2 undo move, 3 manual move, 4 white engine move, 5 black engine move, 6 evaluate, 7 get white moves, 8 get black moves");
             int x = console.nextInt();
-            if (x == 3) {
+            if (x == 6) {
+                System.out.println(evaluatePosition());
+            }
+            else if (x == 3) {
                 System.out.print("Move index : ");
                 int move = console.nextInt();
                 makeMove(move);
@@ -93,8 +96,10 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 int move = startSearch(SEARCH_DEPTH,true);
                 makeMove(move);
                 gameMoves.add(move);
-            } else if (x == 5) { //
+                System.out.println(move);
+            } else if (x == 5) {
                 int move = startSearch(SEARCH_DEPTH,false);
+                System.out.println(move);
                 makeMove(move);
                 gameMoves.add(move);
             } else {
@@ -371,7 +376,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
     public static void makeMove(int move) {
         int to = (move>>1) & 0b1111111; //records to and from indexes
         int from = (move>>8) & 0b1111111;
-        int moveColor = move & 0b1;
+        int moveColor = move & 1;
         boardState = (byte) (boardState & 0b11110000); //resets en passantables
         if ((move>>18 & 1) == 1) { //if promotion, place correct piece
             board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor))); //first part gets type, second half color
@@ -429,7 +434,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             board[from] = board[to]; //otherwise just move the piece back
             if ((move>>15 & 0b111) == 0b101) { //en passant: also restore opp pawn
                 board[to - 10 + 20*(moveColor)] = (byte)(9 - 8 * (moveColor)); //put opp color pawn in appropriate space
-                pieceLists[1-moveColor].add(to - 10 + 20*(moveColor));
+                pieceLists[1-moveColor].add(to - 10 + 20 * (moveColor));
             } else if ((move>>16 & 1) == 1) { //undoing castling
                 if ((move>>15 & 1) == 1) { //long castle
                     board[to-2] = board[to+1];
@@ -456,18 +461,30 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
     }
     public static double evaluatePosition() {
         double score = 0;
-        for (int i : pieceLists[0]) { //24 phase points total
-            score += ((whiteOpening[board[i]-1][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[board[i]-1][i]) * phase / 24.0);
+        for (int i : pieceLists[0]) {
+            int p = board[i] - 1;
+            if (p > 6 || p < 0) {
+                printBoard(buildDisplayMap());
+                throw new IllegalArgumentException();
+            } else {
+                score += whiteOpening[board[i] - 1][i]; //((whiteOpening[board[i]-1][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[board[i]-1][i]) * phase / 24.0);
+            }
         }
         for (int i : pieceLists[1]) { //24 phase points total
-            score -= ((blackOpening[board[i]-9][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[board[i]-9][i]) * phase / 24.0);
+            int p = board[i] - 9;
+            if (p > 6 || p < 0) {
+                printBoard(buildDisplayMap());
+                throw new IllegalArgumentException();
+            } else {
+                score -= blackOpening[board[i] - 9][i]; //((blackOpening[board[i]-9][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[board[i]-9][i]) * phase / 24.0);
+            }
         }
         return score;
     }
     public static int startSearch (int depth, boolean whiteMove) {
         if (whiteMove) {
             ArrayList<Integer> moves = getWhiteMoves();
-            double bestScore = Double.MIN_VALUE;
+            double bestScore = -99999.0;
             int bestMove = 0;
             for (int m : moves) {
                 makeMove(m);
@@ -481,7 +498,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             return bestMove;
         } else {
             ArrayList<Integer> moves = getBlackMoves();
-            double bestScore = Double.MAX_VALUE;
+            double bestScore = 99999.0;
             int bestMove = 0;
             for (int m : moves) {
                 makeMove(m);
@@ -502,7 +519,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
         else {
             if (whiteMove) {
                 ArrayList<Integer> moves = getWhiteMoves();
-                double bestScore = Double.MIN_VALUE;
+                double bestScore = -99999.0;
                 for (int m : moves) {
                     makeMove(m);
                     double score = search(depth - 1, false);
@@ -514,7 +531,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 return bestScore;
             } else {
                 ArrayList<Integer> moves = getBlackMoves();
-                double bestScore = Double.MAX_VALUE;
+                double bestScore = 99999.0;
                 for (int m : moves) {
                     makeMove(m);
                     double score = search(depth - 1, true);
