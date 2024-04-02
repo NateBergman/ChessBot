@@ -42,7 +42,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
     static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
 
-    static final int SEARCH_DEPTH = 4;
+    static final int SEARCH_DEPTH = 8;
 
     public static void main(String[] args) {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
@@ -498,7 +498,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 if (makeMove(m)) {
                     return m;
                 }
-                double score = search(depth - 1, false);
+                double score = search(depth - 1, false,bestScore,99999);
                 if (score > bestScore) {
                     bestScore = score;
                     bestMove = m;
@@ -514,7 +514,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 if (makeMove(m)) {
                     return m;
                 }
-                double score = search(depth - 1, true);
+                double score = search(depth - 1, true,-99999,bestScore);
                 if (score < bestScore) {
                     bestScore = score;
                     bestMove = m;
@@ -524,7 +524,49 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             return bestMove;
         }
     }
-    public static double search (int depth, boolean whiteMove) {
+    public static double search (int depth, boolean whiteMove, double alpha, double beta) {
+        if (depth == 0) {
+            return evaluatePosition();
+        }
+        else {
+            if (whiteMove) {
+                ArrayList<Integer> moves = getWhiteMoves();
+                for (int m : moves) {
+                    if (makeMove(m)) { //checkmates (found by capturing king)
+                        return 9999.0;
+                    }
+                    double score = search(depth - 1, false, alpha, beta);
+                    if (score >= beta) {
+                        unMakeMove(m);
+                        return beta;
+                    }
+                    if (score > alpha) {
+                        alpha = score;
+                    }
+                    unMakeMove(m);
+                }
+                return alpha;
+            } else {
+                ArrayList<Integer> moves = getBlackMoves();
+                for (int m : moves) {
+                    if (makeMove(m)) {
+                        return -9999.0;
+                    }
+                    double score = search(depth - 1, true,alpha,beta);
+                    if (score <= alpha) {
+                        unMakeMove(m);
+                        return alpha;
+                    }
+                    if (score < beta) {
+                        beta = score;
+                    }
+                    unMakeMove(m);
+                }
+                return beta;
+            }
+        }
+    }
+    /*public static double search (int depth, boolean whiteMove, int alpha, int beta) {
         if (depth == 0) {
             return evaluatePosition();
         }
@@ -536,7 +578,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                     if (makeMove(m)) {
                         return 9999.0;
                     }
-                    double score = search(depth - 1, false);
+                    double score = search(depth - 1, false,alpha,beta);
                     if (score > bestScore) {
                         bestScore = score;
                     }
@@ -550,7 +592,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                     if (makeMove(m)) {
                         return -9999.0;
                     }
-                    double score = search(depth - 1, true);
+                    double score = search(depth - 1, true,alpha,beta);
                     if (score < bestScore) {
                         bestScore = score;
                     }
@@ -559,5 +601,5 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 return bestScore;
             }
         }
-    }
+    }*/
 }
