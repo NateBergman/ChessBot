@@ -1,17 +1,15 @@
 import java.util.*;
-public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, and mailbox with piece lists and offset move generation
+public class AlphaBetaTranspositionTables {
     static byte[] board;
     static byte boardState;
     static Set<Integer>[] pieceLists = new Set[]{new HashSet<>(), new HashSet<>()};
-    int whiteKing;
-    int blackKing;
-
-    static int phase = 0;
-    static int[] phaseCounts = {0,0,1,1,2,4,0,0,0,0,1,1,2,4,0};
 
     static boolean[] moveGenSlide = {false,false,true,true,true,false};
     static int[][] moveGenOffset = {{},{-21, -19,-12, -8, 8, 12, 19, 21},{-11,  -9,  9, 11},{-10,  -1,  1, 10},{-11, -10, -9, -1, 1,  9, 10, 11},{-11, -10, -9, -1, 1,  9, 10, 11}};
 
+    //piece square tables
+    static int phase = 0;
+    static int[] phaseCounts = {0,0,1,1,2,4,0,0,0,0,1,1,2,4,0};
     static int[] WPO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 47, 81, 62, 59, 67, 106, 120, 60, 0, 0, 56, 78, 78, 72, 85, 85, 115, 70, 0, 0, 55, 80, 77, 94, 99, 88, 92, 57, 0, 0, 68, 95, 88, 103, 105, 94, 99, 59, 0, 0, 76, 89, 108, 113, 147, 138, 107, 62, 0, 0, 180, 216, 143, 177, 150, 208, 116, 71, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] BPO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 180, 216, 143, 177, 150, 208, 116, 71, 0, 0, 76, 89, 108, 113, 147, 138, 107, 62, 0, 0, 68, 95, 88, 103, 105, 94, 99, 59, 0, 0, 55, 80, 77, 94, 99, 88, 92, 57, 0, 0, 56, 78, 78, 72, 85, 85, 115, 70, 0, 0, 47, 81, 62, 59, 67, 106, 120, 60, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] WPE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 94, 94, 94, 94, 94, 94, 94, 94, 0, 0, 107, 102, 102, 104, 107, 94, 96, 87, 0, 0, 98, 101, 88, 95, 94, 89, 93, 86, 0, 0, 107, 103, 91, 87, 87, 86, 97, 93, 0, 0, 126, 118, 107, 99, 92, 98, 111, 111, 0, 0, 188, 194, 179, 161, 150, 147, 176, 178, 0, 0, 272, 267, 252, 228, 241, 226, 259, 281, 0, 0, 94, 94, 94, 94, 94, 94, 94, 94, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -36,11 +34,13 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
     static int[] BKO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -65, 23, 16, -15, -56, -34, 2, 13, 0, 0, 29, -1, -20, -7, -8, -4, -38, -29, 0, 0, -9, 24, 2, -16, -20, 6, 22, -22, 0, 0, -17, -20, -12, -27, -30, -25, -14, -36, 0, 0, -49, -1, -27, -39, -46, -44, -33, -51, 0, 0, -14, -14, -22, -46, -44, -30, -15, -27, 0, 0, 1, 7, -8, -64, -43, -16, 9, 8, 0, 0, -15, 36, 12, -54, 8, -28, 24, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] WKE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -53, -34, -21, -11, -28, -14, -24, -43, 0, 0, -27, -11, 4, 13, 14, 4, -5, -17, 0, 0, -19, -3, 11, 21, 23, 16, 7, -9, 0, 0, -18, -4, 21, 24, 27, 23, 9, -11, 0, 0, -8, 22, 24, 27, 26, 33, 26, 3, 0, 0, 10, 17, 23, 15, 20, 45, 44, 13, 0, 0, -12, 17, 14, 17, 17, 38, 23, 11, 0, 0, -74, -35, -18, -18, -11, 15, 4, -17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] BKE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -74, -35, -18, -18, -11, 15, 4, -17, 0, 0, -12, 17, 14, 17, 17, 38, 23, 11, 0, 0, 10, 17, 23, 15, 20, 45, 44, 13, 0, 0, -8, 22, 24, 27, 26, 33, 26, 3, 0, 0, -18, -4, 21, 24, 27, 23, 9, -11, 0, 0, -19, -3, 11, 21, 23, 16, 7, -9, 0, 0, -27, -11, 4, 13, 14, 4, -5, -17, 0, 0, -53, -34, -21, -11, -28, -14, -24, -43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
     static int[][] whiteOpening = {WPO,WNO,WBO,WRO,WQO,WKO};
     static int[][] blackOpening = {BPO,BNO,BBO,BRO,BQO,BKO};
     static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
+
+    static int[][] hashIndex;
+    static Map<Integer,int[]> transpositionTable;
 
     static final int SEARCH_DEPTH = 6;
 
@@ -63,6 +63,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
 
         Map<Byte,Character> displayMap = buildDisplayMap();
         //Map<Byte,Character> displayMap = laptopDisplayMap();
+
         Scanner console = new Scanner(System.in);
         ArrayList<Integer> gameMoves = new ArrayList<>();
         while (true) {
@@ -159,6 +160,15 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
         display.put((byte) 14, 'k');
         return display;
     }
+    public static void seedHashIndex() {
+        Random r = new Random();
+        hashIndex = new int[13][64]; //1-12 are pieces on the board, 0 is for special stuff like side to move, castling, en passant (0 is side to move, 1-8 en passant, 9-23 castling rights)
+        for (int i = 0; i < 13; i++) {
+            for (int j = 0; j < 64; j++) {
+                hashIndex[i][j] = r.nextInt(2147483647);
+            }
+        }
+    }
     public static int encodeMove(int to, int from) {
         int move = 0;
         move += (board[from]>>3) & 1; //is the move white or black
@@ -251,23 +261,23 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                     }
                 }
             } else {
-               int[] offsets = moveGenOffset[fromPiece];
-               boolean slide = moveGenSlide[fromPiece];
-               for (int o : offsets) {
-                   int toCoordinate = fromCoordinate + o;
-                   do {
-                      byte toPiece = board[toCoordinate];
-                      if (toPiece > 8) {
-                          moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1) + (toPiece << 19));
-                          break;
-                      }
-                      if (toPiece != 0) {
-                          break;
-                      }
-                      moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1));
-                      toCoordinate += o;
-                   } while (slide);
-               }
+                int[] offsets = moveGenOffset[fromPiece];
+                boolean slide = moveGenSlide[fromPiece];
+                for (int o : offsets) {
+                    int toCoordinate = fromCoordinate + o;
+                    do {
+                        byte toPiece = board[toCoordinate];
+                        if (toPiece > 8) {
+                            moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1) + (toPiece << 19));
+                            break;
+                        }
+                        if (toPiece != 0) {
+                            break;
+                        }
+                        moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1));
+                        toCoordinate += o;
+                    } while (slide);
+                }
             }
         }
         if ((boardState & 0b00010000) == 0b00010000 && board[26] == 0 && board[27] == 0 && !isAttacked(25,true) && !isAttacked(26,true)) {
@@ -537,6 +547,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             return evaluatePosition();
         }
         else {
+            int hash = getHashIndex(whiteMove);
             if (whiteMove) {
                 ArrayList<Integer> moves = getWhiteMoves();
                 for (int m : moves) {
@@ -573,5 +584,24 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
                 return beta;
             }
         }
+    }
+
+    public static int getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
+        int hash = 0;
+        for (int y = 2; y < 10; y++) {
+            for (int x = 1; x < 9; x++) {
+                hash = hash ^ hashIndex[board[10*y+x] % 8 + (board[10*y+x]>>>3) * 6][x-1 + (y-2) * 8];
+            }
+        }
+        if (!whiteMove) {
+            hash = hashIndex[0][0] ^ hash;
+        }
+        if ((boardState & 0b1111) != 0) {
+            hash = hash ^ hashIndex[0][boardState & 0b1111];
+        }
+        if ((boardState & 0b11110000) != 0) {
+            hash = hash ^ hashIndex[0][8 + (boardState>>>4)];
+        }
+        return hash;
     }
 }

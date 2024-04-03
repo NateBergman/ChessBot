@@ -4,7 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="Basic alpha-beta pruning search working, takes a few seconds (&lt;10) for depth 6 and a little under 2 minutes for depth 8. Need to add move ordering">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="ok move gen works but captures and en passants with piece lists don't">
+      <change afterPath="$PROJECT_DIR$/src/PieceSquareTableCombiner.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SecondDraft.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SecondDraft.java" afterDir="false" />
     </list>
@@ -101,56 +102,7 @@
       <option name="project" value="LOCAL" />
       <updated>1711651340646</updated>
     </task>
-    <task id="LOCAL-00007" summary="fixed move gen/gameplay problems, starting piece square eval">
-      <created>1711728069633</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1711728069635</updated>
-    </task>
-    <task id="LOCAL-00008" summary="made white psts, need to just make eval function with them">
-      <created>1711730358785</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1711730358785</updated>
-    </task>
-    <task id="LOCAL-00009" summary="have to redo psts because i made them wrong way and white only :(">
-      <created>1711735273837</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1711735273837</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Piece square tables made, just have to implement eval">
-      <created>1711746311081</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1711746311081</updated>
-    </task>
-    <task id="LOCAL-00011" summary="fixed problem, eval should now do checks/mates but untested">
-      <created>1712000935020</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1712000935020</updated>
-    </task>
-    <task id="LOCAL-00012" summary="fixed bugs, can play actual games now but just slow at depth 6 but fast and bad at depth 4">
-      <created>1712002131859</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1712002131859</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Basic alpha-beta pruning search working, takes a few seconds (&lt;10) for depth 6 and a little under 2 minutes for depth 8. Need to add move ordering">
-      <created>1712027026615</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1712027026615</updated>
-    </task>
-    <option name="localTasksCounter" value="14" />
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -171,13 +123,6 @@
     <MESSAGE value="basic eval working" />
     <MESSAGE value="ok doing new draft with cool stuff like piece list and tapered eval" />
     <MESSAGE value="ok move gen works but captures and en passants with piece lists don't" />
-    <MESSAGE value="fixed move gen/gameplay problems, starting piece square eval" />
-    <MESSAGE value="made white psts, need to just make eval function with them" />
-    <MESSAGE value="have to redo psts because i made them wrong way and white only :(" />
-    <MESSAGE value="Piece square tables made, just have to implement eval" />
-    <MESSAGE value="fixed problem, eval should now do checks/mates but untested" />
-    <MESSAGE value="fixed bugs, can play actual games now but just slow at depth 6 but fast and bad at depth 4" />
-    <MESSAGE value="Basic alpha-beta pruning search working, takes a few seconds (&lt;10) for depth 6 and a little under 2 minutes for depth 8. Need to add move ordering" />
-    <option name="LAST_COMMIT_MESSAGE" value="Basic alpha-beta pruning search working, takes a few seconds (&lt;10) for depth 6 and a little under 2 minutes for depth 8. Need to add move ordering" />
+    <option name="LAST_COMMIT_MESSAGE" value="ok move gen works but captures and en passants with piece lists don't" />
   </component>
 </project>
