@@ -42,7 +42,7 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
     static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
 
-    static final int SEARCH_DEPTH = 8;
+    static final int SEARCH_DEPTH = 6;
 
     public static void main(String[] args) {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
@@ -489,6 +489,14 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
         }
         return score;
     }
+    /*public static int iterativeDeepening (int depth, boolean whiteMove) {
+        if (whiteMove) {
+            ArrayList<Integer> moves = getWhiteMoves();
+
+        } else {
+
+        }
+    }*/
     public static int startSearch (int depth, boolean whiteMove) {
         if (whiteMove) {
             ArrayList<Integer> moves = getWhiteMoves();
@@ -566,40 +574,4 @@ public class SecondDraft { //uses tapered piece-square eval, no/basic pruning, a
             }
         }
     }
-    /*public static double search (int depth, boolean whiteMove, int alpha, int beta) {
-        if (depth == 0) {
-            return evaluatePosition();
-        }
-        else {
-            if (whiteMove) {
-                ArrayList<Integer> moves = getWhiteMoves();
-                double bestScore = -99999.0;
-                for (int m : moves) {
-                    if (makeMove(m)) {
-                        return 9999.0;
-                    }
-                    double score = search(depth - 1, false,alpha,beta);
-                    if (score > bestScore) {
-                        bestScore = score;
-                    }
-                    unMakeMove(m);
-                }
-                return bestScore;
-            } else {
-                ArrayList<Integer> moves = getBlackMoves();
-                double bestScore = 99999.0;
-                for (int m : moves) {
-                    if (makeMove(m)) {
-                        return -9999.0;
-                    }
-                    double score = search(depth - 1, true,alpha,beta);
-                    if (score < bestScore) {
-                        bestScore = score;
-                    }
-                    unMakeMove(m);
-                }
-                return bestScore;
-            }
-        }
-    }*/
 }
