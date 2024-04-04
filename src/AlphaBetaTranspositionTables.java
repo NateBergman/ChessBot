@@ -40,7 +40,7 @@ public class AlphaBetaTranspositionTables {
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
 
     static int[][] hashIndex;
-    static Map<Integer,int[]> transpositionTable;
+    static Map<Integer,int[]> transpositionTable; //index 0 is best move, 1 is depth
 
     static final int SEARCH_DEPTH = 6;
 
@@ -60,58 +60,35 @@ public class AlphaBetaTranspositionTables {
         boardState = (byte) 0b11110000;
         Collections.addAll(pieceLists[0],21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38);
         Collections.addAll(pieceLists[1], 81, 82, 83, 84, 85, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98);
+        seedHashIndex();
+        transpositionTable = new HashMap<>();
 
-        Map<Byte,Character> displayMap = buildDisplayMap();
-        //Map<Byte,Character> displayMap = laptopDisplayMap();
+        //Map<Byte,Character> displayMap = buildDisplayMap();
+        Map<Byte,Character> displayMap = laptopDisplayMap();
 
         Scanner console = new Scanner(System.in);
         ArrayList<Integer> gameMoves = new ArrayList<>();
         while (true) {
             printBoard(displayMap);
-            System.out.print("0 for white move, 1 for black move, 2 undo move, 3 manual move, 4 white engine move, 5 black engine move, 6 evaluate, 7 get white moves, 8 get black moves");
+            System.out.print("0 for manual move, 1 to undo move, 2 for white engine, 3 for black engine");
             int x = console.nextInt();
-            if (x == 6) {
-                System.out.println(evaluatePosition());
-            }
-            else if (x == 3) {
-                System.out.print("Move index : ");
-                int move = console.nextInt();
-                makeMove(move);
-                gameMoves.add(move);
-            }
-            else if (x == 2) {
+            if (x == 1) {
                 unMakeMove(gameMoves.get(gameMoves.size() - 1));
                 gameMoves.remove(gameMoves.size() - 1);
-            } else if (x == 1) {
-                ArrayList<Integer> possibleMoves = getBlackMoves();
-                int move = 0;
-                while (!possibleMoves.contains(move)) {
-                    System.out.print("From : ");
-                    int from = console.nextInt();
-                    System.out.print("To : ");
-                    int to = console.nextInt();
-                    move = encodeMove(to,from);
-                }
+            } else if (x == 0) {
+                System.out.print("From : ");
+                int from = console.nextInt();
+                System.out.print("To : ");
+                int to = console.nextInt();
+                int move = encodeMove(to,from);
                 makeMove(move);
                 gameMoves.add(move);
-            } else if (x == 4) {
+            } else if (x == 2) {
                 int move = startSearch(SEARCH_DEPTH,true);
                 makeMove(move);
                 gameMoves.add(move);
-            } else if (x == 5) {
+            } else if (x == 3) {
                 int move = startSearch(SEARCH_DEPTH,false);
-                makeMove(move);
-                gameMoves.add(move);
-            } else {
-                ArrayList<Integer> possibleMoves = getWhiteMoves();
-                int move = 0;
-                while (!possibleMoves.contains(move)) {
-                    System.out.print("From : ");
-                    int from = console.nextInt();
-                    System.out.print("To : ");
-                    int to = console.nextInt();
-                    move = encodeMove(to,from);
-                }
                 makeMove(move);
                 gameMoves.add(move);
             }
@@ -124,7 +101,6 @@ public class AlphaBetaTranspositionTables {
             }
             System.out.println("\n------------------------------------------");
         }
-        //System.out.println(evaluatePosition());
     }
     public static Map<Byte,Character> buildDisplayMap () {
         Map<Byte,Character> display = new HashMap<>();
@@ -499,14 +475,6 @@ public class AlphaBetaTranspositionTables {
         }
         return score;
     }
-    /*public static int iterativeDeepening (int depth, boolean whiteMove) {
-        if (whiteMove) {
-            ArrayList<Integer> moves = getWhiteMoves();
-
-        } else {
-
-        }
-    }*/
     public static int startSearch (int depth, boolean whiteMove) {
         if (whiteMove) {
             ArrayList<Integer> moves = getWhiteMoves();
@@ -550,36 +518,68 @@ public class AlphaBetaTranspositionTables {
             int hash = getHashIndex(whiteMove);
             if (whiteMove) {
                 ArrayList<Integer> moves = getWhiteMoves();
+                if(transpositionTable.containsKey(hash)) {
+                    int m = transpositionTable.get(hash)[0];
+                    int i = moves.indexOf(m);
+                    if (i == -1) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+                int bestMove = moves.get(0);
                 for (int m : moves) {
                     if (makeMove(m)) { //checkmates (found by capturing king)
+                        transpositionTable.put(hash,new int[] {m,99});
                         return 9999.0;
                     }
                     double score = search(depth - 1, false, alpha, beta);
                     if (score >= beta) {
                         unMakeMove(m);
+                        if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash)[1] < depth) {
+                            transpositionTable.put(hash,new int[] {m,depth});
+                        }
                         return beta;
                     }
                     if (score > alpha) {
                         alpha = score;
+                        bestMove = m;
                     }
                     unMakeMove(m);
+                }
+                if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash)[1] < depth) {
+                    transpositionTable.put(hash,new int[] {bestMove,depth});
                 }
                 return alpha;
             } else {
                 ArrayList<Integer> moves = getBlackMoves();
+                if(transpositionTable.containsKey(hash)) {
+                    int m = transpositionTable.get(hash)[0];
+                    int i = moves.indexOf(m);
+                    if (i == -1) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+                int bestMove = moves.get(0);
                 for (int m : moves) {
                     if (makeMove(m)) {
+                        transpositionTable.put(hash,new int[] {m,99});
                         return -9999.0;
                     }
                     double score = search(depth - 1, true,alpha,beta);
                     if (score <= alpha) {
                         unMakeMove(m);
+                        if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash)[1] < depth) {
+                            transpositionTable.put(hash,new int[] {m,depth});
+                        }
                         return alpha;
                     }
                     if (score < beta) {
                         beta = score;
+                        bestMove = m;
                     }
                     unMakeMove(m);
+                }
+                if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash)[1] < depth) {
+                    transpositionTable.put(hash,new int[] {bestMove,depth});
                 }
                 return beta;
             }
@@ -600,7 +600,7 @@ public class AlphaBetaTranspositionTables {
             hash = hash ^ hashIndex[0][boardState & 0b1111];
         }
         if ((boardState & 0b11110000) != 0) {
-            hash = hash ^ hashIndex[0][8 + (boardState>>>4)];
+            hash = hash ^ hashIndex[0][8 + ((boardState & 0b11110000)>>>4)];
         }
         return hash;
     }
