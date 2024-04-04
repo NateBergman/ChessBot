@@ -39,8 +39,8 @@ public class AlphaBetaTranspositionTables {
     static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
 
-    static int[][] hashIndex;
-    static Map<Integer,int[]> transpositionTable; //index 0 is best move, 1 is depth
+    static long[][] hashIndex;
+    static Map<Long,int[]> transpositionTable; //index 0 is best move, 1 is depth
 
     static final int SEARCH_DEPTH = 6;
 
@@ -60,6 +60,7 @@ public class AlphaBetaTranspositionTables {
         boardState = (byte) 0b11110000;
         Collections.addAll(pieceLists[0],21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38);
         Collections.addAll(pieceLists[1], 81, 82, 83, 84, 85, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98);
+
         seedHashIndex();
         transpositionTable = new HashMap<>();
 
@@ -138,10 +139,10 @@ public class AlphaBetaTranspositionTables {
     }
     public static void seedHashIndex() {
         Random r = new Random();
-        hashIndex = new int[13][64]; //1-12 are pieces on the board, 0 is for special stuff like side to move, castling, en passant (0 is side to move, 1-8 en passant, 9-23 castling rights)
+        hashIndex = new long[13][64]; //1-12 are pieces on the board, 0 is for special stuff like side to move, castling, en passant (0 is side to move, 1-8 en passant, 9-23 castling rights)
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 64; j++) {
-                hashIndex[i][j] = r.nextInt(2147483647);
+                hashIndex[i][j] = 0; //r.nextLong(9223372036854775807) + (-1 * r.nextInt(2)); GET WORKING
             }
         }
     }
@@ -515,7 +516,7 @@ public class AlphaBetaTranspositionTables {
             return evaluatePosition();
         }
         else {
-            int hash = getHashIndex(whiteMove);
+            long hash = getHashIndex(whiteMove);
             if (whiteMove) {
                 ArrayList<Integer> moves = getWhiteMoves();
                 if(transpositionTable.containsKey(hash)) {
@@ -586,8 +587,8 @@ public class AlphaBetaTranspositionTables {
         }
     }
 
-    public static int getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
-        int hash = 0;
+    public static long getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
+        long hash = 0;
         for (int y = 2; y < 10; y++) {
             for (int x = 1; x < 9; x++) {
                 hash = hash ^ hashIndex[board[10*y+x] % 8 + (board[10*y+x]>>>3) * 6][x-1 + (y-2) * 8];
