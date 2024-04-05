@@ -64,8 +64,8 @@ public class AlphaBetaTranspositionTables {
         seedHashIndex();
         transpositionTable = new HashMap<>();
 
-        Map<Byte,Character> displayMap = buildDisplayMap();
-        //Map<Byte,Character> displayMap = laptopDisplayMap();
+        //Map<Byte,Character> displayMap = buildDisplayMap();
+        Map<Byte,Character> displayMap = laptopDisplayMap();
 
         Scanner console = new Scanner(System.in);
         ArrayList<Integer> gameMoves = new ArrayList<>();
@@ -550,8 +550,11 @@ public class AlphaBetaTranspositionTables {
                 ArrayList<Integer> moves = getWhiteMoves();
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    if (h.getDepth() >= depth && h.getFullSearch()) {
-                        return h.getScore();
+                    if (h.getDepth() >= depth) {
+                        double score = h.getScore();
+                        if (h.getFullSearch() || score >= beta) {
+                            return score;
+                        }
                     }
                     int m = h.getBestMove();
                     moves.remove(moves.indexOf(m));
@@ -586,8 +589,11 @@ public class AlphaBetaTranspositionTables {
                 ArrayList<Integer> moves = getBlackMoves();
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    if (h.getDepth() >= depth && h.getFullSearch()) {
-                        return h.getScore();
+                    if (h.getDepth() >= depth) {
+                        double score = h.getScore();
+                        if (h.getFullSearch() || score <= alpha) {
+                            return score;
+                        }
                     }
                     int m = h.getBestMove();
                     moves.remove(moves.indexOf(m));
