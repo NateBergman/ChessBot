@@ -506,7 +506,7 @@ public class VersionThreeCleaner {
         }
         return moves;
     }
-    public static int makeMove(int move) { //NEW MOVE ENCODING SCHEME: 1-7 is to, 8-14 is from, 15 is color, 16 capture, 17 pawn push, 18 en passant, 19 short castle, 20 long castle, 21 promotion, 22/23 promoted piece
+    public static boolean makeMove(int move) { //NEW MOVE ENCODING SCHEME: 1-7 is to, 8-14 is from, 15 is color, 16 capture, 17 pawn push, 18 en passant, 19 short castle, 20 long castle, 21 promotion, 22/23 promoted piece
         int to = 0b11111111; //records to and from indexes
         int from = (move>>7) & 0b11111111;
         int moveColor = move>>14 & 1;
@@ -556,6 +556,7 @@ public class VersionThreeCleaner {
         if(from == 98 || from == 95 || to == 98) {
             boardState = (byte)(boardState & 0b10111111);
         }
+        return false; //temporary fix, should be int
     }
     public static void unMakeMove(int move) {
         int to = (move>>1) & 0b1111111; //records to and from indexes
