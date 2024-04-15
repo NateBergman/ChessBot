@@ -1,5 +1,5 @@
 import java.util.*;
-public class AlphaBetaTranspositionTables {
+public class VersionThreeCleaner {
     static byte[] board;
     static byte boardState;
     static Set<Integer>[] pieceLists = new Set[]{new HashSet<>(), new HashSet<>()};
@@ -63,8 +63,8 @@ public class AlphaBetaTranspositionTables {
         Collections.addAll(pieceLists[0],21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38);
         Collections.addAll(pieceLists[1], 81, 82, 83, 84, 85, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98);
 
-        seedHashIndex();
-        transpositionTable = new HashMap<>();
+        //seedHashIndex();
+        //transpositionTable = new HashMap<>();
 
         //Map<Byte,Character> displayMap = buildDisplayMap();
         Map<Byte,Character> displayMap = laptopDisplayMap();
@@ -434,7 +434,7 @@ public class AlphaBetaTranspositionTables {
                                 if (toPiece > 8) {
                                     moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1) + (toPiece << 19));
                                 }
-                            break;
+                                break;
                             }
                             toCoordinate += o;
                         } while (slide);
@@ -506,14 +506,11 @@ public class AlphaBetaTranspositionTables {
         }
         return moves;
     }
-    public static boolean makeMove(int move) {
-        int to = (move>>1) & 0b1111111; //records to and from indexes
-        int from = (move>>8) & 0b1111111;
-        int moveColor = move & 1;
-        if (board[to] % 8 == 6) { //taking the king
-            return true;
-        }
-        boardState = (byte) (boardState & 0b11110000); //resets en passantables
+    public static int makeMove(int move) { //NEW MOVE ENCODING SCHEME: 1-7 is to, 8-14 is from, 15 is color, 16 capture, 17 pawn push, 18 en passant, 19 short castle, 20 long castle, 21 promotion, 22/23 promoted piece
+        int to = 0b11111111; //records to and from indexes
+        int from = (move>>7) & 0b11111111;
+        int moveColor = move>>14 & 1;
+        boardState = (byte) ((boardState & 0b11110000)+12); //resets en passantables to large rank
         if ((move>>18 & 1) == 1) { //if promotion, place correct piece
             board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor))); //first part gets type, second half color
         } else {
@@ -559,7 +556,6 @@ public class AlphaBetaTranspositionTables {
         if(from == 98 || from == 95 || to == 98) {
             boardState = (byte)(boardState & 0b10111111);
         }
-        return false;
     }
     public static void unMakeMove(int move) {
         int to = (move>>1) & 0b1111111; //records to and from indexes
@@ -652,7 +648,7 @@ public class AlphaBetaTranspositionTables {
             int bestMove = 0;
             for (int m : moves) {
                 if (makeMove(m)) {
-                //    transpositionTable.put(hash,new HashEntry(m,99,true,-9999.0));
+                    //    transpositionTable.put(hash,new HashEntry(m,99,true,-9999.0));
                     return m;
                 }
                 double score = search(depth - 1, true,-99999,bestScore);
@@ -672,7 +668,7 @@ public class AlphaBetaTranspositionTables {
         if (depth < 1) {
             //ArrayList<Integer> moves = getCaptures(whiteMove);
             //if (moves.isEmpty()) {
-                return evaluatePosition();
+            return evaluatePosition();
             /*} else { //basic ab quiescence search with just captures
                 if (whiteMove) {
                     for (int m : moves) {
@@ -794,6 +790,15 @@ public class AlphaBetaTranspositionTables {
         int move = 0;
         for (int n = 2; n <= depth; n += 1) { //somehow changing the amoutn of searches changes the actual move - i think it's TT score problems
             move = startSearch(n,whiteMove);
+        }
+        return move;
+    }
+    public static int timeBasedIterativeDeepening(int seconds, boolean whiteMove) {
+        int move = 0;
+        if (whiteMove) {
+
+        } else {
+
         }
         return move;
     }
