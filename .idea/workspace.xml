@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="pushing code to work on miyoshis laptop idk what the state of it is rn">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="help">
+      <change afterPath="$PROJECT_DIR$/src/ThreadObject.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ThreadingMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AttackMapMoveGenTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AttackMapMoveGenTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +26,20 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;NateBergman&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="84d3b922-95d4-4b67-a559-310515f78ddf" />
+        <option name="url" value="https://github.com/NateBergman/ChessBot" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -101,77 +116,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711651340646</updated>
     </task>
-    <task id="LOCAL-00007" summary="fixed move gen/gameplay problems, starting piece square eval">
-      <created>1711728069633</created>
+    <task id="LOCAL-00007" summary="help">
+      <option name="closed" value="true" />
+      <created>1713202710542</created>
       <option name="number" value="00007" />
       <option name="presentableId" value="LOCAL-00007" />
       <option name="project" value="LOCAL" />
-      <updated>1711728069635</updated>
+      <updated>1713202710542</updated>
     </task>
-    <task id="LOCAL-00008" summary="made white psts, need to just make eval function with them">
-      <created>1711730358785</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1711730358785</updated>
-    </task>
-    <task id="LOCAL-00009" summary="have to redo psts because i made them wrong way and white only :(">
-      <created>1711735273837</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1711735273837</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Piece square tables made, just have to implement eval">
-      <created>1711746311081</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1711746311081</updated>
-    </task>
-    <task id="LOCAL-00011" summary="fixed problem, eval should now do checks/mates but untested">
-      <created>1712000935020</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1712000935020</updated>
-    </task>
-    <task id="LOCAL-00012" summary="fixed bugs, can play actual games now but just slow at depth 6 but fast and bad at depth 4">
-      <created>1712002131859</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1712002131859</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Basic alpha-beta pruning search working, takes a few seconds (&lt;10) for depth 6 and a little under 2 minutes for depth 8. Need to add move ordering">
-      <created>1712027026615</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1712027026615</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Problem where transposition table stores non-existent best moves, maybe a problem with hashing function.">
-      <created>1712202422035</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1712202422035</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Need to make random longs instead to stop hash collisions">
-      <created>1712253193059</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1712253193059</updated>
-    </task>
-    <task id="LOCAL-00016" summary="scoring works better with cutoffs (still work to do)">
-      <created>1712338158262</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1712338158262</updated>
-    </task>
-    <option name="localTasksCounter" value="17" />
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -192,16 +145,7 @@
     <MESSAGE value="basic eval working" />
     <MESSAGE value="ok doing new draft with cool stuff like piece list and tapered eval" />
     <MESSAGE value="ok move gen works but captures and en passants with piece lists don't" />
-    <MESSAGE value="fixed move gen/gameplay problems, starting piece square eval" />
-    <MESSAGE value="made white psts, need to just make eval function with them" />
-    <MESSAGE value="have to redo psts because i made them wrong way and white only :(" />
-    <MESSAGE value="Piece square tables made, just have to implement eval" />
-    <MESSAGE value="fixed problem, eval should now do checks/mates but untested" />
-    <MESSAGE value="fixed bugs, can play actual games now but just slow at depth 6 but fast and bad at depth 4" />
-    <MESSAGE value="Basic alpha-beta pruning search working, takes a few seconds (&lt;10) for depth 6 and a little under 2 minutes for depth 8. Need to add move ordering" />
-    <MESSAGE value="Problem where transposition table stores non-existent best moves, maybe a problem with hashing function." />
-    <MESSAGE value="Need to make random longs instead to stop hash collisions" />
-    <MESSAGE value="scoring works better with cutoffs (still work to do)" />
-    <option name="LAST_COMMIT_MESSAGE" value="scoring works better with cutoffs (still work to do)" />
+    <MESSAGE value="help" />
+    <option name="LAST_COMMIT_MESSAGE" value="help" />
   </component>
 </project>
