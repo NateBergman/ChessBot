@@ -378,134 +378,6 @@ public class AlphaBetaTranspositionTables {
         }
         return ((white && (board[square + 9] == 9 || board[square + 11] == 9))) || (!white && (board[square - 9] == 1 || board[square - 11] == 1));
     }
-    public static ArrayList<Integer> getCaptures(boolean whiteMove) {
-        ArrayList<Integer> moves = new ArrayList<>();
-        if (whiteMove) {
-            for (int fromCoordinate : pieceLists[0]) {
-                int fromPiece = board[fromCoordinate] - 1;
-                if (fromPiece == 0) { //pawn
-                    if (fromCoordinate / 10 == 8) { //promotions
-                        int toCoordinate = fromCoordinate + 9;
-                        int toPiece = board[toCoordinate];
-                        if (toPiece > 8) {
-                            moves.add((boardState << 23) + 0b1000000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                            moves.add((boardState << 23) + 0b1001000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                            moves.add((boardState << 23) + 0b1010000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                            moves.add((boardState << 23) + 0b1011000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        }
-
-                        toCoordinate = fromCoordinate + 11;
-                        toPiece = board[toCoordinate];
-                        if (toPiece > 8) {
-                            moves.add((boardState << 23) + 0b1000000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                            moves.add((boardState << 23) + 0b1001000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                            moves.add((boardState << 23) + 0b1010000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                            moves.add((boardState << 23) + 0b1011000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        }
-                    } else {
-                        int toCoordinate = fromCoordinate + 9;
-                        int toPiece = board[toCoordinate];
-                        if (toPiece > 8) {
-                            moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        }
-
-                        toCoordinate = fromCoordinate + 11;
-                        toPiece = board[toCoordinate];
-                        if (toPiece > 8) {
-                            moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1));
-                        }
-
-                        if (fromCoordinate / 10 == 6 && (boardState & 0b1111) != 0) { //ep
-                            if (fromCoordinate % 10 == (boardState & 0b1111) + 1) {
-                                moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate + 9) << 1));
-                            } else if (fromCoordinate % 10 == (boardState & 0b1111) - 1) {
-                                moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate + 11) << 1));
-                            }
-                        }
-                    }
-                } else {
-                    int[] offsets = moveGenOffset[fromPiece];
-                    boolean slide = moveGenSlide[fromPiece];
-                    for (int o : offsets) {
-                        int toCoordinate = fromCoordinate + o;
-                        do {
-                            byte toPiece = board[toCoordinate];
-                            if (toPiece != 0) {
-                                if (toPiece > 8) {
-                                    moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1) + (toPiece << 19));
-                                }
-                            break;
-                            }
-                            toCoordinate += o;
-                        } while (slide);
-                    }
-                }
-            }
-        } else {
-            for (int fromCoordinate : pieceLists[1]) {
-                int fromPiece = board[fromCoordinate] - 9;
-                if (fromPiece == 0) { //pawn
-                    if (fromCoordinate/10 == 3) { //promotions
-                        int toCoordinate = fromCoordinate - 9;
-                        int toPiece = board[toCoordinate];
-                        if (toPiece != 0 && toPiece < 7) {
-                            moves.add((boardState << 23) + 0b1000000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                            moves.add((boardState << 23) + 0b1001000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                            moves.add((boardState << 23) + 0b1010000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                            moves.add((boardState << 23) + 0b1011000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                        }
-
-                        toCoordinate = fromCoordinate - 11;
-                        toPiece = board[toCoordinate];
-                        if (toPiece != 0 && toPiece < 7) {
-                            moves.add((boardState << 23) + 0b1000000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                            moves.add((boardState << 23) + 0b1001000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                            moves.add((boardState << 23) + 0b1010000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                            moves.add((boardState << 23) + 0b1011000000000000000 + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                        }
-                    }
-                    else {
-                        int toCoordinate = fromCoordinate - 9;
-                        int toPiece = board[toCoordinate];
-                        if (toPiece != 0 && toPiece < 7) {
-                            moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                        }
-
-                        toCoordinate = fromCoordinate - 11;
-                        toPiece = board[toCoordinate];
-                        if (toPiece != 0 && toPiece < 7) {
-                            moves.add((boardState << 23) + (toPiece << 19) + (fromCoordinate << 8) + (toCoordinate << 1) + 1);
-                        }
-
-                        if (fromCoordinate / 10 == 5  && (boardState & 0b1111) != 0) { //ep
-                            if (fromCoordinate % 10 == (boardState & 0b1111) + 1) {
-                                moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate - 11) << 1) + 1);
-                            } else if (fromCoordinate % 10 == (boardState & 0b1111) - 1) {
-                                moves.add((boardState << 23) + 0b101000000000000000 + (fromCoordinate << 8) + ((fromCoordinate - 9) << 1) + 1);
-                            }
-                        }
-                    }
-                } else {
-                    int[] offsets = moveGenOffset[fromPiece];
-                    boolean slide = moveGenSlide[fromPiece];
-                    for (int o : offsets) {
-                        int toCoordinate = fromCoordinate + o;
-                        do {
-                            byte toPiece = board[toCoordinate];
-                            if (toPiece != 0) {
-                                if (toPiece < 7) {
-                                    moves.add((boardState << 23) + (fromCoordinate << 8) + (toCoordinate << 1) + (toPiece << 19) + 1);
-                                }
-                                break;
-                            }
-                            toCoordinate += o;
-                        } while (slide);
-                    }
-                }
-            }
-        }
-        return moves;
-    }
     public static boolean makeMove(int move) {
         int to = (move>>1) & 0b1111111; //records to and from indexes
         int from = (move>>8) & 0b1111111;
@@ -606,24 +478,33 @@ public class AlphaBetaTranspositionTables {
         }
         return score;
     }
+    public static double estimateMoveEvaluation(int move) {
+        int to = (move>>1) & 0b1111111;
+        int from = (move>>8) & 0b1111111;
+        byte piece = board[from];
+        if ((move & 0b1) == 1) { //black move
+
+        }
+        return 0;
+    }
     public static int startSearch (int depth, boolean whiteMove) {
         long hash = getHashIndex(whiteMove);
         if (whiteMove) {
             ArrayList<Integer> moves = getWhiteMoves();
-            /*if(transpositionTable.containsKey(hash)) {
+            if(transpositionTable.containsKey(hash)) {
                 HashEntry h = transpositionTable.get(hash);
                 int m = h.getBestMove();
-                if (h.getDepth() >= depth && h.getFullSearch()) {
+                /*if (h.getDepth() >= depth && h.getFullSearch()) {
                     return m;
-                }
+                }*/
                 moves.remove(moves.indexOf(m));
                 moves.add(0,m);
-            }*/
+            }
             double bestScore = -99999.0;
             int bestMove = 0;
             for (int m : moves) {
                 if (makeMove(m)) {
-                    //transpositionTable.put(hash,new HashEntry(m,99,true,9999.0));
+                    transpositionTable.put(hash,new HashEntry(m,99,true,9999.0));
                     return m;
                 }
                 double score = search(depth - 1, false,bestScore,99999);
@@ -633,26 +514,26 @@ public class AlphaBetaTranspositionTables {
                 }
                 unMakeMove(m);
             }
-            /*if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
+            if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                 transpositionTable.put(hash,new HashEntry(bestMove,depth,true,bestScore));
-            }*/
+            }
             return bestMove;
         } else {
             ArrayList<Integer> moves = getBlackMoves();
-            /*if(transpositionTable.containsKey(hash)) {
+            if(transpositionTable.containsKey(hash)) {
                 HashEntry h = transpositionTable.get(hash);
                 int m = h.getBestMove();
-                if (h.getDepth() >= depth && h.getFullSearch()) {
+                /*if (h.getDepth() >= depth && h.getFullSearch()) {
                     return m;
-                }
+                }*/
                 moves.remove(moves.indexOf(m));
                 moves.add(0,m);
-            }*/
+            }
             double bestScore = 99999.0;
             int bestMove = 0;
             for (int m : moves) {
                 if (makeMove(m)) {
-                //    transpositionTable.put(hash,new HashEntry(m,99,true,-9999.0));
+                    transpositionTable.put(hash,new HashEntry(m,99,true,-9999.0));
                     return m;
                 }
                 double score = search(depth - 1, true,-99999,bestScore);
@@ -662,82 +543,45 @@ public class AlphaBetaTranspositionTables {
                 }
                 unMakeMove(m);
             }
-            /*if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
+            if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                 transpositionTable.put(hash,new HashEntry(bestMove,depth,true,bestScore));
-            }*/
+            }
             return bestMove;
         }
     }
-    public static double search (int depth, boolean whiteMove, double alpha, double beta) {
-        if (depth < 1) {
-            //ArrayList<Integer> moves = getCaptures(whiteMove);
-            //if (moves.isEmpty()) {
-                return evaluatePosition();
-            /*} else { //basic ab quiescence search with just captures
-                if (whiteMove) {
-                    for (int m : moves) {
-                        if (makeMove(m)) {
-                            return 9999.0;
-                        }
-                        double score = search(depth - 1, false, alpha, beta);
-                        if (score >= beta) {
-                            unMakeMove(m);
-                            return beta;
-                        }
-                        if (score > alpha) {
-                            alpha = score;
-                        }
-                        unMakeMove(m);
-                    }
-                    return alpha;
-                } else {
-                    for (int m : moves) {
-                        if (makeMove(m)) {
-                            return -9999.0;
-                        }
-                        double score = search(depth - 1, true, alpha, beta);
-                        if (score <= alpha) {
-                            unMakeMove(m);
-                            return alpha;
-                        }
-                        if (score < beta) {
-                            beta = score;
-                        }
-                        unMakeMove(m);
-                    }
-                    return beta;
-                }
-            }*/
+    public static double search (int depth, boolean whiteMove, double alpha, double beta) { //need to add if nothing meets minimum cutoff (all moves suck)
+        if (depth < 1) { //then we put it in tt as incomplete, and pass the highest value we got on to help with accuracy
+            return evaluatePosition();
         }
         else {
             long hash = getHashIndex(whiteMove);
             if (whiteMove) {
                 ArrayList<Integer> moves = getWhiteMoves();
-                /*if(transpositionTable.containsKey(hash)) {
+                if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    if (h.getDepth() >= depth) {
+                    /*if (h.getDepth() >= depth) {
                         double score = h.getScore();
                         if (h.getFullSearch() || score >= beta) {
                             return score;
                         }
-                    }
+                    }*/
                     int m = h.getBestMove();
                     moves.remove(moves.indexOf(m));
                     moves.add(0,m);
-                }*/
+                }
                 int bestMove = moves.get(0);
                 for (int m : moves) {
                     if (makeMove(m)) { //checkmates (found by capturing king)
-                        //transpositionTable.put(hash,new HashEntry(m,99,true,9999.0));
+                        transpositionTable.put(hash,new HashEntry(m,99,true,9999.0));
                         return 9999.0;
                     }
                     double score = search(depth - 1, false, alpha, beta);
                     if (score >= beta) {
                         unMakeMove(m);
-                        /*if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
+                        if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                             transpositionTable.put(hash,new HashEntry(m,depth,false,score));
-                        }*/
-                        return beta;
+                        }
+                        return score;
                     }
                     if (score > alpha) {
                         alpha = score;
@@ -745,37 +589,37 @@ public class AlphaBetaTranspositionTables {
                     }
                     unMakeMove(m);
                 }
-                /*if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
+                if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                     transpositionTable.put(hash,new HashEntry(bestMove,depth,true,alpha));
-                }*/
+                }
                 return alpha;
             } else {
                 ArrayList<Integer> moves = getBlackMoves();
-                /*if(transpositionTable.containsKey(hash)) {
+                if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    if (h.getDepth() >= depth) {
+                    /*if (h.getDepth() >= depth) {
                         double score = h.getScore();
                         if (h.getFullSearch() || score <= alpha) {
                             return score;
                         }
-                    }
+                    }*/
                     int m = h.getBestMove();
                     moves.remove(moves.indexOf(m));
                     moves.add(0,m);
-                }*/
+                }
                 int bestMove = moves.get(0);
                 for (int m : moves) {
                     if (makeMove(m)) {
-                        //transpositionTable.put(hash,new HashEntry(m,99,true,-9999.0));
+                        transpositionTable.put(hash,new HashEntry(m,99,true,-9999.0));
                         return -9999.0;
                     }
                     double score = search(depth - 1, true,alpha,beta);
                     if (score <= alpha) {
                         unMakeMove(m);
-                        //if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                        //    transpositionTable.put(hash,new HashEntry(m,depth,false,score));
-                        //}
-                        return alpha;
+                        if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
+                            transpositionTable.put(hash,new HashEntry(m,depth,false,score));
+                        }
+                        return score;
                     }
                     if (score < beta) {
                         beta = score;
@@ -783,16 +627,16 @@ public class AlphaBetaTranspositionTables {
                     }
                     unMakeMove(m);
                 }
-                //if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                //    transpositionTable.put(hash,new HashEntry(bestMove,depth,true,beta));
-                //}
+                if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
+                    transpositionTable.put(hash,new HashEntry(bestMove,depth,true,beta));
+                }
                 return beta;
             }
         }
     }
     public static int iterativeDeepening(int depth, boolean whiteMove) {
         int move = 0;
-        for (int n = 2; n <= depth; n += 1) { //somehow changing the amoutn of searches changes the actual move - i think it's TT score problems
+        for (int n = 2; n <= depth; n += 1) { //somehow changing the amount of searches changes the actual move - i think it's TT score problems
             move = startSearch(n,whiteMove);
         }
         return move;

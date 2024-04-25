@@ -1,9 +1,11 @@
+import java.util.*;
 public class HashEntry {
     int bestMove;
     int depth;
 
     double score;
     boolean fullSearch;
+    ArrayList<Integer> moves;
     public HashEntry(int bestMove,int depth,boolean fullSearch, double score) {
         this.bestMove = bestMove;
         this.depth = depth;
