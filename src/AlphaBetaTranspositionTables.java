@@ -490,63 +490,67 @@ public class AlphaBetaTranspositionTables {
     public static int startSearch (int depth, boolean whiteMove) {
         long hash = getHashIndex(whiteMove);
         if (whiteMove) {
-            ArrayList<Integer> moves = getWhiteMoves();
+            ArrayList<Integer> moves;
             if(transpositionTable.containsKey(hash)) {
                 HashEntry h = transpositionTable.get(hash);
-                int m = h.getBestMove();
+                moves = h.getMoves();
                 if (h.getDepth() >= depth && h.getFullSearch()) {
-                    return m;
+                    return moves.get(0);
                 }
-                moves.remove(moves.indexOf(m));
-                moves.add(0,m);
+            } else {
+                moves = getWhiteMoves();
             }
             double bestScore = -99999.0;
-            int bestMove = 0;
-            for (int m : moves) {
+            int length = moves.size();
+            for (int i = 0; i < length; i++) {
+                int m = moves.get(i);
                 if (makeMove(m)) {
-                    transpositionTable.put(hash,new HashEntry(m,99,true,9999.0));
+                    moves.add(moves.remove(i));
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0));
                     return m;
                 }
                 double score = search(depth - 1, false,bestScore,99999);
                 if (score > bestScore) {
                     bestScore = score;
-                    bestMove = m;
+                    moves.add(moves.remove(i));
                 }
                 unMakeMove(m);
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                transpositionTable.put(hash,new HashEntry(bestMove,depth,true,bestScore));
+                transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
             }
-            return bestMove;
+            return moves.get(0);
         } else {
-            ArrayList<Integer> moves = getBlackMoves();
+            ArrayList<Integer> moves;
             if(transpositionTable.containsKey(hash)) {
                 HashEntry h = transpositionTable.get(hash);
-                int m = h.getBestMove();
+                moves = h.getMoves();
                 if (h.getDepth() >= depth && h.getFullSearch()) {
-                    return m;
+                    return moves.get(0);
                 }
-                moves.remove(moves.indexOf(m));
-                moves.add(0,m);
+            } else {
+                moves = getBlackMoves();
             }
             double bestScore = 99999.0;
-            int bestMove = 0;
-            for (int m : moves) {
+            int length = moves.size();
+            for (int i = 0; i < length; i++) {
+                int m = moves.get(i);
                 if (makeMove(m)) {
-                    transpositionTable.put(hash,new HashEntry(m,99,true,-9999.0));
+                    moves.add(moves.remove(i));
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0));
                     return m;
                 }
                 double score = search(depth - 1, true,-99999,bestScore);
                 if (score < bestScore) {
                     bestScore = score;
-                    bestMove = m;
+                    moves.add(moves.remove(i));
                 }
                 unMakeMove(m);
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                transpositionTable.put(hash,new HashEntry(bestMove,depth,true,bestScore));
+                transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
             }
-            return bestMove;
+            return moves.get(0);
         }
     }
     public static double search (int depth, boolean whiteMove, double alpha, double beta) { //need to add if nothing meets minimum cutoff (all moves suck)
@@ -556,83 +560,83 @@ public class AlphaBetaTranspositionTables {
         else {
             long hash = getHashIndex(whiteMove);
             if (whiteMove) {
-                ArrayList<Integer> moves = getWhiteMoves();
+                ArrayList<Integer> moves;
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    if (h.getDepth() >= depth) {
-                        double score = h.getScore();
-                        if (h.getFullSearch() || score >= beta) {
-                            return score;
-                        }
+                    if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() >= beta)) {
+                            return h.getScore();
                     }
-                    int m = h.getBestMove();
-                    moves.remove(moves.indexOf(m));
-                    moves.add(0,m);
+                    moves = h.getMoves();
+                } else {
+                    moves = getWhiteMoves();
                 }
-                int bestMove = moves.get(0);
                 double bestScore = -99999;
-                for (int m : moves) {
+                int length = moves.size(); //timesave b/ we don't have to look up move size every time
+                for (int i = 0; i < length; i++) {
+                    int m = moves.get(i);
                     if (makeMove(m)) { //checkmates (found by capturing king)
-                        transpositionTable.put(hash,new HashEntry(m,99,true,9999.0));
+                        moves.add(moves.remove(i)); //puts this move first because it's best so far
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0));
                         return 9999.0;
                     }
                     double score = search(depth - 1, false, alpha, beta);
                     if (score >= beta) {
                         unMakeMove(m);
+                        moves.add(moves.remove(i));
                         if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                            transpositionTable.put(hash,new HashEntry(m,depth,false,score));
+                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score));
                         }
                         return score;
                     }
                     if (score > bestScore) {
+                        moves.add(moves.remove(i));
                         bestScore = score;
                         alpha = Math.max(bestScore,alpha);
-                        bestMove = m;
                     }
                     unMakeMove(m);
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                    transpositionTable.put(hash,new HashEntry(bestMove,depth,true,bestScore));
+                    transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
                 }
                 return bestScore;
             } else {
-                ArrayList<Integer> moves = getBlackMoves();
+                ArrayList<Integer> moves;
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    if (h.getDepth() >= depth) {
-                        double score = h.getScore();
-                        if (h.getFullSearch() || score <= alpha) {
-                            return score;
-                        }
+                    if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() <= alpha)) {
+                        return h.getScore();
                     }
-                    int m = h.getBestMove();
-                    moves.remove(moves.indexOf(m));
-                    moves.add(0,m);
+                    moves = h.getMoves();
+                } else {
+                    moves = getBlackMoves();
                 }
-                int bestMove = moves.get(0);
                 double bestScore = 99999;
-                for (int m : moves) {
+                int length = moves.size();
+                for (int i = 0; i < length; i++) {
+                    int m = moves.get(i);
                     if (makeMove(m)) {
-                        transpositionTable.put(hash,new HashEntry(m,99,true,-9999.0));
+                        moves.add(moves.remove(i));
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0));
                         return -9999.0;
                     }
                     double score = search(depth - 1, true,alpha,beta);
                     if (score <= alpha) {
                         unMakeMove(m);
                         if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                            transpositionTable.put(hash,new HashEntry(m,depth,false,score));
+                            moves.add(moves.remove(i));
+                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score));
                         }
                         return score;
                     }
                     if (score < bestScore) {
                         bestScore = score;
                         beta = Math.min(beta,bestScore);
-                        bestMove = m;
+                        moves.add(moves.remove(i));
                     }
                     unMakeMove(m);
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                    transpositionTable.put(hash,new HashEntry(bestMove,depth,true,bestScore));
+                    transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
                 }
                 return bestScore;
             }

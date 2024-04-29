@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="moving away from bitboards for the moment to refine search (bitboard hurt my brain)">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="got tt score working">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HashEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HashEntry.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,7 +179,14 @@
       <option name="project" value="LOCAL" />
       <updated>1714067669855</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="got tt score working">
+      <created>1714150435230</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1714150435230</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -210,6 +218,7 @@
     <MESSAGE value="Need to make random longs instead to stop hash collisions" />
     <MESSAGE value="scoring works better with cutoffs (still work to do)" />
     <MESSAGE value="moving away from bitboards for the moment to refine search (bitboard hurt my brain)" />
-    <option name="LAST_COMMIT_MESSAGE" value="moving away from bitboards for the moment to refine search (bitboard hurt my brain)" />
+    <MESSAGE value="got tt score working" />
+    <option name="LAST_COMMIT_MESSAGE" value="got tt score working" />
   </component>
 </project>

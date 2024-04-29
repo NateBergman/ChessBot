@@ -1,19 +1,19 @@
+import java.sql.Array;
 import java.util.*;
 public class HashEntry {
-    int bestMove;
     int depth;
 
     double score;
     boolean fullSearch;
     ArrayList<Integer> moves;
-    public HashEntry(int bestMove,int depth,boolean fullSearch, double score) {
-        this.bestMove = bestMove;
+    public HashEntry(ArrayList<Integer> moves,int depth,boolean fullSearch, double score) {
+        this.moves = new ArrayList<>(moves);
         this.depth = depth;
         this.score = score;
         this.fullSearch = fullSearch;
     }
-    public int getBestMove() {
-        return bestMove;
+    public ArrayList<Integer> getMoves() {
+        return new ArrayList<>(moves);
     }
     public int getDepth() {
         return depth;
