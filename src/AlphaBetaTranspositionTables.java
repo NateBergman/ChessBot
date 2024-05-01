@@ -42,10 +42,15 @@ public class AlphaBetaTranspositionTables {
     static long[][] hashIndex;
     static Map<Long,HashEntry> transpositionTable;
 
-    static final int SEARCH_DEPTH = 6; //to clean up: pieces use 5 digits (one bit is a flag for white, other for black),
-    // moves don't contain board state and can use more flags instead (update board state in moving/unmoving)
-    //better final eval and make a temporary one for move ordering
+    static final int SEARCH_DEPTH = 6;
 
+    static final int TIME_PER_MOVE = 5000; //how long we take per move in milliseconds
+
+    //to-dos: quiescence search, attack maps, check extentions, time-based iterative deepending
+    //better eval (pawn structure, mobility, king safety, mop up endgame)
+    //handle draws
+    //eventually do forward pruning (lmr, delta, futility, null move) and bitboard move gen
+    //lastly opening/endgame tablebases/books
     public static void main(String[] args) {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
                 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
@@ -494,9 +499,9 @@ public class AlphaBetaTranspositionTables {
             if(transpositionTable.containsKey(hash)) {
                 HashEntry h = transpositionTable.get(hash);
                 moves = new ArrayList<>(h.getMoves());
-                /*if (h.getDepth() >= depth && h.getFullSearch()) {
+                if (h.getDepth() >= depth && h.getFullSearch()) {
                     return moves.get(0);
-                }*/
+                }
             } else {
                 moves = getWhiteMoves();
             }
@@ -525,9 +530,9 @@ public class AlphaBetaTranspositionTables {
             if(transpositionTable.containsKey(hash)) {
                 HashEntry h = transpositionTable.get(hash);
                 moves = new ArrayList<>(h.getMoves());
-                /*if (h.getDepth() >= depth && h.getFullSearch()) {
+                if (h.getDepth() >= depth && h.getFullSearch()) {
                     return moves.get(0);
-                }*/
+                }
             } else {
                 moves = getBlackMoves();
             }
@@ -563,9 +568,9 @@ public class AlphaBetaTranspositionTables {
                 ArrayList<Integer> moves;
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    /*if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() >= beta)) {
-                            return h.getScore();
-                    }*/
+                    if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() >= beta)) {
+                        return h.getScore();
+                    }
                     moves = new ArrayList<>(h.getMoves());
                 } else {
                     moves = getWhiteMoves();
@@ -603,9 +608,9 @@ public class AlphaBetaTranspositionTables {
                 ArrayList<Integer> moves;
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    /*if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() <= alpha)) {
+                    if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() <= alpha)) {
                         return h.getScore();
-                    }*/
+                    }
                     moves = new ArrayList<>(h.getMoves());
                 } else {
                     moves = getBlackMoves();
