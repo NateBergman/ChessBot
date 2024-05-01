@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="tt scoring now works as well. its a good day.">
-      <change afterPath="$PROJECT_DIR$/src/V3MayFirst.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="Created v3, added quiescence search to ABTT but it takes forever, look into pruning and SEE">
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -207,7 +205,14 @@
       <option name="project" value="LOCAL" />
       <updated>1714596321409</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Created v3, added quiescence search to ABTT but it takes forever, look into pruning and SEE">
+      <created>1714599589793</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1714599589793</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -243,6 +248,7 @@
     <MESSAGE value="got updated transposition tables with moves and now computer makes really dumb moves :( bug fixing time!" />
     <MESSAGE value="fixed multiple errors with that, now tt stores pseudo legal moves so don't have to rerun move gen" />
     <MESSAGE value="tt scoring now works as well. its a good day." />
-    <option name="LAST_COMMIT_MESSAGE" value="tt scoring now works as well. its a good day." />
+    <MESSAGE value="Created v3, added quiescence search to ABTT but it takes forever, look into pruning and SEE" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created v3, added quiescence search to ABTT but it takes forever, look into pruning and SEE" />
   </component>
 </project>
