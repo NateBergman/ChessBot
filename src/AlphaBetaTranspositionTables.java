@@ -46,10 +46,11 @@ public class AlphaBetaTranspositionTables {
 
     static final int TIME_PER_MOVE = 5000; //how long we take per move in milliseconds
 
-    //to-dos: quiescence search (with SEE or pruning), attack maps, check extentions, time-based iterative deepending
+    //to-dos: quiescence search (with SEE, pruning, and tt hashing), attack maps, check extentions, time-based iterative deepending, move ordering, aspiration windows
     //better eval (pawn structure, mobility, king safety, mop up endgame)
     //handle draws
-    //eventually do forward pruning (lmr, delta, futility, null move) and bitboard move gen
+    //eventually do forward pruning/reductions (lmr, delta, futility, null move)
+    //bitboard move gen
     //lastly opening/endgame tablebases/books
     public static void main(String[] args) {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
@@ -149,7 +150,7 @@ public class AlphaBetaTranspositionTables {
         hashIndex = new long[13][64]; //1-12 are pieces on the board, 0 is for special stuff like side to move, castling, en passant (0 is side to move, 1-8 en passant, 9-23 castling rights)
         for (int i = 0; i < 13; i++) {
             for (int j = 0; j < 64; j++) {
-                hashIndex[i][j] = r.nextLong(); //GET WORKING
+                hashIndex[i][j] = r.nextLong();
             }
         }
     }
@@ -426,6 +427,8 @@ public class AlphaBetaTranspositionTables {
                 }
             }
         }
+        MoveSorter sorter = new MoveSorter(board);
+        moves.sort(sorter);
         return moves;
     }
     public static ArrayList<Integer> getBlackCaptures() {
@@ -614,16 +617,7 @@ public class AlphaBetaTranspositionTables {
         }
         return score;
     }
-    public static double estimateMoveEvaluation(int move) {
-        int to = (move>>1) & 0b1111111;
-        int from = (move>>8) & 0b1111111;
-        byte piece = board[from];
-        if ((move & 0b1) == 1) { //black move
-
-        }
-        return 0;
-    }
-    public static int startSearch (int depth, boolean whiteMove) {
+    public static int startSearch (int depth, boolean whiteMove, double alpha, double beta) {
         long hash = getHashIndex(whiteMove);
         if (whiteMove) {
             ArrayList<Integer> moves;
@@ -636,7 +630,6 @@ public class AlphaBetaTranspositionTables {
             } else {
                 moves = getWhiteMoves();
             }
-            double bestScore = -99999.0;
             int length = moves.size();
             for (int i = 0; i < length; i++) {
                 int m = moves.get(i);
@@ -645,15 +638,15 @@ public class AlphaBetaTranspositionTables {
                     transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0));
                     return m;
                 }
-                double score = search(depth - 1, false,bestScore,99999);
-                if (score > bestScore) {
-                    bestScore = score;
+                double score = search(depth - 1, false,alpha,99999);
+                if (score > alpha) {
+                    alpha = score;
                     moves.add(0,moves.remove(i));
                 }
                 unMakeMove(m);
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
+                transpositionTable.put(hash,new HashEntry(moves,depth,true,alpha));
             }
             return moves.get(0);
         } else {
@@ -667,7 +660,6 @@ public class AlphaBetaTranspositionTables {
             } else {
                 moves = getBlackMoves();
             }
-            double bestScore = 99999.0;
             int length = moves.size();
             for (int i = 0; i < length; i++) {
                 int m = moves.get(i);
@@ -676,20 +668,21 @@ public class AlphaBetaTranspositionTables {
                     transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0));
                     return m;
                 }
-                double score = search(depth - 1, true,-99999,bestScore);
-                if (score < bestScore) {
-                    bestScore = score;
+                double score = search(depth - 1, true,-99999,beta);
+                if (score < beta) {
+                    beta = score;
                     moves.add(0,moves.remove(i));
                 }
                 unMakeMove(m);
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
+                transpositionTable.put(hash,new HashEntry(moves,depth,true,beta));
             }
             return moves.get(0);
         }
     }
     public static double search (int depth, boolean whiteMove, double alpha, double beta) {
+        boolean foundGoodMove = false;
         if (depth < 1) { //quiescence search for captures and final eval
             ArrayList<Integer> moves;
             if (whiteMove) {
@@ -701,7 +694,8 @@ public class AlphaBetaTranspositionTables {
                 return evaluatePosition();
             }
             if (whiteMove) {
-                double bestScore = -99999;
+                double bestScore = evaluatePosition();
+                alpha = Math.max(bestScore,alpha);
                 for (int m : moves) {
                     if (makeMove(m)) {
                         return 9999.0;
@@ -719,7 +713,8 @@ public class AlphaBetaTranspositionTables {
                 }
                 return bestScore;
             }
-            double bestScore = 99999;
+            double bestScore = evaluatePosition();
+            alpha = Math.max(bestScore,alpha);
             for (int m : moves) {
                 if (makeMove(m)) {
                     return -9999.0;
@@ -742,7 +737,7 @@ public class AlphaBetaTranspositionTables {
                 ArrayList<Integer> moves;
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() >= beta)) {
+                    if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() >= beta || h.getScore() <= alpha)) {
                         return h.getScore();
                     }
                     moves = new ArrayList<>(h.getMoves());
@@ -782,7 +777,7 @@ public class AlphaBetaTranspositionTables {
                 ArrayList<Integer> moves;
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
-                    if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() <= alpha)) {
+                    if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() <= alpha || h.getScore() >= beta)) {
                         return h.getScore();
                     }
                     moves = new ArrayList<>(h.getMoves());
@@ -824,8 +819,8 @@ public class AlphaBetaTranspositionTables {
     public static int iterativeDeepening(int depth, boolean whiteMove) {
         int move = 0;
         for (int n = 2; n <= depth; n += 1) {
-            move = startSearch(n,whiteMove);
-        }
+            move = startSearch(n,whiteMove,-99999.0,99999.0); //assumes (pretty safely) that score will end up being between these bounds
+        } //if it's not between them everything breaks but at that point we have a bigger problem with the eval
         return move;
     }
     public static long getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
