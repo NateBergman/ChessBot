@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="Created time based v3 (works), added quiescence search to ABTT but it takes forever, look into pruning and SEE">
-      <change afterPath="$PROJECT_DIR$/src/MoveSorter.java" afterDir="false" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="working on quiescence and refining errors in AB search where values were put in tt even if nothing exceeded alpha">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
     </list>
@@ -221,7 +220,14 @@
       <option name="project" value="LOCAL" />
       <updated>1714599995638</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="working on quiescence and refining errors in AB search where values were put in tt even if nothing exceeded alpha">
+      <created>1714755224203</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1714755224203</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -259,6 +265,7 @@
     <MESSAGE value="tt scoring now works as well. its a good day." />
     <MESSAGE value="Created v3, added quiescence search to ABTT but it takes forever, look into pruning and SEE" />
     <MESSAGE value="Created time based v3 (works), added quiescence search to ABTT but it takes forever, look into pruning and SEE" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created time based v3 (works), added quiescence search to ABTT but it takes forever, look into pruning and SEE" />
+    <MESSAGE value="working on quiescence and refining errors in AB search where values were put in tt even if nothing exceeded alpha" />
+    <option name="LAST_COMMIT_MESSAGE" value="working on quiescence and refining errors in AB search where values were put in tt even if nothing exceeded alpha" />
   </component>
 </project>

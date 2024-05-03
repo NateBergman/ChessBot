@@ -5,14 +5,16 @@ public class HashEntry {
     double score;
     boolean fullSearch;
     ArrayList<Integer> moves;
-    public HashEntry(ArrayList<Integer> moves,int depth,boolean fullSearch, double score) {
+    ArrayList<Integer> quiescenceMoves;
+    public HashEntry(ArrayList<Integer> moves,int depth,boolean fullSearch,double score, ArrayList<Integer> quiescenceMoves) {
         this.moves = new ArrayList<>(moves);
+        this.quiescenceMoves = new ArrayList<>(quiescenceMoves);
         this.depth = depth;
         this.score = score;
         this.fullSearch = fullSearch;
     }
     public ArrayList<Integer> getMoves() {
-        return new ArrayList<>(moves);
+        return moves;
     }
     public int getDepth() {
         return depth;
@@ -22,5 +24,8 @@ public class HashEntry {
     }
     public boolean getFullSearch() {
         return fullSearch;
+    }
+    public ArrayList<Integer> getQuiescenceMoves() {
+        return quiescenceMoves;
     }
 }

@@ -509,7 +509,7 @@ public class V3MayFirst {
                 int m = moves.get(i);
                 if (makeMove(m)) {
                     moves.add(0,moves.remove(i));
-                    transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0));
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0,null));
                     return m;
                 }
                 double score = search(depth - 1, false,bestScore,99999);
@@ -520,13 +520,13 @@ public class V3MayFirst {
                 unMakeMove(m);
                 if (System.currentTimeMillis() - startTime > TIME_PER_MOVE) {
                     if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                        transpositionTable.put(hash,new HashEntry(moves,depth,false,bestScore));
+                        transpositionTable.put(hash,new HashEntry(moves,depth,false,bestScore,null));
                     }
                     return moves.get(0);
                 }
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
+                transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore,null));
             }
             return moves.get(0);
         } else {
@@ -546,7 +546,7 @@ public class V3MayFirst {
                 int m = moves.get(i);
                 if (makeMove(m)) {
                     moves.add(0,moves.remove(i));
-                    transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0));
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0,null));
                     return m;
                 }
                 double score = search(depth - 1, true,-99999,bestScore);
@@ -557,13 +557,13 @@ public class V3MayFirst {
                 unMakeMove(m);
                 if (System.currentTimeMillis() - startTime > TIME_PER_MOVE) {
                     if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                        transpositionTable.put(hash,new HashEntry(moves,depth,false,bestScore));
+                        transpositionTable.put(hash,new HashEntry(moves,depth,false,bestScore,null));
                     }
                     return moves.get(0);
                 }
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
+                transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore,null));
             }
             return moves.get(0);
         }
@@ -591,7 +591,7 @@ public class V3MayFirst {
                     int m = moves.get(i);
                     if (makeMove(m)) { //checkmates (found by capturing king)
                         moves.add(0,moves.remove(i)); //puts this move first because it's best so far
-                        transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0));
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0,null));
                         return 9999.0;
                     }
                     double score = search(depth - 1, false, alpha, beta);
@@ -599,7 +599,7 @@ public class V3MayFirst {
                         unMakeMove(m);
                         moves.add(0,moves.remove(i));
                         if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score));
+                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score,null));
                         }
                         return score;
                     }
@@ -611,7 +611,7 @@ public class V3MayFirst {
                     unMakeMove(m);
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                    transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
+                    transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore,null));
                 }
                 return bestScore;
             } else {
@@ -631,7 +631,7 @@ public class V3MayFirst {
                     int m = moves.get(i);
                     if (makeMove(m)) {
                         moves.add(0,moves.remove(i));
-                        transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0));
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0,null));
                         return -9999.0;
                     }
                     double score = search(depth - 1, true,alpha,beta);
@@ -639,7 +639,7 @@ public class V3MayFirst {
                         unMakeMove(m);
                         if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                             moves.add(0,moves.remove(i));
-                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score));
+                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score,null));
                         }
                         return score;
                     }
@@ -651,7 +651,7 @@ public class V3MayFirst {
                     unMakeMove(m);
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                    transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore));
+                    transpositionTable.put(hash,new HashEntry(moves,depth,true,bestScore,null));
                 }
                 return bestScore;
             }
