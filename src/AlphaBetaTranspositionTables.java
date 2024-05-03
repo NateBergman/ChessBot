@@ -46,7 +46,8 @@ public class AlphaBetaTranspositionTables {
 
     static final int TIME_PER_MOVE = 5000; //how long we take per move in milliseconds
 
-    //to-dos: quiescence search (with SEE, pruning, and tt hashing), attack maps, check extentions, time-based iterative deepending, move ordering, aspiration windows
+    //to-dos: quiescence search (with SEE, pruning, and tt hashing), attack maps, check extentions, time-based iterative deepending,
+    // move ordering (hash, mvv/lva, killer moves, others), aspiration windows and pv search (narrow window for all non-pv)
     //better eval (pawn structure, mobility, king safety, mop up endgame)
     //handle draws
     //eventually do forward pruning/reductions (lmr, delta, futility, null move)
