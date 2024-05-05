@@ -81,7 +81,7 @@ public class AlphaBetaTranspositionTables {
         ArrayList<Integer> gameMoves = new ArrayList<>();
         while (true) {
             printBoard(displayMap);
-            System.out.print("0 for manual move, 1 to undo move, 2 for white engine, 3 for black engine");
+            System.out.print("0 for manual move, 1 to undo move, 2 for white engine, 3 for black engine, 4 for pawn evaluation");
             int x = console.nextInt();
             if (x == 1) {
                 unMakeMove(gameMoves.get(gameMoves.size() - 1));
@@ -102,6 +102,11 @@ public class AlphaBetaTranspositionTables {
                 int move = iterativeDeepening(SEARCH_DEPTH, false);
                 makeMove(move);
                 gameMoves.add(move);
+            } else if (x == 4) {
+                System.out.print("Square?");
+                int sq = console.nextInt();
+                boolean white = board[sq] == 1;
+                System.out.println(evaluatePawn(sq,white));
             }
         }
     }
@@ -610,22 +615,121 @@ public class AlphaBetaTranspositionTables {
         }
     }
     public static double evaluatePosition() { //to add: pawn structure, king safety, mobility, mop up endgame, update pst to be more general (not pesto). works with lazy eval
-        double score = 0;
+        double score = 0; //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics
         for (int i : pieceLists[0]) {
             score += ((whiteOpening[board[i]-1][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[board[i]-1][i]) * phase / 24.0);
         }
         for (int i : pieceLists[1]) { //24 phase points total
             score -= ((blackOpening[board[i]-9][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[board[i]-9][i]) * phase / 24.0);
         }
+        //mobility
+
         return score;
+        //pawn structure:
+
         //king safety ideas:
         //attack units table from stockfish with S-bend
         //scales with material (less important later)
-        //attack zone (by piece and count)
+        //attack zone (by piece and count) (includes pawns, so pawn storms are adressed)
         //pst to hide in corner
         //treat like a queen, negative mobility
-        //tropism (distance from enemy pieces)
         //pawn shield (penalty for op storm) could maybe have separate pst for middle pawns, ones same side of my king, same side of op's king, or neither
+
+        //tempo bonus for side to move?
+    }
+    public static double evaluatePawn(int sq, boolean white) {
+        double score = 0;
+
+        boolean opposed = false; //for semi open file stuff
+        boolean weak = true;
+        boolean isolated = true;
+        boolean passed = true;
+
+        double doubledPenalty = -20;
+        double weakPenalty = -5; //higher if on semi-open file
+        double weakSemiOpenPenalty = -5; //stacks with weak and isloated
+        double isolatedPenalty = -10; //stacks with weak and semi open
+        double passedBonus = 25;
+        double supportedBonus = 5; //adjacent pawn at level or right behind
+        double supportedPassed = 5;
+        //other ideas: scale passed via position on pst, calculate for blocked/can't advance/attacked target square, mobility points
+
+        int stepFwd;
+        if (white) {
+            stepFwd = 10;
+        } else {
+            stepFwd = -10;
+        }
+        byte piece = board[sq];
+        int nextSq = sq + stepFwd;
+
+        while (true) { //searching forward
+            byte target = board[nextSq];
+            if (target == 7) {
+                break;
+            }
+            if (target == piece) { //doubled pawns
+                score += doubledPenalty;
+                passed = false;
+            } else if (target % 8 == 1){ //other colors pawn
+                opposed = true;
+                passed = false;
+            }
+
+            target = board[nextSq - 1];
+            if (target == piece) {
+                isolated = false;
+            } else if (target % 8 == 1) {
+                passed = false;
+            }
+
+            target = board[nextSq + 1];
+            if (target == piece) {
+                isolated = false;
+            } else if (target % 8 == 1) {
+                passed = false;
+            }
+
+            nextSq += stepFwd;
+        }
+
+        if (board[sq + 1] == piece || board[sq - 1] == piece || board[sq - stepFwd - 1] == piece || board[sq - stepFwd + 1] == piece) {
+            score += supportedBonus;
+            if (passed) {
+                score += supportedPassed;
+            }
+            isolated = false;
+            weak = false;
+        }
+
+        nextSq = sq - stepFwd;
+        while(board[nextSq] != 7) {
+            if (board[nextSq - 1] == piece || board[nextSq + 1] == piece) {
+                isolated = false;
+                weak = false;
+                break;
+            }
+            nextSq -= stepFwd;
+        }
+
+        if (weak) {
+            score += weakPenalty;
+            if (!opposed) {
+                score += weakSemiOpenPenalty;
+            }
+            if (isolated) {
+                score += isolatedPenalty;
+            }
+        }
+
+        if (passed) {
+            score += passedBonus;
+        }
+
+        if (!white) {
+            return -score;
+        }
+        return score;
     }
     public static int startSearch (int depth, boolean whiteMove, double alpha, double beta) {
         long hash = getHashIndex(whiteMove);

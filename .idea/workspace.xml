@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="commented future ideas">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="commented thoughts for eval function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
     </list>
@@ -248,7 +248,14 @@
       <option name="project" value="LOCAL" />
       <updated>1714774542399</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="commented thoughts for eval function">
+      <created>1714870682373</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1714870682373</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -263,7 +270,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Moving + unmoving works with ep; need to test castling but starting on legal move + check generation" />
     <MESSAGE value="basic eval working" />
     <MESSAGE value="ok doing new draft with cool stuff like piece list and tapered eval" />
     <MESSAGE value="ok move gen works but captures and en passants with piece lists don't" />
@@ -288,6 +294,7 @@
     <MESSAGE value="adding transposition tables to quiescence" />
     <MESSAGE value="Quiescence transposition tables work! can play reasonable at depth of 4 normal + quiescence (6 may take a while still)" />
     <MESSAGE value="commented future ideas" />
-    <option name="LAST_COMMIT_MESSAGE" value="commented future ideas" />
+    <MESSAGE value="commented thoughts for eval function" />
+    <option name="LAST_COMMIT_MESSAGE" value="commented thoughts for eval function" />
   </component>
 </project>
