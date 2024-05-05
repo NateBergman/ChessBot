@@ -47,9 +47,10 @@ public class AlphaBetaTranspositionTables {
     static final int TIME_PER_MOVE = 5000; //how long we take per move in milliseconds
 
     //to-dos: quiescence search (with SEE, pruning, and tt hashing), attack maps, check extentions, time-based iterative deepending,
-    // move ordering (hash, mvv/lva, killer moves, others), aspiration windows and pv search (narrow window for all non-pv)
+    // move ordering (hash (best moves previously, stored in tt), mvv/lva, killer moves/history heuristic, others), aspiration windows and pv search (narrow window for all non-pv)
     //better eval (pawn structure, mobility, king safety, mop up endgame)
-    //handle draws
+    //safeguards against tt collision (clear old entries, like after losing castling rights ones that have it still) (currently have problem if >beta in one search is <alpha in another)
+    //handle draws and better win checking (earlier checkmates are better)
     //eventually do forward pruning/reductions (lmr, delta, futility, null move)
     //bitboard move gen
     //lastly opening/endgame tablebases/books
@@ -608,7 +609,7 @@ public class AlphaBetaTranspositionTables {
             pieceLists[1-moveColor].add(to);
         }
     }
-    public static double evaluatePosition() {
+    public static double evaluatePosition() { //to add: pawn structure, king safety, mobility, mop up endgame, update pst to be more general (not pesto). works with lazy eval
         double score = 0;
         for (int i : pieceLists[0]) {
             score += ((whiteOpening[board[i]-1][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[board[i]-1][i]) * phase / 24.0);
@@ -617,6 +618,14 @@ public class AlphaBetaTranspositionTables {
             score -= ((blackOpening[board[i]-9][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[board[i]-9][i]) * phase / 24.0);
         }
         return score;
+        //king safety ideas:
+        //attack units table from stockfish with S-bend
+        //scales with material (less important later)
+        //attack zone (by piece and count)
+        //pst to hide in corner
+        //treat like a queen, negative mobility
+        //tropism (distance from enemy pieces)
+        //pawn shield (penalty for op storm) could maybe have separate pst for middle pawns, ones same side of my king, same side of op's king, or neither
     }
     public static int startSearch (int depth, boolean whiteMove, double alpha, double beta) {
         long hash = getHashIndex(whiteMove);
