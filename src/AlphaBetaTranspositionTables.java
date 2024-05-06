@@ -39,6 +39,10 @@ public class AlphaBetaTranspositionTables {
     static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
 
+    static int[] mobilityOpening = {0,4,3,2,1,0};
+    static int[] mobilityEndgame = {0,4,3,4,2,0};
+
+
     static long[][] hashIndex;
     static Map<Long,HashEntry> transpositionTable;
 
@@ -504,6 +508,49 @@ public class AlphaBetaTranspositionTables {
         }
         return moves;
     }
+    public static int getMobility (int square, boolean white) {
+        int count = 0;
+        if (white) {
+            int fromPiece = board[square] - 1;
+            int[] offsets = moveGenOffset[fromPiece];
+            boolean slide = moveGenSlide[fromPiece];
+            for (int o : offsets) {
+                int toCoordinate = square + o;
+                do {
+                    byte toPiece = board[toCoordinate];
+                    if (toPiece > 8) {
+                        count++;
+                        break;
+                    }
+                    if (toPiece != 0) {
+                        break;
+                    }
+                    count++;
+                    toCoordinate += o;
+                } while (slide);
+            }
+        } else {
+            int fromPiece = board[square] - 9;
+            int[] offsets = moveGenOffset[fromPiece];
+            boolean slide = moveGenSlide[fromPiece];
+            for (int o : offsets) {
+                int toCoordinate = square + o;
+                do {
+                    byte toPiece = board[toCoordinate];
+                    if (toPiece < 7 && toPiece != 0) {
+                        count++;
+                        break;
+                    }
+                    if (toPiece != 0) {
+                        break;
+                    }
+                    count++;
+                    toCoordinate += o;
+                } while (slide);
+            }
+        }
+        return count;
+    }
     public static boolean isAttacked (int square, boolean white) {
         for (int i = 1; i < 6; i++) {
             int[] offsets = moveGenOffset[i];
@@ -617,15 +664,25 @@ public class AlphaBetaTranspositionTables {
     public static double evaluatePosition() { //to add: pawn structure, king safety, mobility, mop up endgame, update pst to be more general (not pesto). works with lazy eval
         double score = 0; //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics
         for (int i : pieceLists[0]) {
-            score += ((whiteOpening[board[i]-1][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[board[i]-1][i]) * phase / 24.0);
+            byte piece = (byte) (board[i] - 1);
+            score += ((whiteOpening[piece][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[piece][i]) * phase / 24.0);
+            if (piece == 0) {
+                score += evaluatePawn(i,true);
+            } else {
+                score += getMobility(i,true) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
+            }
         }
         for (int i : pieceLists[1]) { //24 phase points total
-            score -= ((blackOpening[board[i]-9][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[board[i]-9][i]) * phase / 24.0);
+            byte piece = (byte) (board[i] - 9);
+            score -= ((blackOpening[piece][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[piece][i]) * phase / 24.0);
+            if (piece == 0) {
+                score += evaluatePawn(i,false);
+            } else {
+                score -= getMobility(i,false) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
+            }
         }
-        //mobility
 
         return score;
-        //pawn structure:
 
         //king safety ideas:
         //attack units table from stockfish with S-bend
