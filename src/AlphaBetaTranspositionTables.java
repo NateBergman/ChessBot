@@ -3,6 +3,7 @@ public class AlphaBetaTranspositionTables {
     static byte[] board;
     static byte boardState;
     static Set<Integer>[] pieceLists = new Set[]{new HashSet<>(), new HashSet<>()};
+    static int[] kingPositions = {25,95};
 
     static boolean[] moveGenSlide = {false,false,true,true,true,false};
     static int[][] moveGenOffset = {{},{-21, -19,-12, -8, 8, 12, 19, 21},{-11,  -9,  9, 11},{-10,  -1,  1, 10},{-11, -10, -9, -1, 1,  9, 10, 11},{-11, -10, -9, -1, 1,  9, 10, 11}};
@@ -41,7 +42,7 @@ public class AlphaBetaTranspositionTables {
 
     static int[] mobilityOpening = {0,4,3,2,1,0};
     static int[] mobilityEndgame = {0,4,3,4,2,0};
-
+    static int[] attackerValue = {1,2,2,3,5,0};
 
     static long[][] hashIndex;
     static Map<Long,HashEntry> transpositionTable;
@@ -508,8 +509,9 @@ public class AlphaBetaTranspositionTables {
         }
         return moves;
     }
-    public static int getMobility (int square, boolean white) {
+    public static int getMobility (int square, boolean white, int[] attacks, Set<Integer> kingArea) { //also gets attacks for attack tables/king safety
         int count = 0;
+        boolean attacking = false;
         if (white) {
             int fromPiece = board[square] - 1;
             int[] offsets = moveGenOffset[fromPiece];
@@ -520,12 +522,25 @@ public class AlphaBetaTranspositionTables {
                     byte toPiece = board[toCoordinate];
                     if (toPiece > 8) {
                         count++;
+                        if (kingArea.contains(toCoordinate) && !attacking) {
+                            attacks[0] += attackerValue[fromPiece];
+                            attacks[1]++;
+                        }
                         break;
                     }
                     if (toPiece != 0) {
+                        if (kingArea.contains(toCoordinate) && !attacking) {
+                            attacks[0] += attackerValue[fromPiece];
+                            attacks[1]++;
+                        }
                         break;
                     }
                     count++;
+                    if (kingArea.contains(toCoordinate) && !attacking) {
+                        attacks[0] += attackerValue[fromPiece];
+                        attacks[1]++;
+                        attacking = true;
+                    }
                     toCoordinate += o;
                 } while (slide);
             }
@@ -539,12 +554,25 @@ public class AlphaBetaTranspositionTables {
                     byte toPiece = board[toCoordinate];
                     if (toPiece < 7 && toPiece != 0) {
                         count++;
+                        if (kingArea.contains(toCoordinate) && !attacking) {
+                            attacks[2] += attackerValue[fromPiece];
+                            attacks[3]++;
+                        }
                         break;
                     }
                     if (toPiece != 0) {
+                        if (kingArea.contains(toCoordinate) && !attacking) {
+                            attacks[2] += attackerValue[fromPiece];
+                            attacks[3]++;
+                        }
                         break;
                     }
                     count++;
+                    if (kingArea.contains(toCoordinate) && !attacking) {
+                        attacks[2] += attackerValue[fromPiece];
+                        attacks[3]++;
+                        attacking = true;
+                    }
                     toCoordinate += o;
                 } while (slide);
             }
@@ -624,6 +652,12 @@ public class AlphaBetaTranspositionTables {
         if(from == 98 || from == 95 || to == 98) {
             boardState = (byte)(boardState & 0b10111111);
         }
+
+        if (board[to] == 6) {
+            kingPositions[0] = to;
+        } else if (board[to] == 14) {
+            kingPositions[1] = to;
+        }
         return false;
     }
     public static void unMakeMove(int move) {
@@ -660,16 +694,30 @@ public class AlphaBetaTranspositionTables {
         if ((move & 0b11110000000000000000000) != 0) {
             pieceLists[1-moveColor].add(to);
         }
+        if (board[from] == 6) {
+            kingPositions[0] = from;
+        } else if (board[from] == 14) {
+            kingPositions[1] = from;
+        }
     }
-    public static double evaluatePosition() { //to add: pawn structure, king safety, mobility, mop up endgame, update pst to be more general (not pesto). works with lazy eval
-        double score = 0; //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics
+    public static double evaluatePosition() { //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
+        double score = 0; //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics (bonus for canons w/ bishop/rook/queen)
+        int[] attacks = new int[4]; //goes white attack value, white attacker count, black attack value, black attacker count
+
+        Set<Integer> whiteKingArea = new HashSet<Integer>(); //calculate some king safety things for pawn shield and attacks
+        Set<Integer> blackKingArea = new HashSet<Integer>();
+        boolean whiteShortCastled = (kingPositions[0] == 26 || kingPositions[0] == 27 || kingPositions[0] == 28);
+        boolean whiteLongCastled = (kingPositions[0] == 21 || kingPositions[0] == 22 || kingPositions[0] == 23);
+        boolean blackShortCastled = (kingPositions[1] == 96 || kingPositions[0] == 97 || kingPositions[0] == 98);
+        boolean blackLongCastled = (kingPositions[1] == 91 || kingPositions[1] == 92 || kingPositions[0] == 93);
+
         for (int i : pieceLists[0]) {
             byte piece = (byte) (board[i] - 1);
             score += ((whiteOpening[piece][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[piece][i]) * phase / 24.0);
             if (piece == 0) {
                 score += evaluatePawn(i,true);
             } else {
-                score += getMobility(i,true) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
+                score += getMobility(i,true, attacks, blackKingArea) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
             }
         }
         for (int i : pieceLists[1]) { //24 phase points total
@@ -678,19 +726,21 @@ public class AlphaBetaTranspositionTables {
             if (piece == 0) {
                 score += evaluatePawn(i,false);
             } else {
-                score -= getMobility(i,false) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
+                score -= getMobility(i,false, attacks, whiteKingArea) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
             }
         }
 
         return score;
 
         //king safety ideas:
+
         //attack units table from stockfish with S-bend
         //scales with material (less important later)
         //attack zone (by piece and count) (includes pawns, so pawn storms are adressed)
+
         //pst to hide in corner
         //treat like a queen, negative mobility
-        //pawn shield (penalty for op storm) could maybe have separate pst for middle pawns, ones same side of my king, same side of op's king, or neither
+        //pawn shield bonus
 
         //tempo bonus for side to move?
     }
