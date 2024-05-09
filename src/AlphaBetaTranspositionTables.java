@@ -55,7 +55,7 @@ public class AlphaBetaTranspositionTables {
                 500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
                 500, 500, 500, 500, 500, 500, 500, 500, 500, 500
     };
-    static boolean[][] nearKing = {{}}; //need to make via some algorithm because there's no way I'm doing this by hand.
+    static boolean[][] nearKing = new boolean[120][120]; //need to make via some algorithm because there's no way I'm doing this by hand.
 
     static long[][] hashIndex;
     static Map<Long,HashEntry> transpositionTable;
@@ -91,6 +91,7 @@ public class AlphaBetaTranspositionTables {
 
         seedHashIndex();
         transpositionTable = new HashMap<>();
+        buildNearKingTable();
 
         //Map<Byte,Character> displayMap = buildDisplayMap();
         Map<Byte,Character> displayMap = laptopDisplayMap();
@@ -124,7 +125,7 @@ public class AlphaBetaTranspositionTables {
                 System.out.print("Square?");
                 int sq = console.nextInt();
                 boolean white = board[sq] == 1;
-                System.out.println(evaluatePawn(sq,white));
+                System.out.println(evaluatePawn(sq,white,new int[3],0));
             }
         }
     }
@@ -134,6 +135,19 @@ public class AlphaBetaTranspositionTables {
                 System.out.print(displayMap.get(board[y + x]) + "|");
             }
             System.out.println("\n------------------------------------------");
+        }
+    }
+    public static void buildNearKingTable() {
+        for (int i = 20; i < 100; i +=10) {
+            for (int j = 1; j < 9; j++) {
+                int kingCoordinate = i + j;
+                int[] coordinatesToTry = {kingCoordinate,kingCoordinate+1,kingCoordinate-1,kingCoordinate+9,kingCoordinate+10,kingCoordinate+11,kingCoordinate+19,kingCoordinate+20,kingCoordinate+21,kingCoordinate-9,kingCoordinate-10,kingCoordinate-11,kingCoordinate-19,kingCoordinate-20,kingCoordinate-21};
+                for (int c : coordinatesToTry) {
+                    if (board[c] != 7) {
+                        nearKing[kingCoordinate][c] = true;
+                    }
+                }
+            }
         }
     }
     public static Map<Byte,Character> buildDisplayMap () {
@@ -581,7 +595,7 @@ public class AlphaBetaTranspositionTables {
                         break;
                     }
                     count++;
-                    if (nearKing[kingSquare][toCoordinate] && !attacking) { //TODO: precompute near King
+                    if (nearKing[kingSquare][toCoordinate] && !attacking) {
                         attacks[2] += attackerValue[fromPiece];
                         attacks[3]++;
                         attacking = true;
@@ -714,36 +728,65 @@ public class AlphaBetaTranspositionTables {
         }
     }
     public static double evaluatePosition() { //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
-        double score = 0; //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics (bonus for canons w/ bishop/rook/queen)
+        //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics (bonus for canons w/ bishop/rook/queen)
+        int mgScore = 0;
+        int egScore = 0;
         int[] attacks = new int[4]; //goes white attack value, white attacker count, black attack value, black attacker count
-
-        Set<Integer> whiteKingArea = new HashSet<Integer>(); //calculate some king safety things for pawn shield and attacks
-        Set<Integer> blackKingArea = new HashSet<Integer>();
-        boolean whiteShortCastled = (kingPositions[0] == 26 || kingPositions[0] == 27 || kingPositions[0] == 28);
-        boolean whiteLongCastled = (kingPositions[0] == 21 || kingPositions[0] == 22 || kingPositions[0] == 23);
-        boolean blackShortCastled = (kingPositions[1] == 96 || kingPositions[0] == 97 || kingPositions[0] == 98);
-        boolean blackLongCastled = (kingPositions[1] == 91 || kingPositions[1] == 92 || kingPositions[0] == 93);
 
         for (int i : pieceLists[0]) {
             byte piece = (byte) (board[i] - 1);
-            score += ((whiteOpening[piece][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[piece][i]) * phase / 24.0);
+            mgScore += whiteOpening[piece][i];
+            egScore += whiteEndgame[piece][i];
+            //score += ((whiteOpening[piece][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[piece][i]) * phase / 24.0);
             if (piece == 0) {
-                score += evaluatePawn(i,true);
+                int score = evaluatePawn(i,true,attacks,kingPositions[1]);
+                mgScore += score;
+                egScore += score;
+                //score += evaluatePawn(i,true, attacks, kingPositions[1]);
             } else {
-                score += getMobility(i,true, attacks, kingPositions[1]) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
+                int score = getMobility(i,true,attacks,kingPositions[1]);
+                mgScore += score * mobilityOpening[piece];
+                egScore += score * mobilityEndgame[piece];
+                //score += getMobility(i,true, attacks, kingPositions[1]) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
             }
         }
         for (int i : pieceLists[1]) { //24 phase points total
             byte piece = (byte) (board[i] - 9);
-            score -= ((blackOpening[piece][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[piece][i]) * phase / 24.0);
+            mgScore -= blackOpening[piece][i];
+            egScore -= blackEndgame[piece][i];
+            //score -= ((blackOpening[piece][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[piece][i]) * phase / 24.0);
             if (piece == 0) {
-                score += evaluatePawn(i,false);
+                int score = evaluatePawn(i,false, attacks, kingPositions[0]);;
+                mgScore -= score;
+                egScore -= score;
+                //score -= evaluatePawn(i,false, attacks, kingPositions[0]);
             } else {
-                score -= getMobility(i,false, attacks, kingPositions[0]) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
+                int score = getMobility(i,false, attacks, kingPositions[0]);
+                mgScore -= score * mobilityOpening[piece];
+                egScore -= score * mobilityEndgame[piece];
+                //score -= getMobility(i,false, attacks, kingPositions[0]) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
             }
         }
 
-        return score;
+        if (attacks[1] > 1) {
+            mgScore += attackTable[attacks[0]];
+        }
+        if (attacks[3] > 1) {
+            egScore += attackTable[attacks[2]];
+        }
+        //pawn shields
+        if (kingPositions[0] == 26 || kingPositions[0] == 27 || kingPositions[0] == 28) { //white short castled
+
+        } else if (kingPositions[0] == 21 || kingPositions[0] == 22 || kingPositions[0] == 23) { //white long castled
+
+        }
+        if (kingPositions[1] == 96 || kingPositions[1] == 97 || kingPositions[1] == 98) { //black short castled
+
+        } else if (kingPositions[1] == 91 || kingPositions[1] == 92 || kingPositions[1] == 93) { //black long castled
+
+        }
+
+        return ((double) mgScore * (24.0 - phase) / 24.0) + ((double) egScore * phase / 24.0);
 
         //king safety ideas:
 
@@ -757,21 +800,21 @@ public class AlphaBetaTranspositionTables {
 
         //tempo bonus for side to move?
     }
-    public static double evaluatePawn(int sq, boolean white) {
-        double score = 0;
+    public static int evaluatePawn(int sq, boolean white, int[] attacks, int kingPosition) {
+        int score = 0;
 
         boolean opposed = false; //for semi open file stuff
         boolean weak = true;
         boolean isolated = true;
         boolean passed = true;
 
-        double doubledPenalty = -20;
-        double weakPenalty = -5; //higher if on semi-open file
-        double weakSemiOpenPenalty = -5; //stacks with weak and isloated
-        double isolatedPenalty = -10; //stacks with weak and semi open
-        double passedBonus = 25;
-        double supportedBonus = 5; //adjacent pawn at level or right behind
-        double supportedPassed = 5;
+        int doubledPenalty = -20;
+        int weakPenalty = -5; //higher if on semi-open file
+        int weakSemiOpenPenalty = -5; //stacks with weak and isloated
+        int isolatedPenalty = -10; //stacks with weak and semi open
+        int passedBonus = 25;
+        int supportedBonus = 5; //adjacent pawn at level or right behind
+        int supportedPassed = 5;
         //other ideas: scale passed via position on pst, calculate for blocked/can't advance/attacked target square, mobility points
 
         int stepFwd;
@@ -846,9 +889,18 @@ public class AlphaBetaTranspositionTables {
             score += passedBonus;
         }
 
-        if (!white) {
-            return -score;
+        if (white) { //attack points for pawn storms
+            if (nearKing[kingPosition][sq] || nearKing[kingPosition][sq + 10]) {
+                attacks[0] += attackerValue[0];
+                attacks[1]++;
+            }
+        } else {
+            if (nearKing[kingPosition][sq] || nearKing[kingPosition][sq - 10]) {
+                attacks[2] += attackerValue[0];
+                attacks[3]++;
+            }
         }
+
         return score;
     }
     public static int startSearch (int depth, boolean whiteMove, double alpha, double beta) {
