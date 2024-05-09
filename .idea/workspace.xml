@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="main eval now uses pawn structure and piece mobility as parameters - yay! now time to work out pawn hashing, piece specific heuristics, and king safety.">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="middle of incorporating attack evaluation/king safety">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
     </list>
@@ -269,7 +269,14 @@
       <option name="project" value="LOCAL" />
       <updated>1714970329091</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="middle of incorporating attack evaluation/king safety">
+      <created>1715099212687</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1715099212687</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -284,7 +291,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="ok move gen works but captures and en passants with piece lists don't" />
     <MESSAGE value="fixed move gen/gameplay problems, starting piece square eval" />
     <MESSAGE value="made white psts, need to just make eval function with them" />
     <MESSAGE value="have to redo psts because i made them wrong way and white only :(" />
@@ -309,6 +315,7 @@
     <MESSAGE value="commented thoughts for eval function" />
     <MESSAGE value="think i have my pawn structure eval working - just need to test it in different scenarios and work a hash table into it" />
     <MESSAGE value="main eval now uses pawn structure and piece mobility as parameters - yay! now time to work out pawn hashing, piece specific heuristics, and king safety." />
-    <option name="LAST_COMMIT_MESSAGE" value="main eval now uses pawn structure and piece mobility as parameters - yay! now time to work out pawn hashing, piece specific heuristics, and king safety." />
+    <MESSAGE value="middle of incorporating attack evaluation/king safety" />
+    <option name="LAST_COMMIT_MESSAGE" value="middle of incorporating attack evaluation/king safety" />
   </component>
 </project>

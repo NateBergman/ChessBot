@@ -43,6 +43,19 @@ public class AlphaBetaTranspositionTables {
     static int[] mobilityOpening = {0,4,3,2,1,0};
     static int[] mobilityEndgame = {0,4,3,4,2,0};
     static int[] attackerValue = {1,2,2,3,5,0};
+    static int[] attackTable = {
+                0,  0,   1,   2,   3,   5,   7,   9,  12,  15,
+                18,  22,  26,  30,  35,  39,  44,  50,  56,  62,
+                68,  75,  82,  85,  89,  97, 105, 113, 122, 131,
+                140, 150, 169, 180, 191, 202, 213, 225, 237, 248,
+                260, 272, 283, 295, 307, 319, 330, 342, 354, 366,
+                377, 389, 401, 412, 424, 436, 448, 459, 471, 483,
+                494, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+                500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+                500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+                500, 500, 500, 500, 500, 500, 500, 500, 500, 500
+    };
+    static boolean[][] nearKing = {{}}; //need to make via some algorithm because there's no way I'm doing this by hand.
 
     static long[][] hashIndex;
     static Map<Long,HashEntry> transpositionTable;
@@ -509,7 +522,7 @@ public class AlphaBetaTranspositionTables {
         }
         return moves;
     }
-    public static int getMobility (int square, boolean white, int[] attacks, Set<Integer> kingArea) { //also gets attacks for attack tables/king safety
+    public static int getMobility (int square, boolean white, int[] attacks, int kingSquare) { //also gets attacks for attack tables/king safety
         int count = 0;
         boolean attacking = false;
         if (white) {
@@ -522,21 +535,21 @@ public class AlphaBetaTranspositionTables {
                     byte toPiece = board[toCoordinate];
                     if (toPiece > 8) {
                         count++;
-                        if (kingArea.contains(toCoordinate) && !attacking) {
+                        if (nearKing[kingSquare][toCoordinate] && !attacking) {
                             attacks[0] += attackerValue[fromPiece];
                             attacks[1]++;
                         }
                         break;
                     }
                     if (toPiece != 0) {
-                        if (kingArea.contains(toCoordinate) && !attacking) {
+                        if (nearKing[kingSquare][toCoordinate] && !attacking) {
                             attacks[0] += attackerValue[fromPiece];
                             attacks[1]++;
                         }
                         break;
                     }
                     count++;
-                    if (kingArea.contains(toCoordinate) && !attacking) {
+                    if (nearKing[kingSquare][toCoordinate] && !attacking) {
                         attacks[0] += attackerValue[fromPiece];
                         attacks[1]++;
                         attacking = true;
@@ -554,21 +567,21 @@ public class AlphaBetaTranspositionTables {
                     byte toPiece = board[toCoordinate];
                     if (toPiece < 7 && toPiece != 0) {
                         count++;
-                        if (kingArea.contains(toCoordinate) && !attacking) {
+                        if (nearKing[kingSquare][toCoordinate] && !attacking) {
                             attacks[2] += attackerValue[fromPiece];
                             attacks[3]++;
                         }
                         break;
                     }
                     if (toPiece != 0) {
-                        if (kingArea.contains(toCoordinate) && !attacking) {
+                        if (nearKing[kingSquare][toCoordinate] && !attacking) {
                             attacks[2] += attackerValue[fromPiece];
                             attacks[3]++;
                         }
                         break;
                     }
                     count++;
-                    if (kingArea.contains(toCoordinate) && !attacking) {
+                    if (nearKing[kingSquare][toCoordinate] && !attacking) { //TODO: precompute near King
                         attacks[2] += attackerValue[fromPiece];
                         attacks[3]++;
                         attacking = true;
@@ -717,7 +730,7 @@ public class AlphaBetaTranspositionTables {
             if (piece == 0) {
                 score += evaluatePawn(i,true);
             } else {
-                score += getMobility(i,true, attacks, blackKingArea) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
+                score += getMobility(i,true, attacks, kingPositions[1]) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
             }
         }
         for (int i : pieceLists[1]) { //24 phase points total
@@ -726,7 +739,7 @@ public class AlphaBetaTranspositionTables {
             if (piece == 0) {
                 score += evaluatePawn(i,false);
             } else {
-                score -= getMobility(i,false, attacks, whiteKingArea) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
+                score -= getMobility(i,false, attacks, kingPositions[0]) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
             }
         }
 
@@ -1091,9 +1104,11 @@ public class AlphaBetaTranspositionTables {
     }
     public static int iterativeDeepening(int depth, boolean whiteMove) {
         int move = 0;
+        long startTime = System.currentTimeMillis();
         for (int n = 2; n <= depth; n += 1) {
             move = startSearch(n,whiteMove,-99999.0,99999.0); //assumes (pretty safely) that score will end up being between these bounds
         } //if it's not between them everything breaks but at that point we have a bigger problem with the eval
+        System.out.println(System.currentTimeMillis() - startTime);
         return move;
     }
     public static long getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
