@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="king attacks functional (values need tuning) need to make pawn shield and then eval is close to complete aside from motifs">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="ok fancy eval is completeish but numbers need tuning (no material imbalance or piece heuristic scores). working to add draw by repetition as that is coming up a lot">
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -290,7 +289,14 @@
       <option name="project" value="LOCAL" />
       <updated>1715277327954</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="ok fancy eval is completeish but numbers need tuning (no material imbalance or piece heuristic scores). working to add draw by repetition as that is coming up a lot">
+      <created>1715308571211</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1715308571211</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -305,7 +311,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="have to redo psts because i made them wrong way and white only :(" />
     <MESSAGE value="Piece square tables made, just have to implement eval" />
     <MESSAGE value="fixed problem, eval should now do checks/mates but untested" />
     <MESSAGE value="fixed bugs, can play actual games now but just slow at depth 6 but fast and bad at depth 4" />
@@ -330,6 +335,7 @@
     <MESSAGE value="middle of incorporating attack evaluation/king safety" />
     <MESSAGE value="king attacks almost functional, just need to precompute table of near squares and work in logic for scoring attack count/value" />
     <MESSAGE value="king attacks functional (values need tuning) need to make pawn shield and then eval is close to complete aside from motifs" />
-    <option name="LAST_COMMIT_MESSAGE" value="king attacks functional (values need tuning) need to make pawn shield and then eval is close to complete aside from motifs" />
+    <MESSAGE value="ok fancy eval is completeish but numbers need tuning (no material imbalance or piece heuristic scores). working to add draw by repetition as that is coming up a lot" />
+    <option name="LAST_COMMIT_MESSAGE" value="ok fancy eval is completeish but numbers need tuning (no material imbalance or piece heuristic scores). working to add draw by repetition as that is coming up a lot" />
   </component>
 </project>

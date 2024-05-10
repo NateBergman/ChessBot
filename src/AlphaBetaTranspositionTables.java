@@ -59,6 +59,8 @@ public class AlphaBetaTranspositionTables {
 
     static long[][] hashIndex;
     static Map<Long,HashEntry> transpositionTable;
+    static Set<Long> repetitionHashTable;
+    static final double CONTEMPT = 0;
 
     static final int SEARCH_DEPTH = 4;
 
@@ -91,6 +93,7 @@ public class AlphaBetaTranspositionTables {
 
         seedHashIndex();
         transpositionTable = new HashMap<>();
+        repetitionHashTable = new HashSet<>();
         buildNearKingTable();
 
         //Map<Byte,Character> displayMap = buildDisplayMap();
@@ -630,6 +633,7 @@ public class AlphaBetaTranspositionTables {
         int to = (move>>1) & 0b1111111; //records to and from indexes
         int from = (move>>8) & 0b1111111;
         int moveColor = move & 1;
+        repetitionHashTable.add(getHashIndex(moveColor == 0));
         if (board[to] % 8 == 6) { //taking the king
             return true;
         }
@@ -726,6 +730,7 @@ public class AlphaBetaTranspositionTables {
         } else if (board[from] == 14) {
             kingPositions[1] = from;
         }
+        repetitionHashTable.remove(getHashIndex(moveColor == 0));
     }
     public static double evaluatePosition() { //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
         //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics (bonus for canons w/ bishop/rook/queen)
@@ -1024,6 +1029,9 @@ public class AlphaBetaTranspositionTables {
     public static double search (int depth, boolean whiteMove, double alpha, double beta) {
         boolean foundGoodMove = false;
         long hash = getHashIndex(whiteMove);
+        if (repetitionHashTable.contains(hash)) {
+            return CONTEMPT;
+        }
         if (depth < 1) { //quiescence search for captures and final eval
             ArrayList<Integer> moves;
             if (transpositionTable.containsKey(hash)) {
