@@ -775,30 +775,76 @@ public class AlphaBetaTranspositionTables {
             egScore += attackTable[attacks[2]];
         }
         //pawn shields
+        int shieldRankTwo = 10;
+        int shieldRankThree = 5;
         if (kingPositions[0] == 26 || kingPositions[0] == 27 || kingPositions[0] == 28) { //white short castled
-
+            if (board[26] == 1) {
+                mgScore += shieldRankTwo;
+            } else if (board[36] == 1) {
+                mgScore += shieldRankThree;
+            }
+            if (board[27] == 1) {
+                mgScore += shieldRankTwo;
+            } else if (board[37] == 1) {
+                mgScore += shieldRankThree;
+            }
+            if (board[28] == 1) {
+                mgScore += shieldRankTwo;
+            } else if (board[38] == 1) {
+                mgScore += shieldRankThree;
+            }
         } else if (kingPositions[0] == 21 || kingPositions[0] == 22 || kingPositions[0] == 23) { //white long castled
-
+            if (board[21] == 1) {
+                mgScore += shieldRankTwo;
+            } else if (board[31] == 1) {
+                mgScore += shieldRankThree;
+            }
+            if (board[22] == 1) {
+                mgScore += shieldRankTwo;
+            } else if (board[32] == 1) {
+                mgScore += shieldRankThree;
+            }
+            if (board[23] == 1) {
+                mgScore += shieldRankTwo;
+            } else if (board[33] == 1) {
+                mgScore += shieldRankThree;
+            }
         }
         if (kingPositions[1] == 96 || kingPositions[1] == 97 || kingPositions[1] == 98) { //black short castled
-
+            if (board[86] == 1) {
+                mgScore -= shieldRankTwo;
+            } else if (board[76] == 1) {
+                mgScore -= shieldRankThree;
+            }
+            if (board[87] == 1) {
+                mgScore -= shieldRankTwo;
+            } else if (board[77] == 1) {
+                mgScore -= shieldRankThree;
+            }
+            if (board[88] == 1) {
+                mgScore -= shieldRankTwo;
+            } else if (board[78] == 1) {
+                mgScore -= shieldRankThree;
+            }
         } else if (kingPositions[1] == 91 || kingPositions[1] == 92 || kingPositions[1] == 93) { //black long castled
-
+            if (board[81] == 1) {
+                mgScore -= shieldRankTwo;
+            } else if (board[71] == 1) {
+                mgScore -= shieldRankThree;
+            }
+            if (board[82] == 1) {
+                mgScore -= shieldRankTwo;
+            } else if (board[72] == 1) {
+                mgScore -= shieldRankThree;
+            }
+            if (board[83] == 1) {
+                mgScore -= shieldRankTwo;
+            } else if (board[73] == 1) {
+                mgScore -= shieldRankThree;
+            }
         }
 
         return ((double) mgScore * (24.0 - phase) / 24.0) + ((double) egScore * phase / 24.0);
-
-        //king safety ideas:
-
-        //attack units table from stockfish with S-bend
-        //scales with material (less important later)
-        //attack zone (by piece and count) (includes pawns, so pawn storms are adressed)
-
-        //pst to hide in corner
-        //treat like a queen, negative mobility
-        //pawn shield bonus
-
-        //tempo bonus for side to move?
     }
     public static int evaluatePawn(int sq, boolean white, int[] attacks, int kingPosition) {
         int score = 0;

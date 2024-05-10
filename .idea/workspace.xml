@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="king attacks almost functional, just need to precompute table of near squares and work in logic for scoring attack count/value">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="king attacks functional (values need tuning) need to make pawn shield and then eval is close to complete aside from motifs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
     </list>
@@ -283,7 +283,14 @@
       <option name="project" value="LOCAL" />
       <updated>1715230969608</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="king attacks functional (values need tuning) need to make pawn shield and then eval is close to complete aside from motifs">
+      <created>1715277327954</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1715277327954</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -298,7 +305,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="made white psts, need to just make eval function with them" />
     <MESSAGE value="have to redo psts because i made them wrong way and white only :(" />
     <MESSAGE value="Piece square tables made, just have to implement eval" />
     <MESSAGE value="fixed problem, eval should now do checks/mates but untested" />
@@ -323,6 +329,7 @@
     <MESSAGE value="main eval now uses pawn structure and piece mobility as parameters - yay! now time to work out pawn hashing, piece specific heuristics, and king safety." />
     <MESSAGE value="middle of incorporating attack evaluation/king safety" />
     <MESSAGE value="king attacks almost functional, just need to precompute table of near squares and work in logic for scoring attack count/value" />
-    <option name="LAST_COMMIT_MESSAGE" value="king attacks almost functional, just need to precompute table of near squares and work in logic for scoring attack count/value" />
+    <MESSAGE value="king attacks functional (values need tuning) need to make pawn shield and then eval is close to complete aside from motifs" />
+    <option name="LAST_COMMIT_MESSAGE" value="king attacks functional (values need tuning) need to make pawn shield and then eval is close to complete aside from motifs" />
   </component>
 </project>
