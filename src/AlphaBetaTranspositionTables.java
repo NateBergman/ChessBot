@@ -60,8 +60,12 @@ public class AlphaBetaTranspositionTables {
     static long[][] hashIndex;
     static Map<Long,HashEntry> transpositionTable;
     static Set<Long> repetitionHashTable;
-    static final double CONTEMPT = 0;
-
+    static final int DRAW = 0;
+    static final int WIN = 9999; //biggest int is 2147483647 maybe make it so that
+    //return one value for immediate cpature per side to prevent illegal moves
+    //if all of one sides moves result in immediate capture value, test null move
+    //from then on return either draw or win value, which are passed like normal values and stored as final in TT
+    //record this draw value as different than repetition in TT
     static final int SEARCH_DEPTH = 4;
 
     static final int TIME_PER_MOVE = 5000; //how long we take per move in milliseconds
@@ -223,6 +227,12 @@ public class AlphaBetaTranspositionTables {
             }
         }
         return move;
+    }
+    public static int getNullMove(boolean whiteMove) {
+        if (whiteMove) {
+            return boardState << 23;
+        }
+        return (boardState << 23) + 1;
     }
     public static ArrayList<Integer> getWhiteMoves() {
         ArrayList<Integer> moves = new ArrayList<>();
@@ -732,7 +742,7 @@ public class AlphaBetaTranspositionTables {
         }
         repetitionHashTable.remove(getHashIndex(moveColor == 0));
     }
-    public static double evaluatePosition() { //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
+    public static int evaluatePosition() { //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
         //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics (bonus for canons w/ bishop/rook/queen)
         int mgScore = 0;
         int egScore = 0;
@@ -849,7 +859,7 @@ public class AlphaBetaTranspositionTables {
             }
         }
 
-        return ((double) mgScore * (24.0 - phase) / 24.0) + ((double) egScore * phase / 24.0);
+        return (int)((mgScore * (24.0 - phase) / 24.0) + (egScore * phase / 24.0));
     }
     public static int evaluatePawn(int sq, boolean white, int[] attacks, int kingPosition) {
         int score = 0;
@@ -1030,7 +1040,7 @@ public class AlphaBetaTranspositionTables {
         boolean foundGoodMove = false;
         long hash = getHashIndex(whiteMove);
         if (repetitionHashTable.contains(hash)) {
-            return CONTEMPT;
+            //return CONTEMPT; DOESN'T WORK i think it's tt errors
         }
         if (depth < 1) { //quiescence search for captures and final eval
             ArrayList<Integer> moves;
