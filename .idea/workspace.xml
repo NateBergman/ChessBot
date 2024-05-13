@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="ok fancy eval is completeish but numbers need tuning (no material imbalance or piece heuristic scores). working to add draw by repetition as that is coming up a lot">
-      <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="draw by repetition basically works&#10;-potential error where transposition table gets written as a draw in one position when it's really not in another b/ move order now changes eval&#10;-stalemate not functional yet&#10;-eval values need to be tweaked (pst, relative weights)&#10;-search optimization needs to be implemented so depth can increase">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -296,7 +296,14 @@
       <option name="project" value="LOCAL" />
       <updated>1715308571211</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="draw by repetition basically works&#10;-potential error where transposition table gets written as a draw in one position when it's really not in another b/ move order now changes eval&#10;-stalemate not functional yet&#10;-eval values need to be tweaked (pst, relative weights)&#10;-search optimization needs to be implemented so depth can increase">
+      <created>1715309756459</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1715309756459</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -311,7 +318,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Piece square tables made, just have to implement eval" />
     <MESSAGE value="fixed problem, eval should now do checks/mates but untested" />
     <MESSAGE value="fixed bugs, can play actual games now but just slow at depth 6 but fast and bad at depth 4" />
     <MESSAGE value="Basic alpha-beta pruning search working, takes a few seconds (&lt;10) for depth 6 and a little under 2 minutes for depth 8. Need to add move ordering" />
@@ -336,6 +342,7 @@
     <MESSAGE value="king attacks almost functional, just need to precompute table of near squares and work in logic for scoring attack count/value" />
     <MESSAGE value="king attacks functional (values need tuning) need to make pawn shield and then eval is close to complete aside from motifs" />
     <MESSAGE value="ok fancy eval is completeish but numbers need tuning (no material imbalance or piece heuristic scores). working to add draw by repetition as that is coming up a lot" />
-    <option name="LAST_COMMIT_MESSAGE" value="ok fancy eval is completeish but numbers need tuning (no material imbalance or piece heuristic scores). working to add draw by repetition as that is coming up a lot" />
+    <MESSAGE value="draw by repetition basically works&#10;-potential error where transposition table gets written as a draw in one position when it's really not in another b/ move order now changes eval&#10;-stalemate not functional yet&#10;-eval values need to be tweaked (pst, relative weights)&#10;-search optimization needs to be implemented so depth can increase" />
+    <option name="LAST_COMMIT_MESSAGE" value="draw by repetition basically works&#10;-potential error where transposition table gets written as a draw in one position when it's really not in another b/ move order now changes eval&#10;-stalemate not functional yet&#10;-eval values need to be tweaked (pst, relative weights)&#10;-search optimization needs to be implemented so depth can increase" />
   </component>
 </project>
