@@ -983,7 +983,7 @@ public class AlphaBetaTranspositionTables {
                 int m = moves.get(i);
                 if (makeMove(m)) {
                     moves.add(0,moves.remove(i));
-                    transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0));
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING));
                     return m;
                 }
                 double score = search(depth - 1, false,alpha,beta);
@@ -1017,7 +1017,7 @@ public class AlphaBetaTranspositionTables {
                 int m = moves.get(i);
                 if (makeMove(m)) {
                     moves.add(0,moves.remove(i));
-                    transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0));
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING));
                     return m;
                 }
                 double score = search(depth - 1, true,alpha,beta);
