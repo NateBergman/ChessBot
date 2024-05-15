@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="help">
-      <change afterPath="$PROJECT_DIR$/src/IntBitTest.java" afterDir="false" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="realized there's a problem with repetition and my end states">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
     </list>
@@ -124,7 +123,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713202710542</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="realized there's a problem with repetition and my end states">
+      <option name="closed" value="true" />
+      <created>1715622021481</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1715622021481</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -146,6 +153,7 @@
     <MESSAGE value="ok doing new draft with cool stuff like piece list and tapered eval" />
     <MESSAGE value="ok move gen works but captures and en passants with piece lists don't" />
     <MESSAGE value="help" />
-    <option name="LAST_COMMIT_MESSAGE" value="help" />
+    <MESSAGE value="realized there's a problem with repetition and my end states" />
+    <option name="LAST_COMMIT_MESSAGE" value="realized there's a problem with repetition and my end states" />
   </component>
 </project>

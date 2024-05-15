@@ -61,7 +61,10 @@ public class AlphaBetaTranspositionTables {
     static Map<Long,HashEntry> transpositionTable;
     static Set<Long> repetitionHashTable;
     static final int DRAW = 0;
-    static final int WIN = 9999; //biggest int is 2147483647 maybe make it so that
+    static final int WIN = 99999;
+    static final int TAKEKING = 9999;
+
+    //biggest int is 2147483647 maybe make it so that
     //return one value for immediate cpature per side to prevent illegal moves
     //if all of one sides moves result in immediate capture value, test null move
     //from then on return either draw or win value, which are passed like normal values and stored as final in TT
@@ -643,10 +646,10 @@ public class AlphaBetaTranspositionTables {
         int to = (move>>1) & 0b1111111; //records to and from indexes
         int from = (move>>8) & 0b1111111;
         int moveColor = move & 1;
-        repetitionHashTable.add(getHashIndex(moveColor == 0));
         if (board[to] % 8 == 6) { //taking the king
             return true;
         }
+        repetitionHashTable.add(getHashIndex(moveColor == 0));
         boardState = (byte) (boardState & 0b11110000); //resets en passantables
         if ((move>>18 & 1) == 1) { //if promotion, place correct piece
             board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor))); //first part gets type, second half color
@@ -752,34 +755,28 @@ public class AlphaBetaTranspositionTables {
             byte piece = (byte) (board[i] - 1);
             mgScore += whiteOpening[piece][i];
             egScore += whiteEndgame[piece][i];
-            //score += ((whiteOpening[piece][i]) * (24.0 - phase) / 24.0) + ((whiteEndgame[piece][i]) * phase / 24.0);
             if (piece == 0) {
                 int score = evaluatePawn(i,true,attacks,kingPositions[1]);
                 mgScore += score;
                 egScore += score;
-                //score += evaluatePawn(i,true, attacks, kingPositions[1]);
             } else {
                 int score = getMobility(i,true,attacks,kingPositions[1]);
                 mgScore += score * mobilityOpening[piece];
                 egScore += score * mobilityEndgame[piece];
-                //score += getMobility(i,true, attacks, kingPositions[1]) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
             }
         }
         for (int i : pieceLists[1]) { //24 phase points total
             byte piece = (byte) (board[i] - 9);
             mgScore -= blackOpening[piece][i];
             egScore -= blackEndgame[piece][i];
-            //score -= ((blackOpening[piece][i]) * (24.0 - phase) / 24.0) + ((blackEndgame[piece][i]) * phase / 24.0);
             if (piece == 0) {
                 int score = evaluatePawn(i,false, attacks, kingPositions[0]);;
                 mgScore -= score;
                 egScore -= score;
-                //score -= evaluatePawn(i,false, attacks, kingPositions[0]);
             } else {
                 int score = getMobility(i,false, attacks, kingPositions[0]);
                 mgScore -= score * mobilityOpening[piece];
                 egScore -= score * mobilityEndgame[piece];
-                //score -= getMobility(i,false, attacks, kingPositions[0]) * ((mobilityOpening[piece] * (24.0 - phase) / 24.0) + (mobilityEndgame[piece] * phase / 24.0));
             }
         }
 
@@ -1040,7 +1037,7 @@ public class AlphaBetaTranspositionTables {
         boolean foundGoodMove = false;
         long hash = getHashIndex(whiteMove);
         if (repetitionHashTable.contains(hash)) {
-            //return CONTEMPT; DOESN'T WORK i think it's tt errors
+            return DRAW; //DOESN'T WORK i think it's tt errors
         }
         if (depth < 1) { //quiescence search for captures and final eval
             ArrayList<Integer> moves;
@@ -1149,8 +1146,8 @@ public class AlphaBetaTranspositionTables {
                     int m = moves.get(i);
                     if (makeMove(m)) { //checkmates (found by capturing king)
                         moves.add(0,moves.remove(i)); //puts this move first because it's best so far
-                        transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0));
-                        return 9999.0;
+                        transpositionTable.put(hash,new HashEntry(moves,depth,true,TAKEKING + depth));
+                        return TAKEKING + depth;
                     }
                     double score = search(depth - 1, false, alpha, beta);
                     if (score >= beta) {
@@ -1192,8 +1189,8 @@ public class AlphaBetaTranspositionTables {
                     int m = moves.get(i);
                     if (makeMove(m)) {
                         moves.add(0,moves.remove(i));
-                        transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0));
-                        return -9999.0;
+                        transpositionTable.put(hash,new HashEntry(moves,depth,true,-TAKEKING - depth));
+                        return -TAKEKING - depth;
                     }
                     double score = search(depth - 1, true,alpha,beta);
                     if (score <= alpha) {
