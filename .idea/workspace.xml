@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="realized there's a problem with repetition and my end states">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="fixed repetition problem, now need to do stalemate and 50 move rule and incentivize earlier checkmates">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HashEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HashEntry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/V3MayFirst.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/V3MayFirst.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +133,23 @@
       <option name="project" value="LOCAL" />
       <updated>1715622021481</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="fixed repetition problem, incentivized earlier checkmates, now need to do stalemate and 50 move rule">
+      <option name="closed" value="true" />
+      <created>1715795363558</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1715795363558</updated>
+    </task>
+    <task id="LOCAL-00010" summary="fixed repetition problem, now need to do stalemate and 50 move rule and incentivize earlier checkmates">
+      <option name="closed" value="true" />
+      <created>1715795554933</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1715795554933</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -154,6 +172,8 @@
     <MESSAGE value="ok move gen works but captures and en passants with piece lists don't" />
     <MESSAGE value="help" />
     <MESSAGE value="realized there's a problem with repetition and my end states" />
-    <option name="LAST_COMMIT_MESSAGE" value="realized there's a problem with repetition and my end states" />
+    <MESSAGE value="fixed repetition problem, incentivized earlier checkmates, now need to do stalemate and 50 move rule" />
+    <MESSAGE value="fixed repetition problem, now need to do stalemate and 50 move rule and incentivize earlier checkmates" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed repetition problem, now need to do stalemate and 50 move rule and incentivize earlier checkmates" />
   </component>
 </project>

@@ -61,8 +61,9 @@ public class AlphaBetaTranspositionTables {
     static Map<Long,HashEntry> transpositionTable;
     static Set<Long> repetitionHashTable;
     static final int DRAW = 0;
-    static final int WIN = 99999;
-    static final int TAKEKING = 9999;
+    static final int WIN = 9999;
+    static final int TAKEKING = 999999;
+    static final int WIDEALPHABETA = 99999;
 
     //biggest int is 2147483647 maybe make it so that
     //return one value for immediate cpature per side to prevent illegal moves
@@ -745,7 +746,8 @@ public class AlphaBetaTranspositionTables {
         }
         repetitionHashTable.remove(getHashIndex(moveColor == 0));
     }
-    public static int evaluatePosition() { //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
+    public static int evaluatePosition() {
+        //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
         //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics (bonus for canons w/ bishop/rook/queen)
         int mgScore = 0;
         int egScore = 0;
@@ -770,7 +772,7 @@ public class AlphaBetaTranspositionTables {
             mgScore -= blackOpening[piece][i];
             egScore -= blackEndgame[piece][i];
             if (piece == 0) {
-                int score = evaluatePawn(i,false, attacks, kingPositions[0]);;
+                int score = evaluatePawn(i,false, attacks, kingPositions[0]);
                 mgScore -= score;
                 egScore -= score;
             } else {
@@ -961,7 +963,7 @@ public class AlphaBetaTranspositionTables {
 
         return score;
     }
-    public static int startSearch (int depth, boolean whiteMove, double alpha, double beta) {
+    public static int startSearch (int depth, boolean whiteMove, int alpha, int beta) {
         long hash = getHashIndex(whiteMove);
         if (whiteMove) {
             ArrayList<Integer> moves;
@@ -986,7 +988,7 @@ public class AlphaBetaTranspositionTables {
                     transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING));
                     return m;
                 }
-                double score = search(depth - 1, false,alpha,beta);
+                int score = search(depth - 1, false,alpha,beta);
                 if (score > alpha) {
                     alpha = score;
                     moves.add(0,moves.remove(i));
@@ -1020,7 +1022,7 @@ public class AlphaBetaTranspositionTables {
                     transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING));
                     return m;
                 }
-                double score = search(depth - 1, true,alpha,beta);
+                int score = search(depth - 1, true,alpha,beta);
                 if (score < beta) {
                     beta = score;
                     moves.add(0,moves.remove(i));
@@ -1033,16 +1035,19 @@ public class AlphaBetaTranspositionTables {
             return moves.get(0);
         }
     }
-    public static double search (int depth, boolean whiteMove, double alpha, double beta) {
+    public static int search (int depth, boolean whiteMove, int alpha, int beta) {
         boolean foundGoodMove = false;
         long hash = getHashIndex(whiteMove);
         if (repetitionHashTable.contains(hash)) {
-            return DRAW; //DOESN'T WORK i think it's tt errors
+            return DRAW;
         }
         if (depth < 1) { //quiescence search for captures and final eval
             ArrayList<Integer> moves;
             if (transpositionTable.containsKey(hash)) {
                 HashEntry h = transpositionTable.get(hash);
+                if (h.isCheckmate()) {
+                    return h.getCheckmateScore(depth);
+                }
                 if (h.getFullSearch() || h.getScore() >= beta || h.getScore() <= alpha) {
                     return h.getScore();
                 }
@@ -1060,7 +1065,7 @@ public class AlphaBetaTranspositionTables {
                 moves = getBlackCaptures();
             }
             if (moves.size() == 0) {
-                double score = evaluatePosition();
+                int score = evaluatePosition();
                 transpositionTable.put(hash,new HashEntry(moves,0,foundGoodMove,score));
                 return score;
             }
@@ -1071,10 +1076,10 @@ public class AlphaBetaTranspositionTables {
                     int m = moves.get(i);
                     if (makeMove(m)) {
                         moves.add(0,moves.remove(i));
-                        transpositionTable.put(hash,new HashEntry(moves,99,true,9999.0));
-                        return 9999.0;
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING));
+                        return TAKEKING;
                     }
-                    double score = search(0, false, alpha, beta);
+                    int score = search(0, false, alpha, beta);
                     if (score >= beta) {
                         unMakeMove(m);
                         moves.add(0,moves.remove(i));
@@ -1102,10 +1107,10 @@ public class AlphaBetaTranspositionTables {
                 int m = moves.get(i);
                 if (makeMove(m)) {
                     moves.add(0,moves.remove(i));
-                    transpositionTable.put(hash,new HashEntry(moves,99,true,-9999.0));
-                    return -9999.0;
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING));
+                    return -TAKEKING;
                 }
-                double score = search(0, true, alpha, beta);
+                int score = search(0, true, alpha, beta);
                 if (score <= alpha) {
                     unMakeMove(m);
                     moves.add(0,moves.remove(i));
@@ -1146,10 +1151,10 @@ public class AlphaBetaTranspositionTables {
                     int m = moves.get(i);
                     if (makeMove(m)) { //checkmates (found by capturing king)
                         moves.add(0,moves.remove(i)); //puts this move first because it's best so far
-                        transpositionTable.put(hash,new HashEntry(moves,depth,true,TAKEKING + depth));
-                        return TAKEKING + depth;
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING));
+                        return TAKEKING;
                     }
-                    double score = search(depth - 1, false, alpha, beta);
+                    int score = search(depth - 1, false, alpha, beta);
                     if (score >= beta) {
                         unMakeMove(m);
                         moves.add(0,moves.remove(i));
@@ -1162,8 +1167,20 @@ public class AlphaBetaTranspositionTables {
                         moves.add(0,moves.remove(i));
                         alpha = score;
                         foundGoodMove = true;
+                    } else if (score == -TAKEKING) { //if not a legal move, we can remove it. non-legal moves have no chance of raising alpha because losing your king sucks
+                        moves.remove(i);
+                        i--;
+                        length--;
                     }
                     unMakeMove(m);
+                }
+                if (moves.isEmpty()) { //no legal moves - either checkmate or stalemate
+                    if (isAttacked(kingPositions[0],true)) {
+                        transpositionTable.put(hash, new HashEntry(moves,99,true,-WIN));
+                        return -WIN - depth;
+                    }
+                    transpositionTable.put(hash, new HashEntry(moves,99,true,0));
+                    return 0;
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                     transpositionTable.put(hash,new HashEntry(moves,depth,foundGoodMove,alpha));
@@ -1189,10 +1206,10 @@ public class AlphaBetaTranspositionTables {
                     int m = moves.get(i);
                     if (makeMove(m)) {
                         moves.add(0,moves.remove(i));
-                        transpositionTable.put(hash,new HashEntry(moves,depth,true,-TAKEKING - depth));
-                        return -TAKEKING - depth;
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING));
+                        return -TAKEKING;
                     }
-                    double score = search(depth - 1, true,alpha,beta);
+                    int score = search(depth - 1, true,alpha,beta);
                     if (score <= alpha) {
                         unMakeMove(m);
                         if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
@@ -1205,8 +1222,20 @@ public class AlphaBetaTranspositionTables {
                         beta = score;
                         foundGoodMove = true;
                         moves.add(0,moves.remove(i));
+                    } else if (score == TAKEKING) { //if not a legal move, we can remove it. non-legal moves have no chance of raising alpha because losing your king sucks
+                        moves.remove(i);
+                        i--;
+                        length--;
                     }
                     unMakeMove(m);
+                }
+                if (moves.isEmpty()) { //no legal moves - either checkmate or stalemate
+                    if (isAttacked(kingPositions[1],true)) {
+                        transpositionTable.put(hash, new HashEntry(moves,99,true,WIN));
+                        return WIN + depth;
+                    }
+                    transpositionTable.put(hash, new HashEntry(moves,99,true,0));
+                    return 0;
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                     transpositionTable.put(hash,new HashEntry(moves,depth,foundGoodMove,beta));
@@ -1219,7 +1248,7 @@ public class AlphaBetaTranspositionTables {
         int move = 0;
         long startTime = System.currentTimeMillis();
         for (int n = 2; n <= depth; n += 1) {
-            move = startSearch(n,whiteMove,-99999.0,99999.0); //assumes (pretty safely) that score will end up being between these bounds
+            move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA); //assumes (pretty safely) that score will end up being between these bounds
         } //if it's not between them everything breaks but at that point we have a bigger problem with the eval
         System.out.println(System.currentTimeMillis() - startTime);
         return move;
