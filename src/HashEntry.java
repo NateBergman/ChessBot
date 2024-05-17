@@ -5,11 +5,20 @@ public class HashEntry {
     int score;
     boolean fullSearch;
     ArrayList<Integer> moves;
+    int pieceCount; //how many pieces are on the board for both sides (out of 32) - when a capture (non-reversible) occurs we can clear all TT entries with more material
     public HashEntry(ArrayList<Integer> moves, int depth, boolean fullSearch, int score) {
         this.moves = new ArrayList<>(moves);
         this.depth = depth;
         this.score = score;
         this.fullSearch = fullSearch;
+        pieceCount = 0;
+    }
+    public HashEntry(ArrayList<Integer> moves, int depth, boolean fullSearch, int score, int pieceCount) {
+        this.moves = new ArrayList<>(moves);
+        this.depth = depth;
+        this.score = score;
+        this.fullSearch = fullSearch;
+        this.pieceCount = pieceCount;
     }
     public ArrayList<Integer> getMoves() {
         return moves;
@@ -34,5 +43,8 @@ public class HashEntry {
             return score - currentDepth;
         }
         return score + currentDepth;
+    }
+    public int getPieceCount() {
+        return pieceCount;
     }
 }

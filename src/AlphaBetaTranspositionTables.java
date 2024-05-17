@@ -10,6 +10,7 @@ public class AlphaBetaTranspositionTables {
 
     //piece square tables
     static int phase = 0;
+    static int pieceCount = 32;
     static int[] phaseCounts = {0,0,1,1,2,4,0,0,0,0,1,1,2,4,0};
     static int[] WPO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 47, 81, 62, 59, 67, 106, 120, 60, 0, 0, 56, 78, 78, 72, 85, 85, 115, 70, 0, 0, 55, 80, 77, 94, 99, 88, 92, 57, 0, 0, 68, 95, 88, 103, 105, 94, 99, 59, 0, 0, 76, 89, 108, 113, 147, 138, 107, 62, 0, 0, 180, 216, 143, 177, 150, 208, 116, 71, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] BPO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 180, 216, 143, 177, 150, 208, 116, 71, 0, 0, 76, 89, 108, 113, 147, 138, 107, 62, 0, 0, 68, 95, 88, 103, 105, 94, 99, 59, 0, 0, 55, 80, 77, 94, 99, 88, 92, 57, 0, 0, 56, 78, 78, 72, 85, 85, 115, 70, 0, 0, 47, 81, 62, 59, 67, 106, 120, 60, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -66,7 +67,7 @@ public class AlphaBetaTranspositionTables {
     static final int WIDEALPHABETA = 99999;
 
     //biggest int is 2147483647 maybe make it so that
-    //return one value for immediate cpature per side to prevent illegal moves
+    //return one value for immediate capture per side to prevent illegal moves
     //if all of one sides moves result in immediate capture value, test null move
     //from then on return either draw or win value, which are passed like normal values and stored as final in TT
     //record this draw value as different than repetition in TT
@@ -110,6 +111,7 @@ public class AlphaBetaTranspositionTables {
         Scanner console = new Scanner(System.in);
         ArrayList<Integer> gameMoves = new ArrayList<>();
         while (true) {
+            int initPieceCount = pieceCount;
             printBoard(displayMap);
             System.out.print("0 for manual move, 1 to undo move, 2 for white engine, 3 for black engine, 4 for pawn evaluation");
             int x = console.nextInt();
@@ -137,6 +139,9 @@ public class AlphaBetaTranspositionTables {
                 int sq = console.nextInt();
                 boolean white = board[sq] == 1;
                 System.out.println(evaluatePawn(sq,white,new int[3],0));
+            }
+            if (pieceCount < initPieceCount) {
+                clearTranspositionTable();
             }
         }
     }
@@ -483,8 +488,8 @@ public class AlphaBetaTranspositionTables {
                 }
             }
         }
-        MoveSorter sorter = new MoveSorter(board);
-        moves.sort(sorter);
+        //MoveSorter sorter = new MoveSorter(board);
+        //moves.sort(sorter);
         return moves;
     }
     public static ArrayList<Integer> getBlackCaptures() {
@@ -681,8 +686,9 @@ public class AlphaBetaTranspositionTables {
 
         pieceLists[moveColor].remove(from);
         pieceLists[moveColor].add(to);
-        if ((move & 0b11110000000000000000000) != 0) {
+        if ((move & 0b11110000000000000000000) != 0) { //captures
             pieceLists[1-moveColor].remove(to);
+            pieceCount--;
         }
 
         if(from == 21 || from == 25 || to == 21) {//castling rights are lost if pieces move off 21,25,28,91,95,or98 or opp captures those rooks
@@ -738,6 +744,7 @@ public class AlphaBetaTranspositionTables {
         pieceLists[moveColor].remove(to);
         if ((move & 0b11110000000000000000000) != 0) {
             pieceLists[1-moveColor].add(to);
+            pieceCount++;
         }
         if (board[from] == 6) {
             kingPositions[0] = from;
@@ -985,7 +992,7 @@ public class AlphaBetaTranspositionTables {
                 int m = moves.get(i);
                 if (makeMove(m)) {
                     moves.add(0,moves.remove(i));
-                    transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING));
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING,pieceCount));
                     return m;
                 }
                 int score = search(depth - 1, false,alpha,beta);
@@ -996,7 +1003,7 @@ public class AlphaBetaTranspositionTables {
                 unMakeMove(m);
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                transpositionTable.put(hash,new HashEntry(moves,depth,true,alpha));
+                transpositionTable.put(hash,new HashEntry(moves,depth,true,alpha,pieceCount));
             }
             return moves.get(0);
         } else {
@@ -1019,7 +1026,7 @@ public class AlphaBetaTranspositionTables {
                 int m = moves.get(i);
                 if (makeMove(m)) {
                     moves.add(0,moves.remove(i));
-                    transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING));
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING,pieceCount));
                     return m;
                 }
                 int score = search(depth - 1, true,alpha,beta);
@@ -1030,7 +1037,7 @@ public class AlphaBetaTranspositionTables {
                 unMakeMove(m);
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                transpositionTable.put(hash,new HashEntry(moves,depth,true,beta));
+                transpositionTable.put(hash,new HashEntry(moves,depth,true,beta,pieceCount));
             }
             return moves.get(0);
         }
@@ -1066,7 +1073,7 @@ public class AlphaBetaTranspositionTables {
             }
             if (moves.size() == 0) {
                 int score = evaluatePosition();
-                transpositionTable.put(hash,new HashEntry(moves,0,foundGoodMove,score));
+                transpositionTable.put(hash,new HashEntry(moves,0,foundGoodMove,score,pieceCount));
                 return score;
             }
             if (whiteMove) {
@@ -1076,7 +1083,7 @@ public class AlphaBetaTranspositionTables {
                     int m = moves.get(i);
                     if (makeMove(m)) {
                         moves.add(0,moves.remove(i));
-                        transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING));
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING,pieceCount));
                         return TAKEKING;
                     }
                     int score = search(0, false, alpha, beta);
@@ -1084,7 +1091,7 @@ public class AlphaBetaTranspositionTables {
                         unMakeMove(m);
                         moves.add(0,moves.remove(i));
                         if (!transpositionTable.containsKey(hash)) {
-                            transpositionTable.put(hash,new HashEntry(moves,0,false,score));
+                            transpositionTable.put(hash,new HashEntry(moves,0,false,score,pieceCount));
                         }
                         return score;
                     }
@@ -1096,7 +1103,7 @@ public class AlphaBetaTranspositionTables {
                     unMakeMove(m);
                 }
                 if (!transpositionTable.containsKey(hash)) {
-                    transpositionTable.put(hash,new HashEntry(moves,0,foundGoodMove,alpha));
+                    transpositionTable.put(hash,new HashEntry(moves,0,foundGoodMove,alpha,pieceCount));
                 }
                 return alpha;
             }
@@ -1107,7 +1114,7 @@ public class AlphaBetaTranspositionTables {
                 int m = moves.get(i);
                 if (makeMove(m)) {
                     moves.add(0,moves.remove(i));
-                    transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING));
+                    transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING,pieceCount));
                     return -TAKEKING;
                 }
                 int score = search(0, true, alpha, beta);
@@ -1115,7 +1122,7 @@ public class AlphaBetaTranspositionTables {
                     unMakeMove(m);
                     moves.add(0,moves.remove(i));
                     if (!transpositionTable.containsKey(hash)) {
-                        transpositionTable.put(hash,new HashEntry(moves,0,false,score));
+                        transpositionTable.put(hash,new HashEntry(moves,0,false,score,pieceCount));
                     }
                     return score;
                 }
@@ -1127,7 +1134,7 @@ public class AlphaBetaTranspositionTables {
                 unMakeMove(m);
             }
             if (!transpositionTable.containsKey(hash)) {
-                transpositionTable.put(hash,new HashEntry(moves,0,foundGoodMove,beta));
+                transpositionTable.put(hash,new HashEntry(moves,0,foundGoodMove,beta,pieceCount));
             }
             return beta;
         } else {
@@ -1151,7 +1158,7 @@ public class AlphaBetaTranspositionTables {
                     int m = moves.get(i);
                     if (makeMove(m)) { //checkmates (found by capturing king)
                         moves.add(0,moves.remove(i)); //puts this move first because it's best so far
-                        transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING));
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,TAKEKING,pieceCount));
                         return TAKEKING;
                     }
                     int score = search(depth - 1, false, alpha, beta);
@@ -1159,7 +1166,7 @@ public class AlphaBetaTranspositionTables {
                         unMakeMove(m);
                         moves.add(0,moves.remove(i));
                         if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score));
+                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score,pieceCount));
                         }
                         return score;
                     }
@@ -1176,14 +1183,14 @@ public class AlphaBetaTranspositionTables {
                 }
                 if (moves.isEmpty()) { //no legal moves - either checkmate or stalemate
                     if (isAttacked(kingPositions[0],true)) {
-                        transpositionTable.put(hash, new HashEntry(moves,99,true,-WIN));
+                        transpositionTable.put(hash, new HashEntry(moves,99,true,-WIN,pieceCount));
                         return -WIN - depth;
                     }
-                    transpositionTable.put(hash, new HashEntry(moves,99,true,0));
+                    transpositionTable.put(hash, new HashEntry(moves,99,true,0,pieceCount));
                     return 0;
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                    transpositionTable.put(hash,new HashEntry(moves,depth,foundGoodMove,alpha));
+                    transpositionTable.put(hash,new HashEntry(moves,depth,foundGoodMove,alpha,pieceCount));
                 }
                 return alpha;
             } else {
@@ -1206,7 +1213,7 @@ public class AlphaBetaTranspositionTables {
                     int m = moves.get(i);
                     if (makeMove(m)) {
                         moves.add(0,moves.remove(i));
-                        transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING));
+                        transpositionTable.put(hash,new HashEntry(moves,99,true,-TAKEKING,pieceCount));
                         return -TAKEKING;
                     }
                     int score = search(depth - 1, true,alpha,beta);
@@ -1214,7 +1221,7 @@ public class AlphaBetaTranspositionTables {
                         unMakeMove(m);
                         if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                             moves.add(0,moves.remove(i));
-                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score));
+                            transpositionTable.put(hash,new HashEntry(moves,depth,false,score,pieceCount));
                         }
                         return score;
                     }
@@ -1231,14 +1238,14 @@ public class AlphaBetaTranspositionTables {
                 }
                 if (moves.isEmpty()) { //no legal moves - either checkmate or stalemate
                     if (isAttacked(kingPositions[1],true)) {
-                        transpositionTable.put(hash, new HashEntry(moves,99,true,WIN));
+                        transpositionTable.put(hash, new HashEntry(moves,99,true,WIN,pieceCount));
                         return WIN + depth;
                     }
-                    transpositionTable.put(hash, new HashEntry(moves,99,true,0));
+                    transpositionTable.put(hash, new HashEntry(moves,99,true,0,pieceCount));
                     return 0;
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
-                    transpositionTable.put(hash,new HashEntry(moves,depth,foundGoodMove,beta));
+                    transpositionTable.put(hash,new HashEntry(moves,depth,foundGoodMove,beta,pieceCount));
                 }
                 return beta;
             }
@@ -1270,5 +1277,14 @@ public class AlphaBetaTranspositionTables {
             hash = hash ^ hashIndex[0][8 + ((boardState & 0b11110000)>>>4)];
         }
         return hash;
+    }
+    public static void clearTranspositionTable() {
+        Set<Long> keys = transpositionTable.keySet();
+        /*for (long l : keys) {
+            if (transpositionTable.get(l).getPieceCount() > pieceCount) {
+                transpositionTable.remove(l);
+            }
+        }*/
+        System.out.println("removed keys");
     }
 }
