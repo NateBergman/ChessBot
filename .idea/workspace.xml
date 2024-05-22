@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="ok now has stalemate, need to reformat quiescence to not run out of memory and handle stalemate and stuff better">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="middle of working on clearing TT and also need to add checkmate/stalemate to quiescence">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/HashEntry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HashEntry.java" afterDir="false" />
@@ -156,7 +156,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715882121923</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="middle of working on clearing TT and also need to add checkmate/stalemate to quiescence">
+      <option name="closed" value="true" />
+      <created>1715964834738</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1715964834738</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -182,6 +190,7 @@
     <MESSAGE value="fixed repetition problem, incentivized earlier checkmates, now need to do stalemate and 50 move rule" />
     <MESSAGE value="fixed repetition problem, now need to do stalemate and 50 move rule and incentivize earlier checkmates" />
     <MESSAGE value="ok now has stalemate, need to reformat quiescence to not run out of memory and handle stalemate and stuff better" />
-    <option name="LAST_COMMIT_MESSAGE" value="ok now has stalemate, need to reformat quiescence to not run out of memory and handle stalemate and stuff better" />
+    <MESSAGE value="middle of working on clearing TT and also need to add checkmate/stalemate to quiescence" />
+    <option name="LAST_COMMIT_MESSAGE" value="middle of working on clearing TT and also need to add checkmate/stalemate to quiescence" />
   </component>
 </project>
