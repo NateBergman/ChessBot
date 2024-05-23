@@ -69,17 +69,24 @@ public class AlphaBetaTranspositionTables {
     static final int TAKEKING = 999999;
     static final int WIDEALPHABETA = 99999;
 
-    static final int SEARCH_DEPTH = 4;
-    static final int TIME_PER_MOVE = 5000; //how long we take per move in milliseconds
+    static final int SEARCH_DEPTH = 6; //we stop the search when it either takes a certain amount of time or hits a certain depth
+    static final int TIME_PER_MOVE = 5000; //how long we take per move in milliseconds - this allows us 60 moves for a 5 + 0 game
+    static MoveSorter sorter;
 
-    //to-dos: quiescence search (with SEE, pruning, and tt hashing), attack maps, check extentions, time-based iterative deepending,
-    // move ordering (hash (best moves previously, stored in tt), mvv/lva, killer moves/history heuristic, others), aspiration windows and pv search (narrow window for all non-pv)
-    //better eval (pawn structure, mobility, king safety, mop up endgame)
-    //safeguards against tt collision (clear old entries, like after losing castling rights ones that have it still) (currently have problem if >beta in one search is <alpha in another)
-    //handle draws and better win checking (earlier checkmates are better)
-    //eventually do forward pruning/reductions (lmr, delta, futility, null move)
-    //bitboard move gen
-    //lastly opening/endgame tablebases/books
+    // NEEDED:
+    // check extentions (fixes quiescence stalemate problem)
+    // time-based iterative deepening combining time/depth management based on expected game length
+    // move ordering (hash (best moves previously, stored in tt), captures w/ mvv/lva, killer moves/history heuristic, others),
+    // tune eval! maybe add mop up endgame
+    // better tt clearing, (currently have problem if >beta in one search is <alpha in another)
+    // opening book
+
+    //OPTIONAL:
+    // forward pruning/reductions (lmr, delta, futility, null move)
+    // aspiration windows and pv search (narrow window for all non-pv)
+    // bitboard move gen and attack maps
+    // SEE
+    // endgame tablebases
     public static void main(String[] args) {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
                 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
@@ -97,6 +104,7 @@ public class AlphaBetaTranspositionTables {
         Collections.addAll(pieceLists[0],21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38);
         Collections.addAll(pieceLists[1], 81, 82, 83, 84, 85, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98);
 
+        sorter = new MoveSorter(board);
         seedHashIndex();
         transpositionTable = new HashMap<>();
         repetitionHashTable = new HashSet<>();
@@ -497,8 +505,7 @@ public class AlphaBetaTranspositionTables {
                 }
             }
         }
-        //MoveSorter sorter = new MoveSorter(board);
-        //moves.sort(sorter);
+        moves.sort(sorter);
         return moves;
     }
     public static ArrayList<Integer> getBlackCaptures() {
@@ -565,6 +572,7 @@ public class AlphaBetaTranspositionTables {
                 }
             }
         }
+        moves.sort(sorter);
         return moves;
     }
     public static int getMobility (int square, boolean white, int[] attacks, int kingSquare) { //also gets attacks for attack tables/king safety
@@ -1049,7 +1057,7 @@ public class AlphaBetaTranspositionTables {
             return moves.get(0);
         }
     }
-    public static int search (int depth, boolean whiteMove, int alpha, int beta) { //todo: check extensions (quiescence doesn't need checkmate)
+    public static int search (int depth, boolean whiteMove, int alpha, int beta) { //todo: check extensions (quiescence doesn't need checkmate if we have these)
         boolean foundGoodMove = false;
         long hash = getHashIndex(whiteMove);
         if (repetitionHashTable.contains(hash)) {
@@ -1085,6 +1093,12 @@ public class AlphaBetaTranspositionTables {
             }
             if (whiteMove) {
                 alpha = Math.max(evaluatePosition(),alpha); //need to find out a way for counting it as a full search still if nothing exceeds no capture
+                if (alpha >= beta) { //if this position is too good for us even without making a move (bad for opponent), don't have to search moves
+                    if (!transpositionTable.containsKey(hash)) {
+                        transpositionTable.put(hash,new HashEntry(moves,0,false,alpha,searchNumber));
+                    }
+                    return alpha;
+                }
                 int length = moves.size();
                 for (int i = 0; i < length; i++) {
                     int m = moves.get(i);
@@ -1116,6 +1130,12 @@ public class AlphaBetaTranspositionTables {
             }
             //black moves
             beta = Math.min(evaluatePosition(),beta); //need to find out a way for counting it as a full search still if nothing exceeds no capture
+            if (beta <= alpha) { //if this position is too good for us even without making a move (bad for opponent), don't have to search moves
+                if (!transpositionTable.containsKey(hash)) {
+                    transpositionTable.put(hash,new HashEntry(moves,0,false,beta,searchNumber));
+                }
+                return beta;
+            }
             int length = moves.size();
             for (int i = 0; i < length; i++) {
                 int m = moves.get(i);
@@ -1265,6 +1285,14 @@ public class AlphaBetaTranspositionTables {
             move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA); //assumes (pretty safely) that score will end up being between these bounds
         } //if it's not between them everything breaks but at that point we have a bigger problem with the eval
         System.out.println(System.currentTimeMillis() - startTime);
+        return move;
+    }
+    public static int timeBasedIterativeDeepening(boolean whiteMove) {
+        int move = 0;
+        long startTime = System.currentTimeMillis();
+        for (int n = 1; System.currentTimeMillis() - startTime < TIME_PER_MOVE; n += 1) {
+            //move = startSearch(n,whiteMove,startTime);
+        }
         return move;
     }
     public static long getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table

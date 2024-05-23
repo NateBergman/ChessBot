@@ -13,8 +13,8 @@ public class MoveSorter implements Comparator<Integer> { //just sorting captures
             byte to1 = board[m1 >> 1 & 0b1111111];
             byte from1 = board[m1 >> 8 & 0b1111111];
             byte to2 = board[m2 >> 1 & 0b1111111];
-            byte from2 = board[m2 >> 1 & 0b1111111];
-            return -4 * board[to1] + board[from1] + 4 * board[to2] + board[from2];
+            byte from2 = board[m2 >> 8 & 0b1111111];
+            return -4 * (board[to1] - board[to2]) + board[from1] - board[from2];
         //}
         //if (capture1) {
         //    return -1;
