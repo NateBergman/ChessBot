@@ -985,7 +985,7 @@ public class AlphaBetaTranspositionTables {
 
         return score;
     }
-    public static int startSearch (int depth, boolean whiteMove, int alpha, int beta) {
+    public static int startSearch (int depth, boolean whiteMove, int alpha, int beta, long startTime) {
         long hash = getHashIndex(whiteMove);
         if (whiteMove) {
             ArrayList<Integer> moves;
@@ -1016,6 +1016,9 @@ public class AlphaBetaTranspositionTables {
                     moves.add(0,moves.remove(i));
                 }
                 unMakeMove(m);
+                if (System.currentTimeMillis() - startTime > TIME_PER_MOVE) {
+                    return moves.get(0);
+                }
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                 transpositionTable.put(hash,new HashEntry(moves,depth,true,alpha,searchNumber));
@@ -1057,7 +1060,7 @@ public class AlphaBetaTranspositionTables {
             return moves.get(0);
         }
     }
-    public static int search (int depth, boolean whiteMove, int alpha, int beta) { //todo: check extensions (quiescence doesn't need checkmate if we have these)
+    public static int search (int depth, boolean whiteMove, int alpha, int beta) {
         boolean foundGoodMove = false;
         long hash = getHashIndex(whiteMove);
         if (repetitionHashTable.contains(hash)) {
@@ -1282,7 +1285,7 @@ public class AlphaBetaTranspositionTables {
         int move = 0;
         long startTime = System.currentTimeMillis();
         for (int n = 2; n <= depth; n += 1) {
-            move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA); //assumes (pretty safely) that score will end up being between these bounds
+            move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA, 999999999); //assumes (pretty safely) that score will end up being between these bounds
         } //if it's not between them everything breaks but at that point we have a bigger problem with the eval
         System.out.println(System.currentTimeMillis() - startTime);
         return move;
@@ -1291,7 +1294,7 @@ public class AlphaBetaTranspositionTables {
         int move = 0;
         long startTime = System.currentTimeMillis();
         for (int n = 1; System.currentTimeMillis() - startTime < TIME_PER_MOVE; n += 1) {
-            //move = startSearch(n,whiteMove,startTime);
+            move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA,startTime);
         }
         return move;
     }
