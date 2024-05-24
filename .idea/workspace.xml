@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="fixed a quiescence bug, see todo list still. Actually working on time management next" />
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="working on time management">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -176,7 +179,15 @@
       <option name="project" value="LOCAL" />
       <updated>1716485897973</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="working on time management">
+      <option name="closed" value="true" />
+      <created>1716486904238</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1716486904238</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -205,6 +216,7 @@
     <MESSAGE value="middle of working on clearing TT and also need to add checkmate/stalemate to quiescence" />
     <MESSAGE value="need to still work on tt memory, check extensions (fixes quiescence problem, but now starting opening book!" />
     <MESSAGE value="fixed a quiescence bug, see todo list still. Actually working on time management next" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed a quiescence bug, see todo list still. Actually working on time management next" />
+    <MESSAGE value="working on time management" />
+    <option name="LAST_COMMIT_MESSAGE" value="working on time management" />
   </component>
 </project>

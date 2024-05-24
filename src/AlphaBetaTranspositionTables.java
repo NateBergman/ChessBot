@@ -70,14 +70,18 @@ public class AlphaBetaTranspositionTables {
     static final int WIDEALPHABETA = 99999;
 
     static final int SEARCH_DEPTH = 6; //we stop the search when it either takes a certain amount of time or hits a certain depth
-    static final int TIME_PER_MOVE = 5000; //how long we take per move in milliseconds - this allows us 60 moves for a 5 + 0 game
+    static final int TIME_PER_MOVE = 10000000; //how long we take per move in milliseconds - this allows us 60 moves for a 5 + 0 game
     static MoveSorter sorter;
+
+    static final int TIME_CONTROL = 300000;
+    static final int INCREMENT = 3000;
+    static int timeLeft = TIME_CONTROL;
 
     // NEEDED:
     // check extentions (fixes quiescence stalemate problem)
     // time-based iterative deepening combining time/depth management based on expected game length
     // move ordering (hash (best moves previously, stored in tt), captures w/ mvv/lva, killer moves/history heuristic, others),
-    // tune eval! maybe add mop up endgame
+    // tune eval! maybe simplify for speed and add mop up endgame
     // better tt clearing, (currently have problem if >beta in one search is <alpha in another)
     // opening book
 
@@ -87,6 +91,7 @@ public class AlphaBetaTranspositionTables {
     // bitboard move gen and attack maps
     // SEE
     // endgame tablebases
+    // "pondering"
     public static void main(String[] args) {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
                 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
@@ -985,7 +990,7 @@ public class AlphaBetaTranspositionTables {
 
         return score;
     }
-    public static int startSearch (int depth, boolean whiteMove, int alpha, int beta, long startTime) {
+    public static int startSearch (int depth, boolean whiteMove, int alpha, int beta, long endTime) {
         long hash = getHashIndex(whiteMove);
         if (whiteMove) {
             ArrayList<Integer> moves;
@@ -1016,7 +1021,7 @@ public class AlphaBetaTranspositionTables {
                     moves.add(0,moves.remove(i));
                 }
                 unMakeMove(m);
-                if (System.currentTimeMillis() - startTime > TIME_PER_MOVE) {
+                if (System.currentTimeMillis() > endTime) {
                     return moves.get(0);
                 }
             }
@@ -1053,6 +1058,9 @@ public class AlphaBetaTranspositionTables {
                     moves.add(0,moves.remove(i));
                 }
                 unMakeMove(m);
+                if (System.currentTimeMillis() > endTime) {
+                    return moves.get(0);
+                }
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                 transpositionTable.put(hash,new HashEntry(moves,depth,true,beta,searchNumber));
@@ -1281,7 +1289,7 @@ public class AlphaBetaTranspositionTables {
             }
         }
     }
-    public static int iterativeDeepening(int depth, boolean whiteMove) {
+    public static int depthBasediterativeDeepening(int depth, boolean whiteMove) {
         int move = 0;
         long startTime = System.currentTimeMillis();
         for (int n = 2; n <= depth; n += 1) {
@@ -1292,10 +1300,24 @@ public class AlphaBetaTranspositionTables {
     }
     public static int timeBasedIterativeDeepening(boolean whiteMove) {
         int move = 0;
-        long startTime = System.currentTimeMillis();
-        for (int n = 1; System.currentTimeMillis() - startTime < TIME_PER_MOVE; n += 1) {
-            move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA,startTime);
+        long endTime = System.currentTimeMillis() + TIME_PER_MOVE;
+        for (int n = 2; System.currentTimeMillis() < endTime; n += 1) {
+            move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA,endTime);
         }
+        return move;
+    }
+    public static int iterativeDeepening(int depth, boolean whiteMove) { //depth or time cutoff (whichever it hits first)
+        int move = 0;
+        long startTime = System.currentTimeMillis();
+        long endTime = /*System.currentTimeMillis()*/ startTime + TIME_PER_MOVE;
+        for (int n = 2; System.currentTimeMillis() < endTime && n <= depth; n++) {
+            move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA,endTime);
+        }
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        System.out.println(elapsedTime);
+        /*timeLeft -= elapsedTime;
+        timeLeft += INCREMENT;
+        System.out.println(timeLeft / 1000);*/
         return move;
     }
     public static long getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
@@ -1329,5 +1351,8 @@ public class AlphaBetaTranspositionTables {
             }
         }
         System.out.println("Removed " + count + " entries");
+    }
+    public static int allocateTime() {
+        return INCREMENT * 3 / 4 + timeLeft / 25;
     }
 }
