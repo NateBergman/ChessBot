@@ -9,7 +9,7 @@ public class AlphaBetaTranspositionTables {
     static boolean[] moveGenSlide = {false,false,true,true,true,false};
     static int[][] moveGenOffset = {{},{-21, -19,-12, -8, 8, 12, 19, 21},{-11,  -9,  9, 11},{-10,  -1,  1, 10},{-11, -10, -9, -1, 1,  9, 10, 11},{-11, -10, -9, -1, 1,  9, 10, 11}};
 
-    //piece square tables
+    //piece square tables TO BE UPDATED
     static int phase = 0;
     static int searchNumber = 0;
     static int[] phaseCounts = {0,0,1,1,2,4,0,0,0,0,1,1,2,4,0};
@@ -61,16 +61,23 @@ public class AlphaBetaTranspositionTables {
 
     static long[][] hashIndex;
     static Map<Long,HashEntry> transpositionTable;
-    static final int MAXTTSIZE = 6000000;
+    static final int MAXTTSIZE = 5000000;
+    static final int PANICTTCLEARTRIGGER = 12000000;
+    static final int PANICTTCLEARSIZE = 8000000;
     static final int TTBACKDEPTH = 4;
+
+    static final int NODESPERCHECK = 2048; //number of nodes we search at a time before checking if we're out of time/tt is close to overflowing
+    static int nodeCount = 0;
+
     static Set<Long> repetitionHashTable;
     static final int DRAW = 0;
     static final int WIN = 9999;
     static final int TAKEKING = 999999;
     static final int WIDEALPHABETA = 99999;
+    static final int OUTOFTIME = 10000000;
 
-    static final int SEARCH_DEPTH = 6; //we stop the search when it either takes a certain amount of time or hits a certain depth
-    static final int TIME_PER_MOVE = 10000000; //how long we take per move in milliseconds - this allows us 60 moves for a 5 + 0 game
+    static final int SEARCH_DEPTH = 10; //we stop the search when it either takes a certain amount of time or hits a certain depth
+    static final int TIME_PER_MOVE = 10000; //how long we take per move in milliseconds - this allows us 30 moves for a 5 + 0 game
     static MoveSorter sorter;
 
     static final int TIME_CONTROL = 300000;
@@ -84,15 +91,17 @@ public class AlphaBetaTranspositionTables {
     // tune eval! maybe simplify for speed and add mop up endgame
     // better tt clearing, (currently have problem if >beta in one search is <alpha in another)
     // opening book
+    // limited quiescence (so it doesn't take forever!)
 
     //OPTIONAL:
+    // incremental update of pst, hash, material, etc. to save time
     // forward pruning/reductions (lmr, delta, futility, null move)
     // aspiration windows and pv search (narrow window for all non-pv)
     // bitboard move gen and attack maps
     // SEE
     // endgame tablebases
     // "pondering"
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
                 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
                 7, 4, 2, 3, 5, 6, 3, 2, 4, 7,
@@ -120,6 +129,7 @@ public class AlphaBetaTranspositionTables {
 
         Scanner console = new Scanner(System.in);
         ArrayList<Integer> gameMoves = new ArrayList<>();
+        //getOpenings("src/OpeningBookV1");
         while (true) {
             printBoard(displayMap);
             System.out.print("0 for manual move, 1 to undo move, 2 for white engine, 3 for black engine, 4 for pawn evaluation");
@@ -149,11 +159,7 @@ public class AlphaBetaTranspositionTables {
                 boolean white = board[sq] == 1;
                 System.out.println(evaluatePawn(sq,white,new int[3],0));
             }
-            int cutoff = searchNumber - TTBACKDEPTH;
-            while (transpositionTable.size() > MAXTTSIZE) {
-                clearTranspositionTableOrderIn(cutoff);
-                cutoff++;
-            }
+            clearTranspositionTableOrderIn(MAXTTSIZE);
             System.out.println("TT size : " + transpositionTable.size());
             searchNumber++;
         }
@@ -1015,15 +1021,19 @@ public class AlphaBetaTranspositionTables {
                     transpositionTable.put(hash,new HashEntry(99,true,TAKEKING,searchNumber));
                     return m;
                 }
-                int score = search(depth - 1, false,alpha,beta);
+                int score = search(depth - 1, false,alpha,beta,endTime);
+                if (score == OUTOFTIME) {
+                    unMakeMove(m);
+                    return moves.get(0);
+                }
                 if (score > alpha) {
                     alpha = score;
                     moves.add(0,moves.remove(i));
                 }
                 unMakeMove(m);
-                if (System.currentTimeMillis() > endTime) {
+                /*if (System.currentTimeMillis() > endTime) {
                     return moves.get(0);
-                }
+                }*/
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                 transpositionTable.put(hash,new HashEntry(moves,depth,true,alpha,searchNumber));
@@ -1052,15 +1062,19 @@ public class AlphaBetaTranspositionTables {
                     transpositionTable.put(hash,new HashEntry(99,true,-TAKEKING,searchNumber));
                     return m;
                 }
-                int score = search(depth - 1, true,alpha,beta);
+                int score = search(depth - 1, true,alpha,beta,endTime);
+                if (score == OUTOFTIME) {
+                    unMakeMove(m);
+                    return moves.get(0);
+                }
                 if (score < beta) {
                     beta = score;
                     moves.add(0,moves.remove(i));
                 }
                 unMakeMove(m);
-                if (System.currentTimeMillis() > endTime) {
+                /*if (System.currentTimeMillis() > endTime) { //commented out because it's extremely rare we'll hit out of time in the root node
                     return moves.get(0);
-                }
+                }*/
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                 transpositionTable.put(hash,new HashEntry(moves,depth,true,beta,searchNumber));
@@ -1068,7 +1082,18 @@ public class AlphaBetaTranspositionTables {
             return moves.get(0);
         }
     }
-    public static int search (int depth, boolean whiteMove, int alpha, int beta) {
+    public static int search (int depth, boolean whiteMove, int alpha, int beta, long endTime) {
+        nodeCount++;
+        if (nodeCount == NODESPERCHECK) { //check if search is out of time/tt overflow risk (housekeeping)
+            nodeCount = 0;
+            if (System.currentTimeMillis() > endTime) {
+                return OUTOFTIME;
+            }
+            if (transpositionTable.size() > PANICTTCLEARTRIGGER) {
+                clearTranspositionTableOrderIn(PANICTTCLEARSIZE);
+            }
+        }
+
         boolean foundGoodMove = false;
         long hash = getHashIndex(whiteMove);
         if (repetitionHashTable.contains(hash)) {
@@ -1118,7 +1143,11 @@ public class AlphaBetaTranspositionTables {
                         transpositionTable.put(hash,new HashEntry(99,true,TAKEKING,searchNumber));
                         return TAKEKING;
                     }
-                    int score = search(0, false, alpha, beta);
+                    int score = search(0, false, alpha, beta,endTime);
+                    if (score == OUTOFTIME) {
+                        unMakeMove(m);
+                        return OUTOFTIME;
+                    }
                     if (score >= beta) {
                         unMakeMove(m);
                         moves.add(0,moves.remove(i));
@@ -1155,7 +1184,11 @@ public class AlphaBetaTranspositionTables {
                     transpositionTable.put(hash,new HashEntry(99,true,-TAKEKING,searchNumber));
                     return -TAKEKING;
                 }
-                int score = search(0, true, alpha, beta);
+                int score = search(0, true, alpha, beta,endTime);
+                if (score == OUTOFTIME) {
+                    unMakeMove(m);
+                    return OUTOFTIME;
+                }
                 if (score <= alpha) {
                     unMakeMove(m);
                     moves.add(0,moves.remove(i));
@@ -1199,7 +1232,11 @@ public class AlphaBetaTranspositionTables {
                         transpositionTable.put(hash,new HashEntry(99,true,TAKEKING,searchNumber));
                         return TAKEKING;
                     }
-                    int score = search(depth - 1, false, alpha, beta);
+                    int score = search(depth - 1, false, alpha, beta,endTime);
+                    if (score == OUTOFTIME) {
+                        unMakeMove(m);
+                        return OUTOFTIME;
+                    }
                     if (score >= beta) {
                         unMakeMove(m);
                         moves.add(0,moves.remove(i));
@@ -1254,7 +1291,11 @@ public class AlphaBetaTranspositionTables {
                         transpositionTable.put(hash,new HashEntry(99,true,-TAKEKING,searchNumber));
                         return -TAKEKING;
                     }
-                    int score = search(depth - 1, true,alpha,beta);
+                    int score = search(depth - 1, true,alpha,beta,endTime);
+                    if (score == OUTOFTIME) {
+                        unMakeMove(m);
+                        return OUTOFTIME;
+                    }
                     if (score <= alpha) {
                         unMakeMove(m);
                         if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
@@ -1310,7 +1351,9 @@ public class AlphaBetaTranspositionTables {
         int move = 0;
         long startTime = System.currentTimeMillis();
         long endTime = /*System.currentTimeMillis()*/ startTime + TIME_PER_MOVE;
-        for (int n = 2; System.currentTimeMillis() < endTime && n <= depth; n++) {
+        long midCutoffTime = startTime + TIME_PER_MOVE / 2; //only goes to next depth if over half our time is left
+        for (int n = 2; System.currentTimeMillis() < midCutoffTime && n <= depth; n++) {
+            nodeCount = 0;
             move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA,endTime);
         }
         long elapsedTime = System.currentTimeMillis() - startTime;
@@ -1339,16 +1382,21 @@ public class AlphaBetaTranspositionTables {
         return hash;
     }
     //memory management
-    public static void clearTranspositionTableOrderIn(int cutoff) { //first in, first out
-        Set<Long> keys = transpositionTable.keySet();
-        Iterator<Long> itr = keys.iterator();
+    public static void clearTranspositionTableOrderIn(int goalSize) { //first in, first out
+        int cutoff = searchNumber - TTBACKDEPTH;
+        Set<Long> keys = transpositionTable.keySet(); //gets down to goal size exactly - will end up removing some but not all from a certain order
         int count = 0;
-        while (itr.hasNext()) {
-            HashEntry h = transpositionTable.get(itr.next());
-            if (h.orderIn <= cutoff) {
-                itr.remove();
-                count++;
+        int requiredCount = transpositionTable.size() - goalSize;
+        while (count < requiredCount) {
+            Iterator<Long> itr = keys.iterator();
+            while (itr.hasNext() && count < requiredCount) {
+                HashEntry h = transpositionTable.get(itr.next());
+                if (h.orderIn <= cutoff) {
+                    itr.remove();
+                    count++;
+                }
             }
+            cutoff ++;
         }
         System.out.println("Removed " + count + " entries");
     }
