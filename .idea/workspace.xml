@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="draw by repetition basically works&#10;-potential error where transposition table gets written as a draw in one position when it's really not in another b/ move order now changes eval&#10;-stalemate not functional yet&#10;-eval values need to be tweaked (pst, relative weights)&#10;-search optimization needs to be implemented so depth can increase">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="Better time based cutoffs and tt clearing&#10;next up is basically funcitonal game so i have something to turn in">
+      <change afterPath="$PROJECT_DIR$/src/FinalMiyoshiProject.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AlphaBetaTranspositionTables.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/OpeningBookGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/OpeningBookGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/OpeningBookV1" beforeDir="false" afterPath="$PROJECT_DIR$/src/OpeningBookV1" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,7 +180,14 @@
       <option name="project" value="LOCAL" />
       <updated>1716485897973</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Better time based cutoffs and tt clearing&#10;next up is basically funcitonal game so i have something to turn in">
+      <created>1716834259743</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1716834259743</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -210,6 +216,7 @@
     <MESSAGE value="middle of working on clearing TT and also need to add checkmate/stalemate to quiescence" />
     <MESSAGE value="need to still work on tt memory, check extensions (fixes quiescence problem, but now starting opening book!" />
     <MESSAGE value="fixed a quiescence bug, see todo list still. Actually working on time management next" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed a quiescence bug, see todo list still. Actually working on time management next" />
+    <MESSAGE value="Better time based cutoffs and tt clearing&#10;next up is basically funcitonal game so i have something to turn in" />
+    <option name="LAST_COMMIT_MESSAGE" value="Better time based cutoffs and tt clearing&#10;next up is basically funcitonal game so i have something to turn in" />
   </component>
 </project>

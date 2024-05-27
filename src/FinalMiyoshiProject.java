@@ -1,15 +1,17 @@
 import java.util.*;
 import java.io.*;
-public class AlphaBetaTranspositionTables {
+public class FinalMiyoshiProject {
+    //board setup
     static byte[] board;
     static byte boardState;
     static Set<Integer>[] pieceLists = new Set[]{new HashSet<>(), new HashSet<>()};
     static int[] kingPositions = {25,95};
-
+    static MoveSorter sorter;
+    //move generation constants for each piece
     static boolean[] moveGenSlide = {false,false,true,true,true,false};
     static int[][] moveGenOffset = {{},{-21, -19,-12, -8, 8, 12, 19, 21},{-11,  -9,  9, 11},{-10,  -1,  1, 10},{-11, -10, -9, -1, 1,  9, 10, 11},{-11, -10, -9, -1, 1,  9, 10, 11}};
 
-    //piece square tables TO BE UPDATED
+    //scoring initialization - includes phase for mid/endgame scoring and pst's
     static int phase = 0;
     static int searchNumber = 0;
     static int[] phaseCounts = {0,0,1,1,2,4,0,0,0,0,1,1,2,4,0};
@@ -41,48 +43,48 @@ public class AlphaBetaTranspositionTables {
     static int[][] blackOpening = {BPO,BNO,BBO,BRO,BQO,BKO};
     static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
-
     static int[] mobilityOpening = {0,4,3,2,1,0};
     static int[] mobilityEndgame = {0,4,3,4,2,0};
     static int[] attackerValue = {1,2,2,3,5,0};
     static int[] attackTable = {
-                0,  0,   1,   2,   3,   5,   7,   9,  12,  15,
-                18,  22,  26,  30,  35,  39,  44,  50,  56,  62,
-                68,  75,  82,  85,  89,  97, 105, 113, 122, 131,
-                140, 150, 169, 180, 191, 202, 213, 225, 237, 248,
-                260, 272, 283, 295, 307, 319, 330, 342, 354, 366,
-                377, 389, 401, 412, 424, 436, 448, 459, 471, 483,
-                494, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-                500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-                500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
-                500, 500, 500, 500, 500, 500, 500, 500, 500, 500
+            0,  0,   1,   2,   3,   5,   7,   9,  12,  15,
+            18,  22,  26,  30,  35,  39,  44,  50,  56,  62,
+            68,  75,  82,  85,  89,  97, 105, 113, 122, 131,
+            140, 150, 169, 180, 191, 202, 213, 225, 237, 248,
+            260, 272, 283, 295, 307, 319, 330, 342, 354, 366,
+            377, 389, 401, 412, 424, 436, 448, 459, 471, 483,
+            494, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+            500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+            500, 500, 500, 500, 500, 500, 500, 500, 500, 500,
+            500, 500, 500, 500, 500, 500, 500, 500, 500, 500
     };
-    static boolean[][] nearKing = new boolean[120][120]; //need to make via some algorithm because there's no way I'm doing this by hand.
-
+    static boolean[][] nearKing = new boolean[120][120];
+    //transposition and repetition tables
     static long[][] hashIndex;
+    static Set<Long> repetitionHashTable;
     static Map<Long,HashEntry> transpositionTable;
     static final int MAXTTSIZE = 5000000;
     static final int PANICTTCLEARTRIGGER = 12000000;
     static final int PANICTTCLEARSIZE = 8000000;
     static final int TTBACKDEPTH = 4;
-
-    static final int NODESPERCHECK = 2048; //number of nodes we search at a time before checking if we're out of time/tt is close to overflowing
+    //Constants for checking time/tt storage every ___ nodes
+    static final int NODESPERCHECK = 2048;
     static int nodeCount = 0;
-
-    static Set<Long> repetitionHashTable;
+    //important constants returned by scoring function
     static final int DRAW = 0;
     static final int WIN = 9999;
     static final int TAKEKING = 999999;
     static final int WIDEALPHABETA = 99999;
     static final int OUTOFTIME = 10000000;
-
-    static final int SEARCH_DEPTH = 10; //we stop the search when it either takes a certain amount of time or hits a certain depth
-    static final int TIME_PER_MOVE = 10000; //how long we take per move in milliseconds - this allows us 30 moves for a 5 + 0 game
-    static MoveSorter sorter;
-
-    static final int TIME_CONTROL = 300000;
+    //time/depth control
+    static final int SEARCH_DEPTH = 10; //search ends upon hitting a certain depth (doesn't waste time if clear best/only/book move)
+    static final int TIME_CONTROL = 300000; //currently set up to play 5 + 3 rapid (5 mins + 3 sec increment)
     static final int INCREMENT = 3000;
     static int timeLeft = TIME_CONTROL;
+
+    static final boolean WHITEBOT = true;
+
+    // TODOS:
 
     // NEEDED:
     // game with functional ui and picking a side
@@ -95,14 +97,15 @@ public class AlphaBetaTranspositionTables {
     // limited quiescence (so it doesn't take forever!)
     // incremental update of pst, hash, material, etc. to save time
 
-    //OPTIONAL:
+    // OPTIONAL / AFTER GRADUATION:
     // forward pruning/reductions (lmr, delta, futility, null move)
     // aspiration windows and pv search (narrow window for all non-pv)
     // bitboard move gen and attack maps
     // SEE
     // endgame tablebases
-    // "pondering"
-    public static void main(String[] args) throws FileNotFoundException {
+    // "pondering" (thinking during opponent's time)
+
+    public static void main(String[] args) throws FileNotFoundException { //starts by initializing everything
         board = new byte[]{7, 7, 7, 7, 7, 7, 7, 7, 7, 7, //looks upside down in this view, 7s are borders
                 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
                 7, 4, 2, 3, 5, 6, 3, 2, 4, 7,
@@ -118,63 +121,53 @@ public class AlphaBetaTranspositionTables {
         boardState = (byte) 0b11110000;
         Collections.addAll(pieceLists[0],21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38);
         Collections.addAll(pieceLists[1], 81, 82, 83, 84, 85, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98);
-
         sorter = new MoveSorter(board);
         seedHashIndex();
         transpositionTable = new HashMap<>();
         repetitionHashTable = new HashSet<>();
         buildNearKingTable();
-
+        // normal display map is nicer because it has the actual pieces, but they don't work on my laptop
         //Map<Byte,Character> displayMap = buildDisplayMap();
         Map<Byte,Character> displayMap = laptopDisplayMap();
 
-        Scanner console = new Scanner(System.in);
         ArrayList<Integer> gameMoves = new ArrayList<>();
         //getOpenings("src/OpeningBookV1");
-        while (true) {
-            printBoard(displayMap);
-            System.out.print("0 for manual move, 1 to undo move, 2 for white engine, 3 for black engine, 4 for pawn evaluation");
-            int x = console.nextInt();
-            if (x == 1) {
-                unMakeMove(gameMoves.get(gameMoves.size() - 1));
-                gameMoves.remove(gameMoves.size() - 1);
-            } else if (x == 0) {
-                System.out.print("From : ");
-                int from = console.nextInt();
-                System.out.print("To : ");
-                int to = console.nextInt();
-                int move = encodeMove(to,from);
+
+        if (WHITEBOT) {
+            while (true) {
+                printBoard(displayMap);
+                int move = iterativeDeepening(SEARCH_DEPTH, true, allocateTime());
                 makeMove(move);
                 gameMoves.add(move);
-            } else if (x == 2) {
-                int move = iterativeDeepening(SEARCH_DEPTH, true);
+                printBoard(displayMap);
+
+                clearTranspositionTableOrderIn(MAXTTSIZE);
+                searchNumber++;
+
+                move = playerInputToMove();
                 makeMove(move);
                 gameMoves.add(move);
-            } else if (x == 3) {
-                int move = iterativeDeepening(SEARCH_DEPTH, false);
-                makeMove(move);
-                gameMoves.add(move);
-            } else if (x == 4) {
-                System.out.print("Square?");
-                int sq = console.nextInt();
-                boolean white = board[sq] == 1;
-                System.out.println(evaluatePawn(sq,white,new int[3],0));
             }
+        }
+
+        printBoard(displayMap);
+        while (true) {
+            int move = playerInputToMove();
+            makeMove(move);
+            gameMoves.add(move);
+            printBoard(displayMap);
+
+            move = iterativeDeepening(SEARCH_DEPTH, true, allocateTime());
+            makeMove(move);
+            gameMoves.add(move);
+            printBoard(displayMap);
+
             clearTranspositionTableOrderIn(MAXTTSIZE);
-            System.out.println("TT size : " + transpositionTable.size());
             searchNumber++;
         }
     }
-    public static void getOpenings(String fileName) throws FileNotFoundException {
-        Scanner openingReader = new Scanner(new File(fileName)); //format is:  "position bestMove"
-        while (openingReader.hasNext()) { //all have an orderIn of 0 because we can clear them as soon as we get out of book
-            long key = openingReader.nextLong();
-            ArrayList<Integer> moves = new ArrayList<>();
-            moves.add(openingReader.nextInt());
-            transpositionTable.put(key,new HashEntry(moves,99,true,0,0));
-        }
-    }
     public static void printBoard(Map<Byte,Character> displayMap) {
+        System.out.println("\nEngine has " + timeLeft / 60000 + ":" + (timeLeft / 1000) % 60 + " left on its clock\n");
         for (int y = 90; y > 19; y -= 10) {
             for (int x = 1; x < 9; x++) {
                 System.out.print(displayMap.get(board[y + x]) + "|");
@@ -238,6 +231,64 @@ public class AlphaBetaTranspositionTables {
             }
         }
     }
+    public static long getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
+        long hash = 0;
+        for (int y = 2; y < 10; y++) {
+            for (int x = 1; x < 9; x++) {
+                hash = hash ^ hashIndex[board[10*y+x] % 8 + (board[10*y+x]>>>3) * 6][x-1 + (y-2) * 8];
+            }
+        }
+        if (!whiteMove) {
+            hash = hashIndex[0][0] ^ hash;
+        }
+        if ((boardState & 0b1111) != 0) {
+            hash = hash ^ hashIndex[0][boardState & 0b1111];
+        }
+        if ((boardState & 0b11110000) != 0) {
+            hash = hash ^ hashIndex[0][8 + ((boardState & 0b11110000)>>>4)];
+        }
+        return hash;
+    }
+    //memory management
+    public static void clearTranspositionTableOrderIn(int goalSize) { //first in, first out
+        int cutoff = searchNumber - TTBACKDEPTH;
+        Set<Long> keys = transpositionTable.keySet(); //gets down to goal size exactly - will end up removing some but not all from a certain order
+        int count = 0;
+        int requiredCount = transpositionTable.size() - goalSize;
+        while (count < requiredCount) {
+            Iterator<Long> itr = keys.iterator();
+            while (itr.hasNext() && count < requiredCount) {
+                HashEntry h = transpositionTable.get(itr.next());
+                if (h.orderIn <= cutoff) {
+                    itr.remove();
+                    count++;
+                }
+            }
+            cutoff ++;
+        }
+        //System.out.println("Removed " + count + " entries");
+    }
+    public static void getOpenings(String fileName) throws FileNotFoundException {
+        Scanner openingReader = new Scanner(new File(fileName)); //format is:  "position bestMove"
+        while (openingReader.hasNext()) { //all have an orderIn of 0 because we can clear them as soon as we get out of book
+            long key = openingReader.nextLong();
+            ArrayList<Integer> moves = new ArrayList<>();
+            moves.add(openingReader.nextInt());
+            transpositionTable.put(key,new HashEntry(moves,99,true,0,0));
+        }
+    }
+    public static int playerInputToMove() { //gathers player input and translates it to my move notation
+        Scanner console = new Scanner(System.in);
+        System.out.print("Move piece from column : ");
+        int from = console.next().charAt(0) - 'a' + 1;
+        System.out.print("and row : ");
+        from += console.nextInt() * 10 + 10;
+        System.out.print("To column : ");
+        int to = console.next().charAt(0) - 'a' + 1;
+        System.out.print("and row : ");
+        to += console.nextInt() * 10 + 10;
+        return encodeMove(to,from);
+    }
     public static int encodeMove(int to, int from) {
         int move = 0;
         move += (board[from]>>3) & 1; //is the move white or black
@@ -272,7 +323,110 @@ public class AlphaBetaTranspositionTables {
         }
         return (boardState << 23) + 1;
     }
-    public static ArrayList<Integer> getWhiteMoves() {
+    public static boolean makeMove(int move) {
+        int to = (move>>1) & 0b1111111; //records to and from indexes
+        int from = (move>>8) & 0b1111111;
+        int moveColor = move & 1;
+        if (board[to] % 8 == 6) { //taking the king
+            return true;
+        }
+        repetitionHashTable.add(getHashIndex(moveColor == 0));
+        boardState = (byte) (boardState & 0b11110000); //resets en passantables
+        if ((move>>18 & 1) == 1) { //if promotion, place correct piece
+            board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor))); //first part gets type, second half color
+        } else {
+            board[to] = board[from]; //otherwise piece in resulting square is same as initial
+            if ((move>>15 & 0b111) == 0b101) { //en passant
+                board[to - 10 + 20*(moveColor)] = 0; //btw (move & 0b1) gives you 0 if white move and 1 if black move
+                pieceLists[1-moveColor].remove(to - 10 + 20*(moveColor));
+            } else if ((move>>16 & 1) == 1) { //castling
+                if ((move>>15 & 1) == 1) { //long castle
+                    board[to+1] = board[to-2];
+                    board[to-2] = 0;
+                    pieceLists[moveColor].add(to + 1);
+                    pieceLists[moveColor].remove(to - 2);
+                } else { //short castle
+                    board[to-1] = board[to+1];
+                    board[to+1] = 0;
+                    pieceLists[moveColor].add(to - 1);
+                    pieceLists[moveColor].remove(to + 1);
+                }
+            } else if ((move>>15 & 1) == 1) { //pawn pushing makes this column en passantable
+                boardState += to%10;
+            }
+        }
+        board[from] = 0; //space piece is leaving is always empty
+
+        phase += phaseCounts[move>>19 & 0b1111];
+
+        pieceLists[moveColor].remove(from);
+        pieceLists[moveColor].add(to);
+        if ((move & 0b11110000000000000000000) != 0) { //captures
+            pieceLists[1-moveColor].remove(to);
+        }
+
+        if(from == 21 || from == 25 || to == 21) {//castling rights are lost if pieces move off 21,25,28,91,95,or98 or opp captures those rooks
+            boardState = (byte)(boardState & 0b11011111);
+        }
+        if(from == 28 || from == 25 || to == 28) {
+            boardState = (byte)(boardState & 0b11101111);
+        }
+        if(from == 91 || from == 95 || to == 91) {
+            boardState = (byte)(boardState & 0b01111111);
+        }
+        if(from == 98 || from == 95 || to == 98) {
+            boardState = (byte)(boardState & 0b10111111);
+        }
+
+        if (board[to] == 6) {
+            kingPositions[0] = to;
+        } else if (board[to] == 14) {
+            kingPositions[1] = to;
+        }
+        return false;
+    }
+    public static void unMakeMove(int move) {
+        int to = (move>>1) & 0b1111111; //records to and from indexes
+        int from = (move>>8) & 0b1111111;
+        int moveColor = move & 0b1;
+        if ((move>>18 & 1) == 1) { //if promotion, need to unpromote
+            board[from] = (byte)(1 + 8 * (moveColor)); //same color pawn as side moving
+        } else {
+            board[from] = board[to]; //otherwise just move the piece back
+            if ((move>>15 & 0b111) == 0b101) { //en passant: also restore opp pawn
+                board[to - 10 + 20*(moveColor)] = (byte)(9 - 8 * (moveColor)); //put opp color pawn in appropriate space
+                pieceLists[1-moveColor].add(to - 10 + 20 * (moveColor));
+            } else if ((move>>16 & 1) == 1) { //undoing castling
+                if ((move>>15 & 1) == 1) { //long castle
+                    board[to-2] = board[to+1];
+                    board[to+1] = 0;
+                    pieceLists[moveColor].remove(to + 1);
+                    pieceLists[moveColor].add(to - 2);
+                } else { //short castle
+                    board[to+1] = board[to-1];
+                    board[to-1] = 0;
+                    pieceLists[moveColor].remove(to - 1);
+                    pieceLists[moveColor].add(to + 1);
+                }
+            }
+        }
+        board[to] = (byte)(move>>19 & 0b1111); //captured piece goes back on to
+        boardState = (byte)(move>>23); //reverts board state (castle, ep) to previous
+        phase -= phaseCounts[move>>19 & 0b1111];
+
+        pieceLists[moveColor].add(from);
+        pieceLists[moveColor].remove(to);
+        if ((move & 0b11110000000000000000000) != 0) {
+            pieceLists[1-moveColor].add(to);
+        }
+        if (board[from] == 6) {
+            kingPositions[0] = from;
+        } else if (board[from] == 14) {
+            kingPositions[1] = from;
+        }
+        repetitionHashTable.remove(getHashIndex(moveColor == 0));
+    }
+    public static ArrayList<Integer> getWhiteMoves() { //move generation and all it's simplified derivatives
         ArrayList<Integer> moves = new ArrayList<>();
         for (int fromCoordinate : pieceLists[0]) {
             int fromPiece = board[fromCoordinate] - 1;
@@ -587,8 +741,8 @@ public class AlphaBetaTranspositionTables {
         moves.sort(sorter);
         return moves;
     }
-    public static int getMobility (int square, boolean white, int[] attacks, int kingSquare) { //also gets attacks for attack tables/king safety
-        int count = 0;
+    public static int getMobility (int square, boolean white, int[] attacks, int kingSquare) { //faster generation for evaluation, doesn't get actual moves (just count)
+        int count = 0; //also helps with king safety by tracking what pieces attack each king's area
         boolean attacking = false;
         if (white) {
             int fromPiece = board[square] - 1;
@@ -657,7 +811,7 @@ public class AlphaBetaTranspositionTables {
         }
         return count;
     }
-    public static boolean isAttacked (int square, boolean white) {
+    public static boolean isAttacked (int square, boolean white) { //used mostly for checks and castling
         for (int i = 1; i < 6; i++) {
             int[] offsets = moveGenOffset[i];
             boolean slide = moveGenSlide[i];
@@ -676,109 +830,6 @@ public class AlphaBetaTranspositionTables {
             }
         }
         return ((white && (board[square + 9] == 9 || board[square + 11] == 9))) || (!white && (board[square - 9] == 1 || board[square - 11] == 1));
-    }
-    public static boolean makeMove(int move) {
-        int to = (move>>1) & 0b1111111; //records to and from indexes
-        int from = (move>>8) & 0b1111111;
-        int moveColor = move & 1;
-        if (board[to] % 8 == 6) { //taking the king
-            return true;
-        }
-        repetitionHashTable.add(getHashIndex(moveColor == 0));
-        boardState = (byte) (boardState & 0b11110000); //resets en passantables
-        if ((move>>18 & 1) == 1) { //if promotion, place correct piece
-            board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor))); //first part gets type, second half color
-        } else {
-            board[to] = board[from]; //otherwise piece in resulting square is same as initial
-            if ((move>>15 & 0b111) == 0b101) { //en passant
-                board[to - 10 + 20*(moveColor)] = 0; //btw (move & 0b1) gives you 0 if white move and 1 if black move
-                pieceLists[1-moveColor].remove(to - 10 + 20*(moveColor));
-            } else if ((move>>16 & 1) == 1) { //castling
-                if ((move>>15 & 1) == 1) { //long castle
-                    board[to+1] = board[to-2];
-                    board[to-2] = 0;
-                    pieceLists[moveColor].add(to + 1);
-                    pieceLists[moveColor].remove(to - 2);
-                } else { //short castle
-                    board[to-1] = board[to+1];
-                    board[to+1] = 0;
-                    pieceLists[moveColor].add(to - 1);
-                    pieceLists[moveColor].remove(to + 1);
-                }
-            } else if ((move>>15 & 1) == 1) { //pawn pushing makes this column en passantable
-                boardState += to%10;
-            }
-        }
-        board[from] = 0; //space piece is leaving is always empty
-
-        phase += phaseCounts[move>>19 & 0b1111];
-
-        pieceLists[moveColor].remove(from);
-        pieceLists[moveColor].add(to);
-        if ((move & 0b11110000000000000000000) != 0) { //captures
-            pieceLists[1-moveColor].remove(to);
-        }
-
-        if(from == 21 || from == 25 || to == 21) {//castling rights are lost if pieces move off 21,25,28,91,95,or98 or opp captures those rooks
-            boardState = (byte)(boardState & 0b11011111);
-        }
-        if(from == 28 || from == 25 || to == 28) {
-            boardState = (byte)(boardState & 0b11101111);
-        }
-        if(from == 91 || from == 95 || to == 91) {
-            boardState = (byte)(boardState & 0b01111111);
-        }
-        if(from == 98 || from == 95 || to == 98) {
-            boardState = (byte)(boardState & 0b10111111);
-        }
-
-        if (board[to] == 6) {
-            kingPositions[0] = to;
-        } else if (board[to] == 14) {
-            kingPositions[1] = to;
-        }
-        return false;
-    }
-    public static void unMakeMove(int move) {
-        int to = (move>>1) & 0b1111111; //records to and from indexes
-        int from = (move>>8) & 0b1111111;
-        int moveColor = move & 0b1;
-        if ((move>>18 & 1) == 1) { //if promotion, need to unpromote
-            board[from] = (byte)(1 + 8 * (moveColor)); //same color pawn as side moving
-        } else {
-            board[from] = board[to]; //otherwise just move the piece back
-            if ((move>>15 & 0b111) == 0b101) { //en passant: also restore opp pawn
-                board[to - 10 + 20*(moveColor)] = (byte)(9 - 8 * (moveColor)); //put opp color pawn in appropriate space
-                pieceLists[1-moveColor].add(to - 10 + 20 * (moveColor));
-            } else if ((move>>16 & 1) == 1) { //undoing castling
-                if ((move>>15 & 1) == 1) { //long castle
-                    board[to-2] = board[to+1];
-                    board[to+1] = 0;
-                    pieceLists[moveColor].remove(to + 1);
-                    pieceLists[moveColor].add(to - 2);
-                } else { //short castle
-                    board[to+1] = board[to-1];
-                    board[to-1] = 0;
-                    pieceLists[moveColor].remove(to - 1);
-                    pieceLists[moveColor].add(to + 1);
-                }
-            }
-        }
-        board[to] = (byte)(move>>19 & 0b1111); //captured piece goes back on to
-        boardState = (byte)(move>>23); //reverts board state (castle, ep) to previous
-        phase -= phaseCounts[move>>19 & 0b1111];
-
-        pieceLists[moveColor].add(from);
-        pieceLists[moveColor].remove(to);
-        if ((move & 0b11110000000000000000000) != 0) {
-            pieceLists[1-moveColor].add(to);
-        }
-        if (board[from] == 6) {
-            kingPositions[0] = from;
-        } else if (board[from] == 14) {
-            kingPositions[1] = from;
-        }
-        repetitionHashTable.remove(getHashIndex(moveColor == 0));
     }
     public static int evaluatePosition() {
         //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
@@ -1331,75 +1382,19 @@ public class AlphaBetaTranspositionTables {
             }
         }
     }
-    public static int depthBasediterativeDeepening(int depth, boolean whiteMove) {
+    public static int iterativeDeepening(int depth, boolean whiteMove, long timeAllocated) { //depth or time cutoff (whichever it hits first)
         int move = 0;
         long startTime = System.currentTimeMillis();
-        for (int n = 2; n <= depth; n += 1) {
-            move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA, 999999999); //assumes (pretty safely) that score will end up being between these bounds
-        } //if it's not between them everything breaks but at that point we have a bigger problem with the eval
-        System.out.println(System.currentTimeMillis() - startTime);
-        return move;
-    }
-    public static int timeBasedIterativeDeepening(boolean whiteMove) {
-        int move = 0;
-        long endTime = System.currentTimeMillis() + TIME_PER_MOVE;
-        for (int n = 2; System.currentTimeMillis() < endTime; n += 1) {
-            move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA,endTime);
-        }
-        return move;
-    }
-    public static int iterativeDeepening(int depth, boolean whiteMove) { //depth or time cutoff (whichever it hits first)
-        int move = 0;
-        long startTime = System.currentTimeMillis();
-        long endTime = /*System.currentTimeMillis()*/ startTime + TIME_PER_MOVE;
-        long midCutoffTime = startTime + TIME_PER_MOVE / 2; //only goes to next depth if over half our time is left
+        long endTime = startTime + timeAllocated;
+        long midCutoffTime = startTime + timeAllocated / 2; //only goes to next depth if over half our time is left
         for (int n = 2; System.currentTimeMillis() < midCutoffTime && n <= depth; n++) {
             nodeCount = 0;
             move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA,endTime);
         }
         long elapsedTime = System.currentTimeMillis() - startTime;
-        System.out.println(elapsedTime);
-        /*timeLeft -= elapsedTime;
+        timeLeft -= elapsedTime;
         timeLeft += INCREMENT;
-        System.out.println(timeLeft / 1000);*/
         return move;
-    }
-    public static long getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
-        long hash = 0;
-        for (int y = 2; y < 10; y++) {
-            for (int x = 1; x < 9; x++) {
-                hash = hash ^ hashIndex[board[10*y+x] % 8 + (board[10*y+x]>>>3) * 6][x-1 + (y-2) * 8];
-            }
-        }
-        if (!whiteMove) {
-            hash = hashIndex[0][0] ^ hash;
-        }
-        if ((boardState & 0b1111) != 0) {
-            hash = hash ^ hashIndex[0][boardState & 0b1111];
-        }
-        if ((boardState & 0b11110000) != 0) {
-            hash = hash ^ hashIndex[0][8 + ((boardState & 0b11110000)>>>4)];
-        }
-        return hash;
-    }
-    //memory management
-    public static void clearTranspositionTableOrderIn(int goalSize) { //first in, first out
-        int cutoff = searchNumber - TTBACKDEPTH;
-        Set<Long> keys = transpositionTable.keySet(); //gets down to goal size exactly - will end up removing some but not all from a certain order
-        int count = 0;
-        int requiredCount = transpositionTable.size() - goalSize;
-        while (count < requiredCount) {
-            Iterator<Long> itr = keys.iterator();
-            while (itr.hasNext() && count < requiredCount) {
-                HashEntry h = transpositionTable.get(itr.next());
-                if (h.orderIn <= cutoff) {
-                    itr.remove();
-                    count++;
-                }
-            }
-            cutoff ++;
-        }
-        System.out.println("Removed " + count + " entries");
     }
     public static int allocateTime() {
         return INCREMENT * 3 / 4 + timeLeft / 25;
