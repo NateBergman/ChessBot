@@ -14,6 +14,8 @@ public class FinalMiyoshiProject {
     //scoring initialization - includes phase for mid/endgame scoring and pst's
     static int phase = 0;
     static int searchNumber = 0;
+    static int pstScoreMid = 0;
+    static int pstScoreEnd = 0;
     static int[] phaseCounts = {0,0,1,1,2,4,0,0,0,0,1,1,2,4,0};
     static int[] WPO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 47, 81, 62, 59, 67, 106, 120, 60, 0, 0, 56, 78, 78, 72, 85, 85, 115, 70, 0, 0, 55, 80, 77, 94, 99, 88, 92, 57, 0, 0, 68, 95, 88, 103, 105, 94, 99, 59, 0, 0, 76, 89, 108, 113, 147, 138, 107, 62, 0, 0, 180, 216, 143, 177, 150, 208, 116, 71, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] BPO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 180, 216, 143, 177, 150, 208, 116, 71, 0, 0, 76, 89, 108, 113, 147, 138, 107, 62, 0, 0, 68, 95, 88, 103, 105, 94, 99, 59, 0, 0, 55, 80, 77, 94, 99, 88, 92, 57, 0, 0, 56, 78, 78, 72, 85, 85, 115, 70, 0, 0, 47, 81, 62, 59, 67, 106, 120, 60, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -43,6 +45,8 @@ public class FinalMiyoshiProject {
     static int[][] blackOpening = {BPO,BNO,BBO,BRO,BQO,BKO};
     static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
     static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
+    //static int[][] openingGeneralPST = {{},WPO,WNO,WBO,WRO,WQO,WKO,{},{},BPO,BNO,BBO,BRO,BQO,BKO};
+    //static int[][] endgameGeneralPST = {{},WPE,WNE,WBE,WRE,WQE,WKE,{},{},BPE,BNE,BBE,BRE,BQE,BKE};
     static int[] mobilityOpening = {0,4,3,2,1,0};
     static int[] mobilityEndgame = {0,4,3,4,2,0};
     static int[] attackerValue = {1,2,2,3,5,0};
@@ -127,8 +131,8 @@ public class FinalMiyoshiProject {
         repetitionHashTable = new HashSet<>();
         buildNearKingTable();
         // normal display map is nicer because it has the actual pieces, but they don't work on my laptop
-        //Map<Byte,Character> displayMap = buildDisplayMap();
-        Map<Byte,Character> displayMap = laptopDisplayMap();
+        Map<Byte,Character> displayMap = buildDisplayMap();
+        //Map<Byte,Character> displayMap = laptopDisplayMap();
 
         ArrayList<Integer> gameMoves = new ArrayList<>();
         getOpenings("src/OpeningBookV1");
@@ -339,6 +343,15 @@ public class FinalMiyoshiProject {
         }
         repetitionHashTable.add(getHashIndex(moveColor == 0));
         boardState = (byte) (boardState & 0b11110000); //resets en passantables
+
+        if (moveColor == 0) {
+            pstScoreMid += whiteOpening[board[from]-1][to] - whiteOpening[board[from]-1][from];
+            pstScoreEnd += whiteEndgame[board[from]-1][to] - whiteEndgame[board[from]-1][from];
+        } else {
+            pstScoreMid -= blackOpening[board[from]-9][to] - blackOpening[board[from]-9][from];
+            pstScoreEnd -= blackEndgame[board[from]-9][to] - blackEndgame[board[from]-9][from];
+        }
+
         if ((move>>18 & 1) == 1) { //if promotion, place correct piece
             board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor))); //first part gets type, second half color
         } else {
@@ -370,6 +383,13 @@ public class FinalMiyoshiProject {
         pieceLists[moveColor].add(to);
         if ((move & 0b11110000000000000000000) != 0) { //captures
             pieceLists[1-moveColor].remove(to);
+            if (moveColor == 0) {
+                pstScoreMid += blackOpening[(move>>19 & 0b1111) - 9][to];
+                pstScoreEnd += blackEndgame[(move>>19 & 0b1111) - 9][to];
+            } else {
+                pstScoreMid -= whiteOpening[(move>>19 & 0b1111) - 1][to];
+                pstScoreEnd -= whiteEndgame[(move>>19 & 0b1111) - 1][to];
+            }
         }
 
         if(from == 21 || from == 25 || to == 21) {//castling rights are lost if pieces move off 21,25,28,91,95,or98 or opp captures those rooks
@@ -421,10 +441,25 @@ public class FinalMiyoshiProject {
         boardState = (byte)(move>>23); //reverts board state (castle, ep) to previous
         phase -= phaseCounts[move>>19 & 0b1111];
 
+        if (moveColor == 0) {
+            pstScoreMid -= whiteOpening[board[from]-1][to] - whiteOpening[board[from]-1][from];
+            pstScoreEnd -= whiteEndgame[board[from]-1][to] - whiteEndgame[board[from]-1][from];
+        } else {
+            pstScoreMid += blackOpening[board[from]-9][to] - blackOpening[board[from]-9][from];
+            pstScoreEnd += blackEndgame[board[from]-9][to] - blackEndgame[board[from]-9][from];
+        }
+
         pieceLists[moveColor].add(from);
         pieceLists[moveColor].remove(to);
         if ((move & 0b11110000000000000000000) != 0) {
             pieceLists[1-moveColor].add(to);
+            if (moveColor == 0) {
+                pstScoreMid -= blackOpening[(move>>19 & 0b1111) - 9][to];
+                pstScoreEnd -= blackEndgame[(move>>19 & 0b1111) - 9][to];
+            } else {
+                pstScoreMid += whiteOpening[(move>>19 & 0b1111) - 1][to];
+                pstScoreEnd += whiteEndgame[(move>>19 & 0b1111) - 1][to];
+            }
         }
         if (board[from] == 6) {
             kingPositions[0] = from;
@@ -841,15 +876,15 @@ public class FinalMiyoshiProject {
     public static int evaluatePosition() {
         //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
         //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics (bonus for canons w/ bishop/rook/queen)
-        int mgScore = 0;
-        int egScore = 0;
+        int mgScore = pstScoreMid;
+        int egScore = pstScoreEnd;
         int[] attacks = new int[4]; //goes white attack value, white attacker count, black attack value, black attacker count
 
-        for (int i : pieceLists[0]) {
+        /*for (int i : pieceLists[0]) {
             byte piece = (byte) (board[i] - 1);
             mgScore += whiteOpening[piece][i];
             egScore += whiteEndgame[piece][i];
-            if (piece == 0) {
+            /*if (piece == 0) {
                 int score = evaluatePawn(i,true,attacks,kingPositions[1]);
                 mgScore += score;
                 egScore += score;
@@ -857,13 +892,13 @@ public class FinalMiyoshiProject {
                 int score = getMobility(i,true,attacks,kingPositions[1]);
                 mgScore += score * mobilityOpening[piece];
                 egScore += score * mobilityEndgame[piece];
-            }
-        }
+            }*/
+        /*}
         for (int i : pieceLists[1]) { //24 phase points total
             byte piece = (byte) (board[i] - 9);
             mgScore -= blackOpening[piece][i];
             egScore -= blackEndgame[piece][i];
-            if (piece == 0) {
+            /*if (piece == 0) {
                 int score = evaluatePawn(i,false, attacks, kingPositions[0]);
                 mgScore -= score;
                 egScore -= score;
@@ -871,10 +906,10 @@ public class FinalMiyoshiProject {
                 int score = getMobility(i,false, attacks, kingPositions[0]);
                 mgScore -= score * mobilityOpening[piece];
                 egScore -= score * mobilityEndgame[piece];
-            }
-        }
+            }*/
+        //}
 
-        if (attacks[1] > 1) {
+        /*if (attacks[1] > 1) {
             mgScore += attackTable[attacks[0]];
         }
         if (attacks[3] > 1) {
@@ -948,7 +983,7 @@ public class FinalMiyoshiProject {
             } else if (board[73] == 1) {
                 mgScore -= shieldRankThree;
             }
-        }
+        }*/
 
         return (int)((mgScore * (24.0 - phase) / 24.0) + (egScore * phase / 24.0));
     }
