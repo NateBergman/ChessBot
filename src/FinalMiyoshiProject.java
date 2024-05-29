@@ -78,18 +78,18 @@ public class FinalMiyoshiProject {
     static final int OUTOFTIME = 10000000;
     //time/depth control
     static final int SEARCH_DEPTH = 10; //search ends upon hitting a certain depth (doesn't waste time if clear best/only/book move)
-    static final int TIME_CONTROL = 300000; //currently set up to play 5 + 3 rapid (5 mins + 3 sec increment)
-    static final int INCREMENT = 3000;
+    static final int TIME_CONTROL = 180000; //currently set up to play 5 + 3 rapid (5 mins + 3 sec increment)
+    static final int INCREMENT = 0;
     static int timeLeft = TIME_CONTROL;
 
-    static final boolean WHITEBOT = true;
+    static final boolean WHITEBOT = false;
 
     // TODOS:
 
     // NEEDED:
-    // game with functional ui and picking a side
+    // take backs/check for legal moves
     // check extentions (fixes quiescence stalemate problem)
-    // time management in a real game
+    // improve time management
     // move ordering (hash (best moves previously, stored in tt), captures w/ mvv/lva, killer moves/history heuristic, others),
     // tune eval! maybe simplify for speed and add mop up endgame
     // better tt clearing (irreversible moves), (currently have problem if >beta in one search is <alpha in another)
@@ -131,7 +131,7 @@ public class FinalMiyoshiProject {
         Map<Byte,Character> displayMap = laptopDisplayMap();
 
         ArrayList<Integer> gameMoves = new ArrayList<>();
-        //getOpenings("src/OpeningBookV1");
+        getOpenings("src/OpeningBookV1");
 
         if (WHITEBOT) {
             while (true) {
@@ -157,7 +157,7 @@ public class FinalMiyoshiProject {
             gameMoves.add(move);
             printBoard(displayMap);
 
-            move = iterativeDeepening(SEARCH_DEPTH, true, allocateTime());
+            move = iterativeDeepening(SEARCH_DEPTH, false, allocateTime());
             makeMove(move);
             gameMoves.add(move);
             printBoard(displayMap);
@@ -279,14 +279,21 @@ public class FinalMiyoshiProject {
     }
     public static int playerInputToMove() { //gathers player input and translates it to my move notation
         Scanner console = new Scanner(System.in);
-        System.out.print("Move piece from column : ");
-        int from = console.next().charAt(0) - 'a' + 1;
-        System.out.print("and row : ");
-        from += console.nextInt() * 10 + 10;
-        System.out.print("To column : ");
-        int to = console.next().charAt(0) - 'a' + 1;
-        System.out.print("and row : ");
-        to += console.nextInt() * 10 + 10;
+        int from = 0;
+        int to = 0;
+        boolean confirmed = false;
+        while (!confirmed) {
+            System.out.print("Move piece from column : ");
+            from = console.next().charAt(0) - 'a' + 1;
+            System.out.print("and row : ");
+            from += console.nextInt() * 10 + 10;
+            System.out.print("To column : ");
+            to = console.next().charAt(0) - 'a' + 1;
+            System.out.print("and row : ");
+            to += console.nextInt() * 10 + 10;
+            System.out.print("1 to confirm, 0 to reinput");
+            confirmed = console.nextInt() == 1;
+        }
         return encodeMove(to,from);
     }
     public static int encodeMove(int to, int from) {
