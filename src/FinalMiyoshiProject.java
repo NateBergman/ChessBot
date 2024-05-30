@@ -131,8 +131,8 @@ public class FinalMiyoshiProject {
         repetitionHashTable = new HashSet<>();
         buildNearKingTable();
         // normal display map is nicer because it has the actual pieces, but they don't work on my laptop
-        Map<Byte,Character> displayMap = buildDisplayMap();
-        //Map<Byte,Character> displayMap = laptopDisplayMap();
+        //Map<Byte,Character> displayMap = buildDisplayMap();
+        Map<Byte,Character> displayMap = laptopDisplayMap();
 
         ArrayList<Integer> gameMoves = new ArrayList<>();
         getOpenings("src/OpeningBookV1");
