@@ -228,7 +228,7 @@ public class FinalMiyoshiProject {
         display.put((byte) 14, 'k');
         return display;
     }
-    public static void seedHashIndex() {
+    public static void seedHashIndex() { //
         Random r = new Random(1);
         hashIndex = new long[13][64]; //1-12 are pieces on the board, 0 is for special stuff like side to move, castling, en passant (0 is side to move, 1-8 en passant, 9-23 castling rights)
         for (int i = 0; i < 13; i++) {
@@ -237,7 +237,7 @@ public class FinalMiyoshiProject {
             }
         }
     }
-    public static long getHashIndex(boolean whiteMove) {//what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
+    public static long getHashIndex(boolean whiteMove) {
         long hash = 0;
         for (int y = 2; y < 10; y++) {
             for (int x = 1; x < 9; x++) {
@@ -256,6 +256,7 @@ public class FinalMiyoshiProject {
         return hash;
     }
     //memory management
+    //what do we do with TT? at start if already searched this position: at higher depth previously, use that result, else do best move first. then if current depth is higher update table
     public static void clearTranspositionTableOrderIn(int goalSize) { //first in, first out
         int cutoff = searchNumber - TTBACKDEPTH;
         Set<Long> keys = transpositionTable.keySet(); //gets down to goal size exactly - will end up removing some but not all from a certain order
@@ -989,6 +990,71 @@ public class FinalMiyoshiProject {
         //just do pawn shield with 2 mg pst for pawns - same and opposite side of king (or center)
 
         return (int)((mgScore * (24.0 - phase) / 24.0) + (egScore * phase / 24.0));
+
+        //idea: make all material/pst values higher endgame to incentivise trading/not trading if up/down
+
+        //CHAOS eval:
+        // threatened pieces (pieces w/ enemy pieces nearby, but not attacking)
+        // capturing potential (square control)
+        // mobility
+        // mobility potential (unsafe, in check now, or guarding friendly pieces)
+        // centre control (attack + occupancy (pst/bonus))
+        // pins/discovered attacks vs king/queen (maybe a "see through" for sliding pieces, which would also see cannons)
+        // material (pst, individual modifiers)
+        // queen development early penalty
+        //double threats/captures (if two square attacked > defended w/ opp pieces, find net value of less valuable for side to move)
+        // attacked pieces (square control with bonus for it being a square with a piece)
+        // rook usage (open files, behind passed pawns, castling reward)
+        // king endgame stuff (force enemy to edge, stop opposing pawns, rule of the square, opposition, etc.)
+        // development (psts)
+        // attacks near king (square control/king attack table)
+        // SEE
+        // king safety (square control near own king, pawn shield, pst for king location, penalty for king mobility?)
+
+        //CPW eval:
+        // PST
+        // dynamic material (+ for bishop pair, - for knight/rook pair, - knights/+rookswhen we have less pawns)
+        // king pawn shield
+        // tempo bonus for side to move (10 centipawns)
+        // king attack (weighted by pieces and requires certain material)
+        // low material check - if side up has no pawns and a minor, return draw; if no one has any pawns and it's 2 knights v king, draw; if no pawns and rook + minor v rook or rook v minor, cut eval in half
+        // piece specific heuristics:
+        // knight: trapped on A8, A7, H8, H7 penalty, blocking c3 pawn in d4 openings penalty
+        // bishop: trapped A6/A7/B8/H6/H7/G8, returning bonus, fianchetto bonus
+        // rook: bonus for open/semi-open files
+        // queen: early development penalty (for each undeveloped minor)
+        // pawn structure: similar to mine, but includes backwards as weak and scales passed/weak based on position/PST
+        // blockages: central pawns stuck and blocking bishop, king blocking rook uncastled
+
+        //Ostrich eval:
+        // material
+        // material simplification bonus between top/bottom of tree for side up
+        // castling bonus
+        // board control: bonus for each square controlled
+        // tempi: penalty for 2x piece move in opening, uncastled king/rook move, moving a piece directly back, moving in 2 moves when 1 possible
+        // early queen penalty (before move 8)
+        // blocking central pawn penalty
+        // development: penalty to each unmoved central pawn/minor
+        // central pawn bonus
+        // pawn structure: advance pawns +, doubled -
+        // passed pawn bonus + bonus for pushing it
+        // king safety: bonus for pieces in own king sector vs opposing king-side pressure
+
+        //My engine:
+        // material as part of tapered PST - changes values with pieces left && in general higher later so side up has advantage of simplifying
+        // material bonus like CPW engine (+ bishop pair, - knight/rook pair
+
+        // tempo bonus for side to move (10 cp)
+        // trapped bishop/knight penalty
+        // rook on open/semi-open bonus, behind passers bonus
+        // queen development before minors penalty?
+        // low material check/5 piece tablebases or something
+        // endgame king rules?
+
+        // square control/attacks for center, near kings, and enemy pieces, + a little for each square
+        // pins/discovered attacks?
+        // mobility scaling by piece
+        // thourough pawn structure (pst for passed pawns)
     }
     public static int evaluatePawn(int sq, boolean white, int[] attacks, int kingPosition) {
         int score = 0;
@@ -1129,9 +1195,6 @@ public class FinalMiyoshiProject {
                     moves.add(0,moves.remove(i));
                 }
                 unMakeMove(m);
-                /*if (System.currentTimeMillis() > endTime) {
-                    return moves.get(0);
-                }*/
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                 transpositionTable.put(hash,new HashEntry(moves,depth,true,alpha,searchNumber));
@@ -1170,9 +1233,6 @@ public class FinalMiyoshiProject {
                     moves.add(0,moves.remove(i));
                 }
                 unMakeMove(m);
-                /*if (System.currentTimeMillis() > endTime) { //commented out because it's extremely rare we'll hit out of time in the root node
-                    return moves.get(0);
-                }*/
             }
             if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                 transpositionTable.put(hash,new HashEntry(moves,depth,true,beta,searchNumber));
