@@ -84,8 +84,8 @@ public class FinalMiyoshiProject {
     static final int OUTOFTIME = 10000000;
     //time/depth control
     static final int SEARCH_DEPTH = 10; //search ends upon hitting a certain depth (doesn't waste time if clear best/only/book move)
-    static final int TIME_CONTROL = 300000; //currently set up to play 5 + 3 rapid (5 mins + 3 sec increment)
-    static final int INCREMENT = 3000;
+    static final int TIME_CONTROL = 180000; //currently set up to play 5 + 3 rapid (5 mins + 3 sec increment)
+    static final int INCREMENT = 0000;
     static int timeLeft = TIME_CONTROL;
 
     static final boolean WHITEBOT = false;
@@ -786,7 +786,7 @@ public class FinalMiyoshiProject {
     }
     public static int getMobility (int square, boolean white, int[] attacks, int kingSquare) { //faster generation for evaluation, doesn't get actual moves (just count)
         int count = 0; //also helps with king safety by tracking what pieces attack each king's area
-        boolean attacking = false;
+        int attackCnt = 0;
         if (white) {
             int fromPiece = board[square] - 1;
             int[] offsets = moveGenOffset[fromPiece];
@@ -797,27 +797,27 @@ public class FinalMiyoshiProject {
                     byte toPiece = board[toCoordinate];
                     if (toPiece > 8) {
                         count++;
-                        if (nearKing[kingSquare][toCoordinate] && !attacking) {
-                            attacks[0] += attackerValue[fromPiece];
-                            attacks[1]++;
+                        if (nearKing[kingSquare][toCoordinate]) {
+                            attackCnt++;
                         }
                         break;
                     }
                     if (toPiece != 0) {
-                        if (nearKing[kingSquare][toCoordinate] && !attacking) {
-                            attacks[0] += attackerValue[fromPiece];
-                            attacks[1]++;
+                        if (nearKing[kingSquare][toCoordinate]) {
+                            attackCnt++;
                         }
                         break;
                     }
                     count++;
-                    if (nearKing[kingSquare][toCoordinate] && !attacking) {
-                        attacks[0] += attackerValue[fromPiece];
-                        attacks[1]++;
-                        attacking = true;
+                    if (nearKing[kingSquare][toCoordinate]) {
+                        attackCnt++;
                     }
                     toCoordinate += o;
                 } while (slide);
+            }
+            if (attackCnt > 0) {
+                attacks[0] += attackerValue[fromPiece] * attackCnt;
+                attacks[1]++;
             }
         } else {
             int fromPiece = board[square] - 9;
@@ -829,27 +829,27 @@ public class FinalMiyoshiProject {
                     byte toPiece = board[toCoordinate];
                     if (toPiece < 7 && toPiece != 0) {
                         count++;
-                        if (nearKing[kingSquare][toCoordinate] && !attacking) {
-                            attacks[2] += attackerValue[fromPiece];
-                            attacks[3]++;
+                        if (nearKing[kingSquare][toCoordinate]) {
+                            attackCnt++;
                         }
                         break;
                     }
                     if (toPiece != 0) {
-                        if (nearKing[kingSquare][toCoordinate] && !attacking) {
-                            attacks[2] += attackerValue[fromPiece];
-                            attacks[3]++;
+                        if (nearKing[kingSquare][toCoordinate]) {
+                            attackCnt++;
                         }
                         break;
                     }
                     count++;
-                    if (nearKing[kingSquare][toCoordinate] && !attacking) {
-                        attacks[2] += attackerValue[fromPiece];
-                        attacks[3]++;
-                        attacking = true;
+                    if (nearKing[kingSquare][toCoordinate]) {
+                        attackCnt++;
                     }
                     toCoordinate += o;
                 } while (slide);
+            }
+            if (attackCnt > 0) {
+                attacks[2] += attackerValue[fromPiece] * attackCnt;
+                attacks[3]++;
             }
         }
         return count;
@@ -1004,7 +1004,7 @@ public class FinalMiyoshiProject {
         int isolatedPenalty = -10; //stacks with weak and semi open
         int passedBonus = 25;
         int supportedBonus = 5; //adjacent pawn at level or right behind
-        int supportedPassed = 5;
+        int supportedPassed = 10;
         //other ideas: scale passed via position on pst, calculate for blocked/can't advance/attacked target square, mobility points
 
         int stepFwd;
@@ -1093,6 +1093,7 @@ public class FinalMiyoshiProject {
 
         return score;
     }
+    //search
     public static int startSearch (int depth, boolean whiteMove, int alpha, int beta, long endTime) {
         long hash = getHashIndex(whiteMove);
         if (whiteMove) {
