@@ -41,13 +41,13 @@ public class FinalMiyoshiProject {
     static int[] BKO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, -23, -16, 15, 56, 34, -2, -13, 0, 0, -29, 1, 20, 7, 8, 4, 38, 29, 0, 0, 9, -24, -2, 16, 20, -6, -22, 22, 0, 0, 17, 20, 12, 27, 30, 25, 14, 36, 0, 0, 49, 1, 27, 39, 46, 44, 33, 51, 0, 0, 14, 14, 22, 46, 44, 30, 15, 27, 0, 0, -1, -7, 8, 64, 43, 16, -9, -8, 0, 0, 15, -36, -12, 54, -8, 28, -24, -14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] WKE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -53, -34, -21, -11, -28, -14, -24, -43, 0, 0, -27, -11, 4, 13, 14, 4, -5, -17, 0, 0, -19, -3, 11, 21, 23, 16, 7, -9, 0, 0, -18, -4, 21, 24, 27, 23, 9, -11, 0, 0, -8, 22, 24, 27, 26, 33, 26, 3, 0, 0, 10, 17, 23, 15, 20, 45, 44, 13, 0, 0, -12, 17, 14, 17, 17, 38, 23, 11, 0, 0, -74, -35, -18, -18, -11, 15, 4, -17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     static int[] BKE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 74, 35, 18, 18, 11, -15, -4, 17, 0, 0, 12, -17, -14, -17, -17, -38, -23, -11, 0, 0, -10, -17, -23, -15, -20, -45, -44, -13, 0, 0, 8, -22, -24, -27, -26, -33, -26, -3, 0, 0, 18, 4, -21, -24, -27, -23, -9, 11, 0, 0, 19, 3, -11, -21, -23, -16, -7, 9, 0, 0, 27, 11, -4, -13, -14, -4, 5, 17, 0, 0, 53, 34, 21, 11, 28, 14, 24, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] emptyPST = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    static int[][] whiteOpening = {WPO,WNO,WBO,WRO,WQO,WKO};
-    static int[][] blackOpening = {BPO,BNO,BBO,BRO,BQO,BKO};
-    static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
-    static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
-    static int[][] openingGeneralPST = {emptyPST,WPO,WNO,WBO,WRO,WQO,WKO,emptyPST,emptyPST,BPO,BNO,BBO,BRO,BQO,BKO};
-    static int[][] endgameGeneralPST = {emptyPST,WPE,WNE,WBE,WRE,WQE,WKE,emptyPST,emptyPST,BPE,BNE,BBE,BRE,BQE,BKE};
+    //static int[] emptyPST = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    //static int[][] whiteOpening = {WPO,WNO,WBO,WRO,WQO,WKO};
+    //static int[][] blackOpening = {BPO,BNO,BBO,BRO,BQO,BKO};
+    //static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
+    //static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
+    static int[][] openingGeneralPST = {{},WPO,WNO,WBO,WRO,WQO,WKO,{},{},BPO,BNO,BBO,BRO,BQO,BKO};
+    static int[][] endgameGeneralPST = {{},WPE,WNE,WBE,WRE,WQE,WKE,{},{},BPE,BNE,BBE,BRE,BQE,BKE};
 
     static int[] mobilityOpening = {0,4,3,2,1,0};
     static int[] mobilityEndgame = {0,4,3,4,2,0};
@@ -339,20 +339,15 @@ public class FinalMiyoshiProject {
     public static boolean makeMove(int move) {
         int to = (move>>1) & 0b1111111; //records to and from indexes
         int from = (move>>8) & 0b1111111;
-        int moveColor = move & 1;
+        int moveColor = move & 1; //0 for white, 1 for black
         if (board[to] % 8 == 6) { //taking the king
             return true;
         }
         repetitionHashTable.add(getHashIndex(moveColor == 0));
         boardState = (byte) (boardState & 0b11110000); //resets en passantables
 
-        if (moveColor == 0) {
-            pstScoreMid -= whiteOpening[board[from]-1][from];
-            pstScoreEnd -= whiteEndgame[board[from]-1][from];
-        } else {
-            pstScoreMid += blackOpening[board[from]-9][from];
-            pstScoreEnd += blackEndgame[board[from]-9][from];
-        }
+        pstScoreMid -= openingGeneralPST[board[from]][from];
+        pstScoreEnd -= endgameGeneralPST[board[from]][from];
 
         if ((move>>18 & 1) == 1) { //if promotion, place correct piece
             board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor))); //first part gets type, second half color
@@ -361,17 +356,23 @@ public class FinalMiyoshiProject {
             if ((move>>15 & 0b111) == 0b101) { //en passant
                 board[to - 10 + 20*(moveColor)] = 0; //btw (move & 0b1) gives you 0 if white move and 1 if black move
                 pieceLists[1-moveColor].remove(to - 10 + 20*(moveColor));
-            } else if ((move>>16 & 1) == 1) { //castling
+                pstScoreMid -= openingGeneralPST[9 - 8 * moveColor][to - 10 + 20*(moveColor)];
+                pstScoreEnd -= endgameGeneralPST[9 - 8 * moveColor][to - 10 + 20*(moveColor)];
+            } else if ((move>>16 & 1) == 1) { //castling - need to move and update rooks as well
                 if ((move>>15 & 1) == 1) { //long castle
                     board[to+1] = board[to-2];
                     board[to-2] = 0;
                     pieceLists[moveColor].add(to + 1);
                     pieceLists[moveColor].remove(to - 2);
+                    pstScoreMid += openingGeneralPST[4 + 8 * moveColor][to + 1] - openingGeneralPST[4 + 8 * moveColor][to - 2];
+                    pstScoreEnd += endgameGeneralPST[4 + 8 * moveColor][to + 1] - endgameGeneralPST[4 + 8 * moveColor][to - 2];
                 } else { //short castle
                     board[to-1] = board[to+1];
                     board[to+1] = 0;
                     pieceLists[moveColor].add(to - 1);
                     pieceLists[moveColor].remove(to + 1);
+                    pstScoreMid += openingGeneralPST[4 + 8 * moveColor][to - 1] - openingGeneralPST[4 + 8 * moveColor][to + 1];
+                    pstScoreEnd += endgameGeneralPST[4 + 8 * moveColor][to - 1] - endgameGeneralPST[4 + 8 * moveColor][to + 1];
                 }
             } else if ((move>>15 & 1) == 1) { //pawn pushing makes this column en passantable
                 boardState += to%10;
@@ -379,13 +380,8 @@ public class FinalMiyoshiProject {
         }
         board[from] = 0; //space piece is leaving is always empty
 
-        if (moveColor == 0) {
-            pstScoreMid += whiteOpening[board[to]-1][to];
-            pstScoreEnd += whiteEndgame[board[to]-1][to];
-        } else {
-            pstScoreMid -= blackOpening[board[to]-9][to];
-            pstScoreEnd -= blackEndgame[board[to]-9][to];
-        }
+        pstScoreMid += openingGeneralPST[board[to]][to]; //little hack: adding value here accounts for promotion automatically
+        pstScoreEnd += endgameGeneralPST[board[to]][to];
 
         phase += phaseCounts[move>>19 & 0b1111];
 
@@ -393,16 +389,11 @@ public class FinalMiyoshiProject {
         pieceLists[moveColor].add(to);
         if ((move & 0b11110000000000000000000) != 0) { //captures
             pieceLists[1-moveColor].remove(to);
-            if (moveColor == 0) {
-                pstScoreMid += blackOpening[(move>>19 & 0b1111) - 9][to];
-                pstScoreEnd += blackEndgame[(move>>19 & 0b1111) - 9][to];
-            } else {
-                pstScoreMid -= whiteOpening[(move>>19 & 0b1111) - 1][to];
-                pstScoreEnd -= whiteEndgame[(move>>19 & 0b1111) - 1][to];
-            }
+            pstScoreMid -= openingGeneralPST[move>>19 & 0b1111][to];
+            pstScoreEnd -= endgameGeneralPST[move>>19 & 0b1111][to];
         }
 
-        if(from == 21 || from == 25 || to == 21) {//castling rights are lost if pieces move off 21,25,28,91,95,or98 or opp captures those rooks
+        if(from == 21 || from == 25 || to == 21) { //castling rights are lost if pieces move off 21,25,28,91,95,or98 or opp captures those rooks
             boardState = (byte)(boardState & 0b11011111);
         }
         if(from == 28 || from == 25 || to == 28) {
@@ -426,6 +417,10 @@ public class FinalMiyoshiProject {
         int to = (move>>1) & 0b1111111; //records to and from indexes
         int from = (move>>8) & 0b1111111;
         int moveColor = move & 0b1;
+
+        pstScoreMid -= openingGeneralPST[board[to]][to];
+        pstScoreEnd -= endgameGeneralPST[board[to]][to];
+
         if ((move>>18 & 1) == 1) { //if promotion, need to unpromote
             board[from] = (byte)(1 + 8 * (moveColor)); //same color pawn as side moving
         } else {
@@ -433,17 +428,23 @@ public class FinalMiyoshiProject {
             if ((move>>15 & 0b111) == 0b101) { //en passant: also restore opp pawn
                 board[to - 10 + 20*(moveColor)] = (byte)(9 - 8 * (moveColor)); //put opp color pawn in appropriate space
                 pieceLists[1-moveColor].add(to - 10 + 20 * (moveColor));
+                pstScoreMid += openingGeneralPST[9 - 8 * moveColor][to - 10 + 20*(moveColor)];
+                pstScoreEnd += endgameGeneralPST[9 - 8 * moveColor][to - 10 + 20*(moveColor)];
             } else if ((move>>16 & 1) == 1) { //undoing castling
                 if ((move>>15 & 1) == 1) { //long castle
                     board[to-2] = board[to+1];
                     board[to+1] = 0;
                     pieceLists[moveColor].remove(to + 1);
                     pieceLists[moveColor].add(to - 2);
+                    pstScoreMid += openingGeneralPST[4 + 8 * moveColor][to - 2] - openingGeneralPST[4 + 8 * moveColor][to + 1];
+                    pstScoreEnd += endgameGeneralPST[4 + 8 * moveColor][to - 2] - endgameGeneralPST[4 + 8 * moveColor][to + 1];
                 } else { //short castle
                     board[to+1] = board[to-1];
                     board[to-1] = 0;
                     pieceLists[moveColor].remove(to - 1);
                     pieceLists[moveColor].add(to + 1);
+                    pstScoreMid += openingGeneralPST[4 + 8 * moveColor][to + 1] - openingGeneralPST[4 + 8 * moveColor][to - 1];
+                    pstScoreEnd += endgameGeneralPST[4 + 8 * moveColor][to + 1] - endgameGeneralPST[4 + 8 * moveColor][to - 1];
                 }
             }
         }
@@ -451,25 +452,15 @@ public class FinalMiyoshiProject {
         boardState = (byte)(move>>23); //reverts board state (castle, ep) to previous
         phase -= phaseCounts[move>>19 & 0b1111];
 
-        if (moveColor == 0) {
-            pstScoreMid -= whiteOpening[board[from]-1][to] - whiteOpening[board[from]-1][from];
-            pstScoreEnd -= whiteEndgame[board[from]-1][to] - whiteEndgame[board[from]-1][from];
-        } else {
-            pstScoreMid += blackOpening[board[from]-9][to] - blackOpening[board[from]-9][from];
-            pstScoreEnd += blackEndgame[board[from]-9][to] - blackEndgame[board[from]-9][from];
-        }
-
+        pstScoreMid += openingGeneralPST[board[from]][from];
+        pstScoreEnd += endgameGeneralPST[board[from]][from];
         pieceLists[moveColor].add(from);
         pieceLists[moveColor].remove(to);
+
         if ((move & 0b11110000000000000000000) != 0) {
             pieceLists[1-moveColor].add(to);
-            if (moveColor == 0) {
-                pstScoreMid -= blackOpening[(move>>19 & 0b1111) - 9][to];
-                pstScoreEnd -= blackEndgame[(move>>19 & 0b1111) - 9][to];
-            } else {
-                pstScoreMid += whiteOpening[(move>>19 & 0b1111) - 1][to];
-                pstScoreEnd += whiteEndgame[(move>>19 & 0b1111) - 1][to];
-            }
+            pstScoreMid += openingGeneralPST[move>>19 & 0b1111][to];
+            pstScoreEnd += endgameGeneralPST[move>>19 & 0b1111][to];
         }
         if (board[from] == 6) {
             kingPositions[0] = from;
