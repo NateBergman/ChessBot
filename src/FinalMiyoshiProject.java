@@ -875,7 +875,7 @@ public class FinalMiyoshiProject {
         }
         return ((white && (board[square + 9] == 9 || board[square + 11] == 9))) || (!white && (board[square - 9] == 1 || board[square - 11] == 1));
     }
-    public static int evaluatePosition() {
+    public static int evaluatePosition(boolean whiteMove) {
         //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
         //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics (bonus for canons w/ bishop/rook/queen)
         int mgScore = pstScoreMid;
@@ -989,6 +989,16 @@ public class FinalMiyoshiProject {
 
         //just do pawn shield with 2 mg pst for pawns - same and opposite side of king (or center)
 
+        //tempo bonus
+        int tempoBonus = 10;
+        if (whiteMove) {
+            mgScore += tempoBonus;
+            egScore += tempoBonus;
+        } else {
+            mgScore -= tempoBonus;
+            egScore -= tempoBonus;
+        }
+
         return (int)((mgScore * (24.0 - phase) / 24.0) + (egScore * phase / 24.0));
 
         //idea: make all material/pst values higher endgame to incentivise trading/not trading if up/down
@@ -1045,14 +1055,14 @@ public class FinalMiyoshiProject {
         // material bonus like CPW engine (+ bishop pair, - knight/rook pair
 
         // tempo bonus for side to move (10 cp)
-        // trapped bishop/knight penalty
+        // trapped bishop/knight penalty (pst maybe? or maybe not)
         // rook on open/semi-open bonus, behind passers bonus
         // queen development before minors penalty?
         // low material check/5 piece tablebases or something
         // endgame king rules?
 
-        // square control/attacks for center, near kings, and enemy pieces, + a little for each square
-        // pins/discovered attacks?
+        // square control/attacks for center, near kings, and enemy pieces, + a little for each square? maybe just kings
+        // pins/discovered attacks? maybe, maybe not
         // mobility scaling by piece
         // thourough pawn structure (pst for passed pawns)
     }
@@ -1281,12 +1291,12 @@ public class FinalMiyoshiProject {
                 moves = getBlackCaptures();
             }
             if (moves.isEmpty()) {
-                int score = evaluatePosition();
+                int score = evaluatePosition(whiteMove);
                 transpositionTable.put(hash,new HashEntry(0,true,score,searchNumber));
                 return score;
             }
             if (whiteMove) {
-                alpha = Math.max(evaluatePosition(),alpha); //need to find out a way for counting it as a full search still if nothing exceeds no capture
+                alpha = Math.max(evaluatePosition(true),alpha); //need to find out a way for counting it as a full search still if nothing exceeds no capture
                 if (alpha >= beta) { //if this position is too good for us even without making a move (bad for opponent), don't have to search moves
                     if (!transpositionTable.containsKey(hash)) {
                         transpositionTable.put(hash,new HashEntry(moves,0,false,alpha,searchNumber));
@@ -1327,7 +1337,7 @@ public class FinalMiyoshiProject {
                 return alpha;
             }
             //black moves
-            beta = Math.min(evaluatePosition(),beta); //need to find out a way for counting it as a full search still if nothing exceeds no capture
+            beta = Math.min(evaluatePosition(false),beta); //need to find out a way for counting it as a full search still if nothing exceeds no capture
             if (beta <= alpha) { //if this position is too good for us even without making a move (bad for opponent), don't have to search moves
                 if (!transpositionTable.containsKey(hash)) {
                     transpositionTable.put(hash,new HashEntry(moves,0,false,beta,searchNumber));
