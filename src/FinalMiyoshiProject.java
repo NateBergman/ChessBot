@@ -137,8 +137,8 @@ public class FinalMiyoshiProject {
             -27, -11,   4,  13,  14,   4,  -5, -17,
             -53, -34, -21, -11, -28, -14, -24, -43
     };
-    static int[][] openingPST = {PawnOpeningPST,KnightOpeningPST,BishopOpeningPST,RookOpeningPST,QueenOpeningPST,KingOpeningPST};
-    static int[][] endgamePST = {PawnEndgamePST,KnightEndgamePST,BishopEndgamePST,RookEndgamePST,QueenEndgamePST,KingEndgamePST};
+    static int[][] openingPST = {PawnOpeningPST,KnightOpeningPST,BishopOpeningPST,RookOpeningPST,QueenOpeningPST,KingOpeningPST}; //stored like this just for makePST convenience
+    static int[][] endgamePST = {PawnEndgamePST,KnightEndgamePST,BishopEndgamePST,RookEndgamePST,QueenEndgamePST,KingEndgamePST}; //not referenced anywhere else
     static int[] openingMaterial = {82,337,365,477,1025,0};
     static int[] endgameMaterial = {94,281,297,512,936,0};
     static final double endgameMaterialModifier = 1.0;
@@ -234,7 +234,7 @@ public class FinalMiyoshiProject {
         Map<Byte,Character> displayMap = laptopDisplayMap();
 
         ArrayList<Integer> gameMoves = new ArrayList<>();
-        getOpenings("src/OpeningBookV1");
+        //getOpenings("src/OpeningBookV1");
 
         if (WHITEBOT) {
             while (true) {
@@ -269,7 +269,7 @@ public class FinalMiyoshiProject {
             searchNumber++;
         }
     }
-    public static void makePSTS () { //psts are written as would be seen on a chessboard from white, then flipped and stuff
+    public static void makePSTS () { //converts PSTs written like they would be on a chessboard to my 120 square system, flips for colors, etc.
         for (int p = 0; p < 6; p++) {
             for (int r = 0; r < 8; r++) {
                 for (int c = 0; c < 8; c++) {
@@ -281,7 +281,7 @@ public class FinalMiyoshiProject {
             }
         }
     }
-    public static void printBoard(Map<Byte,Character> displayMap) {
+    public static void printBoard(Map<Byte,Character> displayMap) { //self explanatory
         System.out.println("\nEngine has " + timeLeft / 60000 + ":" + (timeLeft / 1000) % 60 + " left on its clock\n");
         for (int y = 90; y > 19; y -= 10) {
             for (int x = 1; x < 9; x++) {
@@ -290,7 +290,7 @@ public class FinalMiyoshiProject {
             System.out.println("\n------------------------------------------");
         }
     }
-    public static void buildNearKingTable() {
+    public static void buildNearKingTable() { //makes an array where for each square all "near" squares on the board are listed - helps with determining if a king is in danger
         for (int i = 20; i < 100; i +=10) {
             for (int j = 1; j < 9; j++) {
                 int kingCoordinate = i + j;
@@ -303,7 +303,7 @@ public class FinalMiyoshiProject {
             }
         }
     }
-    public static Map<Byte,Character> buildDisplayMap () {
+    public static Map<Byte,Character> buildDisplayMap () { //maps pieces, which are stored in bytes, to symbols for display
         Map<Byte,Character> display = new HashMap<>();
         display.put((byte) 0,' ');
         display.put((byte) 1,'\u265F');
@@ -320,7 +320,7 @@ public class FinalMiyoshiProject {
         display.put((byte) 14, '\u2654');
         return display;
     }
-    public static Map<Byte,Character> laptopDisplayMap () {
+    public static Map<Byte,Character> laptopDisplayMap () { //my laptop doesn't show the pieces correctly so I have another scheme with letters
         Map<Byte,Character> display = new HashMap<>();
         display.put((byte) 0,' ');
         display.put((byte) 1,'P');
@@ -337,7 +337,7 @@ public class FinalMiyoshiProject {
         display.put((byte) 14, 'k');
         return display;
     }
-    public static void seedHashIndex() { //
+    public static void seedHashIndex() {
         Random r = new Random(1);
         hashIndex = new long[13][64]; //1-12 are pieces on the board, 0 is for special stuff like side to move, castling, en passant (0 is side to move, 1-8 en passant, 9-23 castling rights)
         for (int i = 0; i < 13; i++) {
@@ -384,17 +384,17 @@ public class FinalMiyoshiProject {
         }
         //System.out.println("Removed " + count + " entries");
     }
-    public static void getOpenings(String fileName) throws FileNotFoundException {
+    public static void getOpenings(String fileName) throws FileNotFoundException { //opening book is simple - we read from a file and store the results as "best moves" in TT
         Scanner openingReader = new Scanner(new File(fileName)); //format is:  "position bestMove"
         while (openingReader.hasNext()) { //all have an orderIn of 0 because we can clear them as soon as we get out of book
             long key = openingReader.nextLong();
             ArrayList<Integer> moves = new ArrayList<>();
             moves.add(openingReader.nextInt());
-            transpositionTable.put(key,new HashEntry(moves,99,true,0,0));
+            transpositionTable.put(key,new HashEntry(moves,99,true,0,0)); //depth is high so we always trust opening book, but order in is 0 so it's first thing we clear
         }
     }
     public static int playerInputToMove() { //gathers player input and translates it to my move notation
-        Scanner console = new Scanner(System.in);
+        Scanner console = new Scanner(System.in); //notably doesn't check for legal moves - the point of this is to test the bot, not have working games
         int from = 0;
         int to = 0;
         boolean confirmed = false;
@@ -412,7 +412,7 @@ public class FinalMiyoshiProject {
         }
         return encodeMove(to,from);
     }
-    public static int encodeMove(int to, int from) {
+    public static int encodeMove(int to, int from) { //I operate on moves as 32-bit integers (faster/less memory than a class) and so this turns player input into them
         int move = 0;
         move += (board[from]>>3) & 1; //is the move white or black
         move += to<<1;
@@ -440,31 +440,31 @@ public class FinalMiyoshiProject {
         }
         return move;
     }
-    public static int getNullMove(boolean whiteMove) {
+    public static int getNullMove(boolean whiteMove) { //potentially useful function for pruning/evaluation where we see what would happen if a side "passed" their turn
         if (whiteMove) {
             return boardState << 23;
         }
         return (boardState << 23) + 1;
     }
-    public static boolean makeMove(int move) {
-        int to = (move>>1) & 0b1111111; //records to and from indexes
+    public static boolean makeMove(int move) { //all the stuff that happens when we move a piece - a lot of stuff to be incrementally updated
+        int to = (move>>1) & 0b1111111; //unpacks integer
         int from = (move>>8) & 0b1111111;
         int moveColor = move & 1; //0 for white, 1 for black
-        if (board[to] % 8 == 6) { //taking the king
+        if (board[to] % 8 == 6) { //if we would take the king, we don't actually have to move - just record we did for search
             return true;
         }
         repetitionHashTable.add(getHashIndex(moveColor == 0));
         boardState = (byte) (boardState & 0b11110000); //resets en passantables
 
-        pstScoreMid -= openingGeneralPST[board[from]][from];
+        pstScoreMid -= openingGeneralPST[board[from]][from]; //incrementally update PSTs - faster than recalculating at eval
         pstScoreEnd -= endgameGeneralPST[board[from]][from];
 
-        if ((move>>18 & 1) == 1) { //if promotion, place correct piece
-            board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor))); //first part gets type, second half color
+        if ((move>>18 & 1) == 1) { //promotion
+            board[to] = (byte) (((move>>15) & 0b11) + 2 + (8 * (moveColor)));
         } else {
             board[to] = board[from]; //otherwise piece in resulting square is same as initial
             if ((move>>15 & 0b111) == 0b101) { //en passant
-                board[to - 10 + 20*(moveColor)] = 0; //btw (move & 0b1) gives you 0 if white move and 1 if black move
+                board[to - 10 + 20*(moveColor)] = 0;
                 pieceLists[1-moveColor].remove(to - 10 + 20*(moveColor));
                 pstScoreMid -= openingGeneralPST[9 - 8 * moveColor][to - 10 + 20*(moveColor)];
                 pstScoreEnd -= endgameGeneralPST[9 - 8 * moveColor][to - 10 + 20*(moveColor)];
@@ -493,18 +493,18 @@ public class FinalMiyoshiProject {
         pstScoreMid += openingGeneralPST[board[to]][to]; //little hack: adding value here accounts for promotion automatically
         pstScoreEnd += endgameGeneralPST[board[to]][to];
 
-        phase += phaseCounts[move>>19 & 0b1111];
-
         pieceLists[moveColor].remove(from);
         pieceLists[moveColor].add(to);
+
         if ((move & 0b11110000000000000000000) != 0) { //captures
             pieceLists[1-moveColor].remove(to);
+            phase += phaseCounts[move>>19 & 0b1111];
             pstScoreMid -= openingGeneralPST[move>>19 & 0b1111][to];
             pstScoreEnd -= endgameGeneralPST[move>>19 & 0b1111][to];
         }
 
-        if(from == 21 || from == 25 || to == 21) { //castling rights are lost if pieces move off 21,25,28,91,95,or98 or opp captures those rooks
-            boardState = (byte)(boardState & 0b11011111);
+        if(from == 21 || from == 25 || to == 21) { //castling rights are lost if pieces move off starting squares
+            boardState = (byte)(boardState & 0b11011111); //or if opponent captures a rook
         }
         if(from == 28 || from == 25 || to == 28) {
             boardState = (byte)(boardState & 0b11101111);
@@ -523,18 +523,18 @@ public class FinalMiyoshiProject {
         }
         return false;
     }
-    public static void unMakeMove(int move) {
-        int to = (move>>1) & 0b1111111; //records to and from indexes
+    public static void unMakeMove(int move) { //undoing a move - important for search. Similar to makeMove
+        int to = (move>>1) & 0b1111111; //unpacks integer
         int from = (move>>8) & 0b1111111;
         int moveColor = move & 0b1;
 
         pstScoreMid -= openingGeneralPST[board[to]][to];
         pstScoreEnd -= endgameGeneralPST[board[to]][to];
 
-        if ((move>>18 & 1) == 1) { //if promotion, need to unpromote
-            board[from] = (byte)(1 + 8 * (moveColor)); //same color pawn as side moving
+        if ((move>>18 & 1) == 1) { //unpromoting
+            board[from] = (byte)(1 + 8 * (moveColor));
         } else {
-            board[from] = board[to]; //otherwise just move the piece back
+            board[from] = board[to];
             if ((move>>15 & 0b111) == 0b101) { //en passant: also restore opp pawn
                 board[to - 10 + 20*(moveColor)] = (byte)(9 - 8 * (moveColor)); //put opp color pawn in appropriate space
                 pieceLists[1-moveColor].add(to - 10 + 20 * (moveColor));
@@ -964,9 +964,41 @@ public class FinalMiyoshiProject {
         }
         return count;
     }
-    public static int getKnightMobility(int square, boolean white) {
+    public static int getKnightMobility(int square, boolean white, int[] attacks, int kingSquare) {
         int count = 0;
-
+        int attackCnt = 0;
+        int[] offsets = moveGenOffset[1];
+        if (white) {
+            for (int o : offsets) {
+                int toCoordinate = square + o;
+                byte toPiece = board[toCoordinate];
+                if ((toPiece > 8 || toPiece == 0) && board[toCoordinate + 9] != 9 && board[toCoordinate + 11] != 9) { //only count squares not attacked by enemy pawns
+                    count++;
+                    if (nearKing[kingSquare][toCoordinate]) {
+                        attackCnt++;
+                    }
+                }
+            }
+            if (attackCnt > 0) {
+                attacks[0] += attackerValue[1] * attackCnt;
+                attacks[1]++;
+            }
+        } else {
+            for (int o : offsets) {
+                int toCoordinate = square + o;
+                byte toPiece = board[toCoordinate];
+                if (toPiece < 7 && board[toCoordinate - 9] != 1 && board[toCoordinate - 11] != 1) { //only count squares not attacked by enemy pawns
+                    count++;
+                    if (nearKing[kingSquare][toCoordinate]) {
+                        attackCnt++;
+                    }
+                }
+            }
+            if (attackCnt > 0) {
+                attacks[2] += attackerValue[1] * attackCnt;
+                attacks[3]++;
+            }
+        }
         return count - 4;
     }
     public static boolean isAttacked (int square, boolean white) { //used mostly for checks and castling
@@ -1004,9 +1036,13 @@ public class FinalMiyoshiProject {
         for (int i : pieceLists[0]) {
             byte piece = (byte) (board[i] - 1);
             if (piece == 0) {
-                int score = evaluatePawn(i,true,attacks,kingPositions[1]);
+                int score = evaluatePawn(i, true, attacks, kingPositions[1]);
                 mgScore += score;
                 egScore += score;
+            } else if (piece == 1) { //knight eval - doesn't consider squares attacked by enemy pawns
+                int score = getKnightMobility(i,true,attacks,kingPositions[1]);
+                mgScore += score * mobilityOpening[1];
+                egScore += score * mobilityEndgame[1];
             } else {
                 int score = getMobility(i,true,attacks,kingPositions[1]);
                 mgScore += score * mobilityOpening[piece];
@@ -1019,7 +1055,11 @@ public class FinalMiyoshiProject {
                 int score = evaluatePawn(i,false, attacks, kingPositions[0]);
                 mgScore -= score;
                 egScore -= score;
-            } else {
+            } else if (piece == 1) {
+                int score = getKnightMobility(i,false,attacks,kingPositions[0]);
+                mgScore -= score * mobilityOpening[1];
+                egScore -= score * mobilityEndgame[1];
+            }else {
                 int score = getMobility(i,false, attacks, kingPositions[0]);
                 mgScore -= score * mobilityOpening[piece];
                 egScore -= score * mobilityEndgame[piece];
@@ -1154,7 +1194,7 @@ public class FinalMiyoshiProject {
         // king rules (center = good (covered by pst), close to pawns = good, opposition = good, force enemy to edge)
 
         //other:
-        // tempo bonus for side to move (10 cp) to help continuity
+        // tempo bonus for side to move (10 cp) to help continuity between depths
         // rooks on open files (mobility) or behind passers?
         // queen early dev penalty (before minors/few turns)
         // returning bishop counteract pst penalty in midgame post castle
