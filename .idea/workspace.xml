@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="incremental pst works and revamping mobility/attacks/squarecontrol">
+    <list default="true" id="58766616-4198-4f0d-9306-60823aa71ec3" name="Changes" comment="separating pesto and in-depth eval versions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FinalMiyoshiProject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FinalMiyoshiProject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/InterfacePESTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/InterfacePESTO.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,7 +201,14 @@
       <option name="project" value="LOCAL" />
       <updated>1717128480946</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="separating pesto and in-depth eval versions">
+      <created>1717275022507</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1717275022507</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -234,6 +240,7 @@
     <MESSAGE value="Better time based cutoffs and tt clearing&#10;next up is basically funcitonal game so i have something to turn in" />
     <MESSAGE value="Playable version now up!" />
     <MESSAGE value="incremental pst seems to be working but not 100% if it's better yet" />
-    <option name="LAST_COMMIT_MESSAGE" value="incremental pst seems to be working but not 100% if it's better yet" />
+    <MESSAGE value="separating pesto and in-depth eval versions" />
+    <option name="LAST_COMMIT_MESSAGE" value="separating pesto and in-depth eval versions" />
   </component>
 </project>

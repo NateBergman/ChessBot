@@ -17,37 +17,133 @@ public class FinalMiyoshiProject {
     static int pstScoreMid = 0;
     static int pstScoreEnd = 0;
     static int[] phaseCounts = {0,0,1,1,2,4,0,0,0,0,1,1,2,4,0};
-    static int[] WPO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 47, 81, 62, 59, 67, 106, 120, 60, 0, 0, 56, 78, 78, 72, 85, 85, 115, 70, 0, 0, 55, 80, 77, 94, 99, 88, 92, 57, 0, 0, 68, 95, 88, 103, 105, 94, 99, 59, 0, 0, 76, 89, 108, 113, 147, 138, 107, 62, 0, 0, 180, 216, 143, 177, 150, 208, 116, 71, 0, 0, 82, 82, 82, 82, 82, 82, 82, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BPO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -82, -82, -82, -82, -82, -82, -82, -82, 0, 0, -180, -216, -143, -177, -150, -208, -116, -71, 0, 0, -76, -89, -108, -113, -147, -138, -107, -62, 0, 0, -68, -95, -88, -103, -105, -94, -99, -59, 0, 0, -55, -80, -77, -94, -99, -88, -92, -57, 0, 0, -56, -78, -78, -72, -85, -85, -115, -70, 0, 0, -47, -81, -62, -59, -67, -106, -120, -60, 0, 0, -82, -82, -82, -82, -82, -82, -82, -82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WPE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 94, 94, 94, 94, 94, 94, 94, 94, 0, 0, 107, 102, 102, 104, 107, 94, 96, 87, 0, 0, 98, 101, 88, 95, 94, 89, 93, 86, 0, 0, 107, 103, 91, 87, 87, 86, 97, 93, 0, 0, 126, 118, 107, 99, 92, 98, 111, 111, 0, 0, 188, 194, 179, 161, 150, 147, 176, 178, 0, 0, 272, 267, 252, 228, 241, 226, 259, 281, 0, 0, 94, 94, 94, 94, 94, 94, 94, 94, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BPE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -94, -94, -94, -94, -94, -94, -94, -94, 0, 0, -272, -267, -252, -228, -241, -226, -259, -281, 0, 0, -188, -194, -179, -161, -150, -147, -176, -178, 0, 0, -126, -118, -107, -99, -92, -98, -111, -111, 0, 0, -107, -103, -91, -87, -87, -86, -97, -93, 0, 0, -98, -101, -88, -95, -94, -89, -93, -86, 0, 0, -107, -102, -102, -104, -107, -94, -96, -87, 0, 0, -94, -94, -94, -94, -94, -94, -94, -94, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WNO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 232, 316, 279, 304, 320, 309, 318, 314, 0, 0, 308, 284, 325, 334, 336, 355, 323, 318, 0, 0, 314, 328, 349, 347, 356, 354, 362, 321, 0, 0, 324, 341, 353, 350, 365, 356, 358, 329, 0, 0, 328, 354, 356, 390, 374, 406, 355, 359, 0, 0, 290, 397, 374, 402, 421, 466, 410, 381, 0, 0, 264, 296, 409, 373, 360, 399, 344, 320, 0, 0, 170, 248, 303, 288, 398, 240, 322, 230, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BNO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -170, -248, -303, -288, -398, -240, -322, -230, 0, 0, -264, -296, -409, -373, -360, -399, -344, -320, 0, 0, -290, -397, -374, -402, -421, -466, -410, -381, 0, 0, -328, -354, -356, -390, -374, -406, -355, -359, 0, 0, -324, -341, -353, -350, -365, -356, -358, -329, 0, 0, -314, -328, -349, -347, -356, -354, -362, -321, 0, 0, -308, -284, -325, -334, -336, -355, -323, -318, 0, 0, -232, -316, -279, -304, -320, -309, -318, -314, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WNE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 252, 230, 258, 266, 259, 263, 231, 217, 0, 0, 239, 261, 271, 276, 279, 261, 258, 237, 0, 0, 258, 278, 280, 296, 291, 278, 261, 259, 0, 0, 263, 275, 297, 306, 297, 298, 285, 263, 0, 0, 264, 284, 303, 303, 303, 292, 289, 263, 0, 0, 257, 261, 291, 290, 280, 272, 262, 240, 0, 0, 256, 273, 256, 279, 272, 256, 257, 229, 0, 0, 223, 243, 268, 253, 250, 254, 218, 182, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BNE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -223, -243, -268, -253, -250, -254, -218, -182, 0, 0, -256, -273, -256, -279, -272, -256, -257, -229, 0, 0, -257, -261, -291, -290, -280, -272, -262, -240, 0, 0, -264, -284, -303, -303, -303, -292, -289, -263, 0, 0, -263, -275, -297, -306, -297, -298, -285, -263, 0, 0, -258, -278, -280, -296, -291, -278, -261, -259, 0, 0, -239, -261, -271, -276, -279, -261, -258, -237, 0, 0, -252, -230, -258, -266, -259, -263, -231, -217, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WBO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 332, 362, 351, 344, 352, 353, 326, 344, 0, 0, 369, 380, 381, 365, 372, 386, 398, 366, 0, 0, 365, 380, 380, 380, 379, 392, 383, 375, 0, 0, 359, 378, 378, 391, 399, 377, 375, 369, 0, 0, 361, 370, 384, 415, 402, 402, 372, 363, 0, 0, 349, 402, 408, 405, 400, 415, 402, 363, 0, 0, 339, 381, 347, 352, 395, 424, 383, 318, 0, 0, 336, 369, 283, 328, 340, 323, 372, 357, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BBO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -336, -369, -283, -328, -340, -323, -372, -357, 0, 0, -339, -381, -347, -352, -395, -424, -383, -318, 0, 0, -349, -402, -408, -405, -400, -415, -402, -363, 0, 0, -361, -370, -384, -415, -402, -402, -372, -363, 0, 0, -359, -378, -378, -391, -399, -377, -375, -369, 0, 0, -365, -380, -380, -380, -379, -392, -383, -375, 0, 0, -369, -380, -381, -365, -372, -386, -398, -366, 0, 0, -332, -362, -351, -344, -352, -353, -326, -344, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WBE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 274, 288, 274, 292, 288, 281, 292, 280, 0, 0, 283, 279, 290, 296, 301, 288, 282, 270, 0, 0, 285, 294, 305, 307, 310, 300, 290, 282, 0, 0, 291, 300, 310, 316, 304, 307, 294, 288, 0, 0, 294, 306, 309, 306, 311, 307, 300, 299, 0, 0, 299, 289, 297, 296, 295, 303, 297, 301, 0, 0, 289, 293, 304, 285, 294, 284, 293, 283, 0, 0, 283, 276, 286, 289, 290, 288, 280, 273, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BBE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -283, -276, -286, -289, -290, -288, -280, -273, 0, 0, -289, -293, -304, -285, -294, -284, -293, -283, 0, 0, -299, -289, -297, -296, -295, -303, -297, -301, 0, 0, -294, -306, -309, -306, -311, -307, -300, -299, 0, 0, -291, -300, -310, -316, -304, -307, -294, -288, 0, 0, -285, -294, -305, -307, -310, -300, -290, -282, 0, 0, -283, -279, -290, -296, -301, -288, -282, -270, 0, 0, -274, -288, -274, -292, -288, -281, -292, -280, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WRO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 458, 464, 478, 494, 493, 484, 440, 451, 0, 0, 433, 461, 457, 468, 476, 488, 471, 406, 0, 0, 432, 452, 461, 460, 480, 477, 472, 444, 0, 0, 441, 451, 465, 476, 486, 470, 483, 454, 0, 0, 453, 466, 484, 503, 501, 512, 469, 457, 0, 0, 472, 496, 503, 513, 494, 522, 538, 493, 0, 0, 504, 509, 535, 539, 557, 544, 503, 521, 0, 0, 509, 519, 509, 528, 540, 486, 508, 520, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BRO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -509, -519, -509, -528, -540, -486, -508, -520, 0, 0, -504, -509, -535, -539, -557, -544, -503, -521, 0, 0, -472, -496, -503, -513, -494, -522, -538, -493, 0, 0, -453, -466, -484, -503, -501, -512, -469, -457, 0, 0, -441, -451, -465, -476, -486, -470, -483, -454, 0, 0, -432, -452, -461, -460, -480, -477, -472, -444, 0, 0, -433, -461, -457, -468, -476, -488, -471, -406, 0, 0, -458, -464, -478, -494, -493, -484, -440, -451, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WRE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 503, 514, 515, 511, 507, 499, 516, 492, 0, 0, 506, 506, 512, 514, 503, 503, 501, 509, 0, 0, 508, 512, 507, 511, 505, 500, 504, 496, 0, 0, 515, 517, 520, 516, 507, 506, 504, 501, 0, 0, 516, 515, 525, 513, 514, 513, 511, 514, 0, 0, 519, 519, 519, 517, 516, 509, 507, 509, 0, 0, 523, 525, 525, 523, 509, 515, 520, 515, 0, 0, 525, 522, 530, 527, 524, 524, 520, 517, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BRE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -525, -522, -530, -527, -524, -524, -520, -517, 0, 0, -523, -525, -525, -523, -509, -515, -520, -515, 0, 0, -519, -519, -519, -517, -516, -509, -507, -509, 0, 0, -516, -515, -525, -513, -514, -513, -511, -514, 0, 0, -515, -517, -520, -516, -507, -506, -504, -501, 0, 0, -508, -512, -507, -511, -505, -500, -504, -496, 0, 0, -506, -506, -512, -514, -503, -503, -501, -509, 0, 0, -503, -514, -515, -511, -507, -499, -516, -492, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WQO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1024, 1007, 1016, 1035, 1010, 1000, 994, 975, 0, 0, 990, 1017, 1036, 1027, 1033, 1040, 1022, 1026, 0, 0, 1011, 1027, 1014, 1023, 1020, 1027, 1039, 1030, 0, 0, 1016, 999, 1016, 1015, 1023, 1021, 1028, 1022, 0, 0, 998, 998, 1009, 1009, 1024, 1042, 1023, 1026, 0, 0, 1012, 1008, 1032, 1033, 1054, 1081, 1072, 1082, 0, 0, 1001, 986, 1020, 1026, 1009, 1082, 1053, 1079, 0, 0, 997, 1025, 1054, 1037, 1084, 1069, 1068, 1070, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BQO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -997, -1025, -1054, -1037, -1084, -1069, -1068, -1070, 0, 0, -1001, -986, -1020, -1026, -1009, -1082, -1053, -1079, 0, 0, -1012, -1008, -1032, -1033, -1054, -1081, -1072, -1082, 0, 0, -998, -998, -1009, -1009, -1024, -1042, -1023, -1026, 0, 0, -1016, -999, -1016, -1015, -1023, -1021, -1028, -1022, 0, 0, -1011, -1027, -1014, -1023, -1020, -1027, -1039, -1030, 0, 0, -990, -1017, -1036, -1027, -1033, -1040, -1022, -1026, 0, 0, -1024, -1007, -1016, -1035, -1010, -1000, -994, -975, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WQE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 903, 908, 914, 893, 931, 904, 916, 895, 0, 0, 914, 913, 906, 920, 920, 913, 900, 904, 0, 0, 920, 909, 951, 942, 945, 953, 946, 941, 0, 0, 918, 964, 955, 983, 967, 970, 975, 959, 0, 0, 939, 958, 960, 981, 993, 976, 993, 972, 0, 0, 916, 942, 945, 985, 983, 971, 955, 945, 0, 0, 919, 956, 968, 977, 994, 961, 966, 936, 0, 0, 927, 958, 958, 963, 963, 955, 946, 956, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BQE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -927, -958, -958, -963, -963, -955, -946, -956, 0, 0, -919, -956, -968, -977, -994, -961, -966, -936, 0, 0, -916, -942, -945, -985, -983, -971, -955, -945, 0, 0, -939, -958, -960, -981, -993, -976, -993, -972, 0, 0, -918, -964, -955, -983, -967, -970, -975, -959, 0, 0, -920, -909, -951, -942, -945, -953, -946, -941, 0, 0, -914, -913, -906, -920, -920, -913, -900, -904, 0, 0, -903, -908, -914, -893, -931, -904, -916, -895, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WKO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -15, 36, 12, -54, 8, -28, 24, 14, 0, 0, 1, 7, -8, -64, -43, -16, 9, 8, 0, 0, -14, -14, -22, -46, -44, -30, -15, -27, 0, 0, -49, -1, -27, -39, -46, -44, -33, -51, 0, 0, -17, -20, -12, -27, -30, -25, -14, -36, 0, 0, -9, 24, 2, -16, -20, 6, 22, -22, 0, 0, 29, -1, -20, -7, -8, -4, -38, -29, 0, 0, -65, 23, 16, -15, -56, -34, 2, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BKO = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, -23, -16, 15, 56, 34, -2, -13, 0, 0, -29, 1, 20, 7, 8, 4, 38, 29, 0, 0, 9, -24, -2, 16, 20, -6, -22, 22, 0, 0, 17, 20, 12, 27, 30, 25, 14, 36, 0, 0, 49, 1, 27, 39, 46, 44, 33, 51, 0, 0, 14, 14, 22, 46, 44, 30, 15, 27, 0, 0, -1, -7, 8, 64, 43, 16, -9, -8, 0, 0, 15, -36, -12, 54, -8, 28, -24, -14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] WKE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -53, -34, -21, -11, -28, -14, -24, -43, 0, 0, -27, -11, 4, 13, 14, 4, -5, -17, 0, 0, -19, -3, 11, 21, 23, 16, 7, -9, 0, 0, -18, -4, 21, 24, 27, 23, 9, -11, 0, 0, -8, 22, 24, 27, 26, 33, 26, 3, 0, 0, 10, 17, 23, 15, 20, 45, 44, 13, 0, 0, -12, 17, 14, 17, 17, 38, 23, 11, 0, 0, -74, -35, -18, -18, -11, 15, 4, -17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    static int[] BKE = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 74, 35, 18, 18, 11, -15, -4, 17, 0, 0, 12, -17, -14, -17, -17, -38, -23, -11, 0, 0, -10, -17, -23, -15, -20, -45, -44, -13, 0, 0, 8, -22, -24, -27, -26, -33, -26, -3, 0, 0, 18, 4, -21, -24, -27, -23, -9, 11, 0, 0, 19, 3, -11, -21, -23, -16, -7, 9, 0, 0, 27, 11, -4, -13, -14, -4, 5, 17, 0, 0, 53, 34, 21, 11, 28, 14, 24, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    //static int[] emptyPST = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    //static int[][] whiteOpening = {WPO,WNO,WBO,WRO,WQO,WKO};
-    //static int[][] blackOpening = {BPO,BNO,BBO,BRO,BQO,BKO};
-    //static int[][] whiteEndgame = {WPE,WNE,WBE,WRE,WQE,WKE};
-    //static int[][] blackEndgame = {BPE,BNE,BBE,BRE,BQE,BKE};
-    static int[][] openingGeneralPST = {{},WPO,WNO,WBO,WRO,WQO,WKO,{},{},BPO,BNO,BBO,BRO,BQO,BKO};
-    static int[][] endgameGeneralPST = {{},WPE,WNE,WBE,WRE,WQE,WKE,{},{},BPE,BNE,BBE,BRE,BQE,BKE};
+    static int[] PawnOpeningPST = { //taken from PESTO: a set of computer-optimized values for engines just using PSTs
+            0,   0,   0,   0,   0,   0,  0,   0,
+            98, 134,  61,  95,  68, 126, 34, -11,
+            -6,   7,  26,  31,  65,  56, 25, -20,
+            -14,  13,   6,  21,  23,  12, 17, -23,
+            -27,  -2,  -5,  12,  17,   6, 10, -25,
+            -26,  -4,  -4, -10,   3,   3, 33, -12,
+            -35,  -1, -20, -23, -15,  24, 38, -22,
+            0,   0,   0,   0,   0,   0,  0,   0,
+    };
+    static int[] PawnEndgamePST = {
+            0,   0,   0,   0,   0,   0,   0,   0,
+            178, 173, 158, 134, 147, 132, 165, 187,
+            94, 100,  85,  67,  56,  53,  82,  84,
+            32,  24,  13,   5,  -2,   4,  17,  17,
+            13,   9,  -3,  -7,  -7,  -8,   3,  -1,
+            4,   7,  -6,   1,   0,  -5,  -1,  -8,
+            13,   8,   8,  10,  13,   0,   2,  -7,
+            0,   0,   0,   0,   0,   0,   0,   0,
+    };
+    static int[] KnightOpeningPST = {
+            -167, -89, -34, -49,  61, -97, -15, -107,
+            -73, -41,  72,  36,  23,  62,   7,  -17,
+            -47,  60,  37,  65,  84, 129,  73,   44,
+            -9,  17,  19,  53,  37,  69,  18,   22,
+            -13,   4,  16,  13,  28,  19,  21,   -8,
+            -23,  -9,  12,  10,  19,  17,  25,  -16,
+            -29, -53, -12,  -3,  -1,  18, -14,  -19,
+            -105, -21, -58, -33, -17, -28, -19,  -23,
+    };
+    static int[] KnightEndgamePST = {
+            -58, -38, -13, -28, -31, -27, -63, -99,
+            -25,  -8, -25,  -2,  -9, -25, -24, -52,
+            -24, -20,  10,   9,  -1,  -9, -19, -41,
+            -17,   3,  22,  22,  22,  11,   8, -18,
+            -18,  -6,  16,  25,  16,  17,   4, -18,
+            -23,  -3,  -1,  15,  10,  -3, -20, -22,
+            -42, -20, -10,  -5,  -2, -20, -23, -44,
+            -29, -51, -23, -15, -22, -18, -50, -64,
+    };
+    static int[] BishopOpeningPST = {
+            -29,   4, -82, -37, -25, -42,   7,  -8,
+            -26,  16, -18, -13,  30,  59,  18, -47,
+            -16,  37,  43,  40,  35,  50,  37,  -2,
+            -4,   5,  19,  50,  37,  37,   7,  -2,
+            -6,  13,  13,  26,  34,  12,  10,   4,
+            0,  15,  15,  15,  14,  27,  18,  10,
+            4,  15,  16,   0,   7,  21,  33,   1,
+            -33,  -3, -14, -21, -13, -12, -39, -21,
+    };
+    static int[] BishopEndgamePST = {
+            -14, -21, -11,  -8, -7,  -9, -17, -24,
+            -8,  -4,   7, -12, -3, -13,  -4, -14,
+            2,  -8,   0,  -1, -2,   6,   0,   4,
+            -3,   9,  12,   9, 14,  10,   3,   2,
+            -6,   3,  13,  19,  7,  10,  -3,  -9,
+            -12,  -3,   8,  10, 13,   3,  -7, -15,
+            -14, -18,  -7,  -1,  4,  -9, -15, -27,
+            -23,  -9, -23,  -5, -9, -16,  -5, -17,
+    };
+    static int[] RookOpeningPST = {
+            32,  42,  32,  51, 63,  9,  31,  43,
+            27,  32,  58,  62, 80, 67,  26,  44,
+            -5,  19,  26,  36, 17, 45,  61,  16,
+            -24, -11,   7,  26, 24, 35,  -8, -20,
+            -36, -26, -12,  -1,  9, -7,   6, -23,
+            -45, -25, -16, -17,  3,  0,  -5, -33,
+            -44, -16, -20,  -9, -1, 11,  -6, -71,
+            -19, -13,   1,  17, 16,  7, -37, -26,
+    };
+    static int[] RookEndgamePST = {
+            13, 10, 18, 15, 12,  12,   8,   5,
+            11, 13, 13, 11, -3,   3,   8,   3,
+            7,  7,  7,  5,  4,  -3,  -5,  -3,
+            4,  3, 13,  1,  2,   1,  -1,   2,
+            3,  5,  8,  4, -5,  -6,  -8, -11,
+            -4,  0, -5, -1, -7, -12,  -8, -16,
+            -6, -6,  0,  2, -9,  -9, -11,  -3,
+            -9,  2,  3, -1, -5, -13,   4, -20,
+    };
+    static int[] QueenOpeningPST = {
+            -28,   0,  29,  12,  59,  44,  43,  45,
+            -24, -39,  -5,   1, -16,  57,  28,  54,
+            -13, -17,   7,   8,  29,  56,  47,  57,
+            -27, -27, -16, -16,  -1,  17,  -2,   1,
+            -9, -26,  -9, -10,  -2,  -4,   3,  -3,
+            -14,   2, -11,  -2,  -5,   2,  14,   5,
+            -35,  -8,  11,   2,   8,  15,  -3,   1,
+            -1, -18,  -9,  10, -15, -25, -31, -50,
+    };
+    static int[] QueenEndgamePST = {
+            -9,  22,  22,  27,  27,  19,  10,  20,
+            -17,  20,  32,  41,  58,  25,  30,   0,
+            -20,   6,   9,  49,  47,  35,  19,   9,
+            3,  22,  24,  45,  57,  40,  57,  36,
+            -18,  28,  19,  47,  31,  34,  39,  23,
+            -16, -27,  15,   6,   9,  17,  10,   5,
+            -22, -23, -30, -16, -16, -23, -36, -32,
+            -33, -28, -22, -43,  -5, -32, -20, -41,
+    };
+    static int[] KingOpeningPST = {
+            -65,  23,  16, -15, -56, -34,   2,  13,
+            29,  -1, -20,  -7,  -8,  -4, -38, -29,
+            -9,  24,   2, -16, -20,   6,  22, -22,
+            -17, -20, -12, -27, -30, -25, -14, -36,
+            -49,  -1, -27, -39, -46, -44, -33, -51,
+            -14, -14, -22, -46, -44, -30, -15, -27,
+            1,   7,  -8, -64, -43, -16,   9,   8,
+            -15,  36,  12, -54,   8, -28,  24,  14,
+    };
+    static int[] KingEndgamePST = {
+            -74, -35, -18, -18, -11,  15,   4, -17,
+            -12,  17,  14,  17,  17,  38,  23,  11,
+            10,  17,  23,  15,  20,  45,  44,  13,
+            -8,  22,  24,  27,  26,  33,  26,   3,
+            -18,  -4,  21,  24,  27,  23,   9, -11,
+            -19,  -3,  11,  21,  23,  16,   7,  -9,
+            -27, -11,   4,  13,  14,   4,  -5, -17,
+            -53, -34, -21, -11, -28, -14, -24, -43
+    };
+    static int[][] openingPST = {PawnOpeningPST,KnightOpeningPST,BishopOpeningPST,RookOpeningPST,QueenOpeningPST,KingOpeningPST};
+    static int[][] endgamePST = {PawnEndgamePST,KnightEndgamePST,BishopEndgamePST,RookEndgamePST,QueenEndgamePST,KingEndgamePST};
+    static int[] openingMaterial = {82,337,365,477,1025,0};
+    static int[] endgameMaterial = {94,281,297,512,936,0};
+    static final double endgameMaterialModifier = 1.0;
+    static int[][] openingGeneralPST = {{},new int[120],new int[120],new int[120],new int[120],new int[120],new int[120],{},{},new int[120],new int[120],new int[120],new int[120],new int[120],new int[120]};
+    static int[][] endgameGeneralPST = {{},new int[120],new int[120],new int[120],new int[120],new int[120],new int[120],{},{},new int[120],new int[120],new int[120],new int[120],new int[120],new int[120]};
 
     static int[] mobilityOpening = {0,4,3,2,1,0};
     static int[] mobilityEndgame = {0,4,3,4,2,0};
@@ -128,6 +224,7 @@ public class FinalMiyoshiProject {
         Collections.addAll(pieceLists[0],21, 22, 23, 24, 25, 26, 27, 28, 31, 32, 33, 34, 35, 36, 37, 38);
         Collections.addAll(pieceLists[1], 81, 82, 83, 84, 85, 86, 87, 88, 91, 92, 93, 94, 95, 96, 97, 98);
         sorter = new MoveSorter(board);
+        makePSTS();
         seedHashIndex();
         transpositionTable = new HashMap<>();
         repetitionHashTable = new HashSet<>();
@@ -170,6 +267,18 @@ public class FinalMiyoshiProject {
 
             clearTranspositionTableOrderIn(MAXTTSIZE);
             searchNumber++;
+        }
+    }
+    public static void makePSTS () { //psts are written as would be seen on a chessboard from white, then flipped and stuff
+        for (int p = 0; p < 6; p++) {
+            for (int r = 0; r < 8; r++) {
+                for (int c = 0; c < 8; c++) {
+                    openingGeneralPST[p + 1][91 - 10 * r + c] = openingPST[p][8 * r + c] + openingMaterial[p];
+                    endgameGeneralPST[p + 1][91 - 10 * r + c] = (int)(endgamePST[p][8 * r + c] + endgameMaterial[p] * endgameMaterialModifier);
+                    openingGeneralPST[p + 9][21 + 10 * r + c] = -openingPST[p][8 * r + c] - openingMaterial[p];
+                    endgameGeneralPST[p + 9][21 + 10 * r + c] = (int)(-endgamePST[p][8 * r + c] - endgameMaterial[p] * endgameMaterialModifier);
+                }
+            }
         }
     }
     public static void printBoard(Map<Byte,Character> displayMap) {
@@ -855,6 +964,11 @@ public class FinalMiyoshiProject {
         }
         return count;
     }
+    public static int getKnightMobility(int square, boolean white) {
+        int count = 0;
+
+        return count - 4;
+    }
     public static boolean isAttacked (int square, boolean white) { //used mostly for checks and castling
         for (int i = 1; i < 6; i++) {
             int[] offsets = moveGenOffset[i];
@@ -875,18 +989,21 @@ public class FinalMiyoshiProject {
         }
         return ((white && (board[square + 9] == 9 || board[square + 11] == 9))) || (!white && (board[square - 9] == 1 || board[square - 11] == 1));
     }
+    public static final int RETURNINGBISHOP = 30;
+    public static final int BISHOPPAIR = 30;
+    public static final int KNIGHTPAIR = -8;
+    public static final int ROOKPAIR = -16;
+
     public static int evaluatePosition(boolean whiteMove) {
         //to add: king safety, mop up endgame, update pst to be more general (not pesto). works with lazy eval
         //add more sophisticated material counts (for inequalities), simpler psts, and piece specific heuristics (bonus for canons w/ bishop/rook/queen)
         int mgScore = pstScoreMid;
         int egScore = pstScoreEnd;
-        //int[] attacks = new int[4]; //goes white attack value, white attacker count, black attack value, black attacker count
+        int[] attacks = new int[4]; //goes white attack value, white attacker count, black attack value, black attacker count
 
-        /*for (int i : pieceLists[0]) {
+        for (int i : pieceLists[0]) {
             byte piece = (byte) (board[i] - 1);
-            mgScore += whiteOpening[piece][i];
-            egScore += whiteEndgame[piece][i];
-            /*if (piece == 0) {
+            if (piece == 0) {
                 int score = evaluatePawn(i,true,attacks,kingPositions[1]);
                 mgScore += score;
                 egScore += score;
@@ -894,13 +1011,11 @@ public class FinalMiyoshiProject {
                 int score = getMobility(i,true,attacks,kingPositions[1]);
                 mgScore += score * mobilityOpening[piece];
                 egScore += score * mobilityEndgame[piece];
-            }*/
-        /*}
+            }
+        }
         for (int i : pieceLists[1]) { //24 phase points total
             byte piece = (byte) (board[i] - 9);
-            mgScore -= blackOpening[piece][i];
-            egScore -= blackEndgame[piece][i];
-            /*if (piece == 0) {
+            if (piece == 0) {
                 int score = evaluatePawn(i,false, attacks, kingPositions[0]);
                 mgScore -= score;
                 egScore -= score;
@@ -908,84 +1023,33 @@ public class FinalMiyoshiProject {
                 int score = getMobility(i,false, attacks, kingPositions[0]);
                 mgScore -= score * mobilityOpening[piece];
                 egScore -= score * mobilityEndgame[piece];
-            }*/
-        //}
+            }
+        }
 
-        /*if (attacks[1] > 1) {
+        if (attacks[1] > 1) {
             mgScore += attackTable[attacks[0]];
         }
         if (attacks[3] > 1) {
             egScore += attackTable[attacks[2]];
         }
         //pawn shields
-        int shieldRankTwo = 10;
-        int shieldRankThree = 5;
-        if (kingPositions[0] == 26 || kingPositions[0] == 27 || kingPositions[0] == 28) { //white short castled
-            if (board[26] == 1) {
-                mgScore += shieldRankTwo;
-            } else if (board[36] == 1) {
-                mgScore += shieldRankThree;
-            }
-            if (board[27] == 1) {
-                mgScore += shieldRankTwo;
-            } else if (board[37] == 1) {
-                mgScore += shieldRankThree;
-            }
-            if (board[28] == 1) {
-                mgScore += shieldRankTwo;
-            } else if (board[38] == 1) {
-                mgScore += shieldRankThree;
-            }
-        } else if (kingPositions[0] == 21 || kingPositions[0] == 22 || kingPositions[0] == 23) { //white long castled
-            if (board[21] == 1) {
-                mgScore += shieldRankTwo;
-            } else if (board[31] == 1) {
-                mgScore += shieldRankThree;
-            }
-            if (board[22] == 1) {
-                mgScore += shieldRankTwo;
-            } else if (board[32] == 1) {
-                mgScore += shieldRankThree;
-            }
-            if (board[23] == 1) {
-                mgScore += shieldRankTwo;
-            } else if (board[33] == 1) {
-                mgScore += shieldRankThree;
-            }
+        mgScore += pawnShield();
+
+        /*
+        //dynamic material adjustment
+        if (whitePieceCounts[2] > 1) {
+            mgScore += BISHOPPAIR;
+            egScore += BISHOPPAIR;
         }
-        if (kingPositions[1] == 96 || kingPositions[1] == 97 || kingPositions[1] == 98) { //black short castled
-            if (board[86] == 1) {
-                mgScore -= shieldRankTwo;
-            } else if (board[76] == 1) {
-                mgScore -= shieldRankThree;
-            }
-            if (board[87] == 1) {
-                mgScore -= shieldRankTwo;
-            } else if (board[77] == 1) {
-                mgScore -= shieldRankThree;
-            }
-            if (board[88] == 1) {
-                mgScore -= shieldRankTwo;
-            } else if (board[78] == 1) {
-                mgScore -= shieldRankThree;
-            }
-        } else if (kingPositions[1] == 91 || kingPositions[1] == 92 || kingPositions[1] == 93) { //black long castled
-            if (board[81] == 1) {
-                mgScore -= shieldRankTwo;
-            } else if (board[71] == 1) {
-                mgScore -= shieldRankThree;
-            }
-            if (board[82] == 1) {
-                mgScore -= shieldRankTwo;
-            } else if (board[72] == 1) {
-                mgScore -= shieldRankThree;
-            }
-            if (board[83] == 1) {
-                mgScore -= shieldRankTwo;
-            } else if (board[73] == 1) {
-                mgScore -= shieldRankThree;
-            }
-        }*/
+        if (blackPieceCounts[2] > 1) {
+            mgScore -= BISHOPPAIR;
+            egScore -= BISHOPPAIR;
+        }
+        if (whitePieceCounts[1] > 1) {
+            mgScore += KNIGHTPAIR;
+            egScore += KNIGHTPAIR;
+        }
+        */
 
         //just do pawn shield with 2 mg pst for pawns - same and opposite side of king (or center)
 
@@ -1006,7 +1070,7 @@ public class FinalMiyoshiProject {
         //CHAOS eval:
         // threatened pieces (pieces w/ enemy pieces nearby, but not attacking)
         // capturing potential (square control)
-        // mobility
+        // legal/actual mobility
         // mobility potential (unsafe, in check now, or guarding friendly pieces)
         // centre control (attack + occupancy (pst/bonus))
         // pins/discovered attacks vs king/queen (maybe a "see through" for sliding pieces, which would also see cannons)
@@ -1050,21 +1114,125 @@ public class FinalMiyoshiProject {
         // passed pawn bonus + bonus for pushing it
         // king safety: bonus for pieces in own king sector vs opposing king-side pressure
 
+
         //My engine:
         // material as part of tapered PST - changes values with pieces left && in general higher later so side up has advantage of simplifying
-        // material bonus like CPW engine (+ bishop pair, - knight/rook pair
 
-        // tempo bonus for side to move (10 cp)
-        // trapped bishop/knight penalty (pst maybe? or maybe not)
-        // rook on open/semi-open bonus, behind passers bonus
-        // queen development before minors penalty?
-        // low material check/5 piece tablebases or something
-        // endgame king rules?
+        //dynamic material:
+        // knight per own pawn: -20 no pawns, +4 for every pawn we have
+        // rook per pawn: +15 no pawns, -3 every pawn we have
+        // bishop pair bonus (+30) i feel like these 3 can be dealt with by just adjusting material values
+        // knight pair penalty (-8) like just make bishop 18 more than knight so bishop pair v knight pair is up 36 (38 w/ this),
+        // rook pair penalty (-16) bishop pair v on of each is up 18 (30 w/ this), and one of each v knight pair is up 18 (vs. 8)
 
-        // square control/attacks for center, near kings, and enemy pieces, + a little for each square? maybe just kings
-        // pins/discovered attacks? maybe, maybe not
-        // mobility scaling by piece
-        // thourough pawn structure (pst for passed pawns)
+        //king safety:
+        // pawn shield/separate pst for kingside pawns
+        // king attacks
+        // defenders? either part of king attacks or do square control
+        // hacks: - king queen mobility, tropism
+
+        //mobility/piece quality:
+        // general calc for each piece
+        // knight not squares attacked by enemy pawns
+        // friendly pieces (defense), more for attack opposing?
+        // pawns? safe mobility?
+        // square control? better for center (pst might take care of) or opp pieces (not accounted for rn)
+        // rooks weight vertical mobility?
+        // maybe "see through" 1 friendly piece at half value for discovered attacks/canons?
+
+        //pawn structure:
+        // doubled/isolated penalty
+        // passed bonus and separate pst
+        // supported/chain/phalanax bonus
+        // backward penalty
+        // blocked penalty
+        // scale weak penalty based on open file, mobility, position, etc.?
+
+        //endgame:
+        // low material check
+        // tablebases?
+        // king rules (center = good (covered by pst), close to pawns = good, opposition = good, force enemy to edge)
+
+        //other:
+        // tempo bonus for side to move (10 cp) to help continuity
+        // rooks on open files (mobility) or behind passers?
+        // queen early dev penalty (before minors/few turns)
+        // returning bishop counteract pst penalty in midgame post castle
+        // trapped bishop/knight penalty
+        // pins unaccounted for (not a huge deal, tactics accounted for by search anyway, just makes mobility annoying)
+
+    }
+    public static int pawnShield() {
+        int score = 0;
+        int shieldRankTwo = 10;
+        int shieldRankThree = 5;
+        if (kingPositions[0] % 10 > 5) { //white short castled
+            if (board[26] == 1) {
+                score += shieldRankTwo;
+            } else if (board[36] == 1) {
+                score += shieldRankThree;
+            }
+            if (board[27] == 1) {
+                score += shieldRankTwo;
+            } else if (board[37] == 1) {
+                score += shieldRankThree;
+            }
+            if (board[28] == 1) {
+                score += shieldRankTwo;
+            } else if (board[38] == 1) {
+                score += shieldRankThree;
+            }
+        } else if (kingPositions[0] % 10 < 4) { //white long castled
+            if (board[21] == 1) {
+                score += shieldRankTwo;
+            } else if (board[31] == 1) {
+                score += shieldRankThree;
+            }
+            if (board[22] == 1) {
+                score += shieldRankTwo;
+            } else if (board[32] == 1) {
+                score += shieldRankThree;
+            }
+            if (board[23] == 1) {
+                score += shieldRankTwo;
+            } else if (board[33] == 1) {
+                score += shieldRankThree;
+            }
+        }
+        if (kingPositions[1] % 10 > 6) { //black short castled
+            if (board[86] == 1) {
+                score -= shieldRankTwo;
+            } else if (board[76] == 1) {
+                score -= shieldRankThree;
+            }
+            if (board[87] == 1) {
+                score -= shieldRankTwo;
+            } else if (board[77] == 1) {
+                score -= shieldRankThree;
+            }
+            if (board[88] == 1) {
+                score -= shieldRankTwo;
+            } else if (board[78] == 1) {
+                score -= shieldRankThree;
+            }
+        } else if (kingPositions[1] % 10 < 4) { //black long castled
+            if (board[81] == 1) {
+                score -= shieldRankTwo;
+            } else if (board[71] == 1) {
+                score -= shieldRankThree;
+            }
+            if (board[82] == 1) {
+                score -= shieldRankTwo;
+            } else if (board[72] == 1) {
+                score -= shieldRankThree;
+            }
+            if (board[83] == 1) {
+                score -= shieldRankTwo;
+            } else if (board[73] == 1) {
+                score -= shieldRankThree;
+            }
+        }
+        return score;
     }
     public static int evaluatePawn(int sq, boolean white, int[] attacks, int kingPosition) {
         int score = 0;
