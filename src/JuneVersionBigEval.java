@@ -1220,6 +1220,20 @@ public class JuneVersionBigEval {
         // trapped bishop/knight penalty
         // pins unaccounted for (not a huge deal, tactics accounted for by search anyway, just makes mobility annoying)
 
+
+
+        //Stockfish 8 mobility
+        // rank 2/3 pawns, blocked pawns, and king exlcuded from mobility area
+        // consider own/enemy pieces for mobility area
+        // don't consider squares attacked by enemy pawns as mobility area
+        // pinned pieces only consider movement in pinned rank/file/diagonal
+        // knight can attack our knights/bishop/rook/queen, and move through enemy king/knight/bishop/rook/queen attacks
+        // Bishop attacks our knight/bishop/rook, see through our queen, move through enemy queen/rook/bishop/knight/king
+        // rook can look through our queen/rook, do not consider attack from enemy queen/rook/bishop/knight/king
+        // queen cannot look through rook/bishop, takes into account attacks from enemy bishop/knight/rook but can move through enemy king/queen
+
+        // gets incremental score
+
     }
     public static int pawnShield() {
         int score = 0;

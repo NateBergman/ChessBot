@@ -16,7 +16,7 @@ public class FinalMiyoshiProject {
     static int pstScoreMid = 0;
     static int pstScoreEnd = 0;
     static int[] phaseCounts = {0,0,1,1,2,4,0,0,0,0,1,1,2,4,0};
-    static int[] PawnOpeningPST = { //taken from PESTO: a set of computer-optimized values for engines just using PSTs
+    static int[] PawnOpeningPST = { //taken from PESTO: a set of computer-optimized values online
             0,   0,   0,   0,   0,   0,  0,   0,
             98, 134,  61,  95,  68, 126, 34, -11,
             -6,   7,  26,  31,  65,  56, 25, -20,
@@ -1032,7 +1032,7 @@ public class FinalMiyoshiProject {
             }
         }
         //king safety stuff
-        if (attacks[1] > 1) { //attacks aren't linear - only threatening past a certain threshold, but danger levels off after there
+        if (attacks[1] > 1) { //attacks aren't linear - only threatening past a certain threshold/amount of attackers, but danger levels off after there
             mgScore += attackTable[attacks[0]];
         }
         if (attacks[3] > 1) {
@@ -1306,7 +1306,7 @@ public class FinalMiyoshiProject {
     }
     public static int search (int depth, boolean whiteMove, int alpha, int beta, long endTime) {
         nodeCount++;
-        if (nodeCount == NODESPERCHECK) { //check if search is out of time/tt overflow risk (housekeeping)
+        if (nodeCount == NODESPERCHECK) { //check if search is out of time/tt memory overflow risk (housekeeping)
             nodeCount = 0;
             if (System.currentTimeMillis() > endTime) {
                 return OUTOFTIME;
@@ -1318,7 +1318,7 @@ public class FinalMiyoshiProject {
 
         boolean foundGoodMove = false;
         long hash = getHashIndex(whiteMove);
-        if (repetitionHashTable.contains(hash)) {
+        if (repetitionHashTable.contains(hash)) { //program counts a single repetition as a draw, because if best play from both sides gives us a draw neither is going to want to take a worse position and will likely keep repeating moves
             return DRAW;
         }
         if (depth < 1) { //quiescence search for captures and final eval
@@ -1430,15 +1430,15 @@ public class FinalMiyoshiProject {
                 transpositionTable.put(hash,new HashEntry(moves,0,foundGoodMove,beta,searchNumber));
             }
             return beta;
-        } else {
+        } else { //main (non-quiescence) search
             if (whiteMove) {
                 ArrayList<Integer> moves;
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
                     if ((h.getDepth() >= depth) && (h.getFullSearch() || h.getScore() >= beta || h.getScore() <= alpha)) {
-                        return h.getScore();
-                    }
-                    if (!h.isQuiescence()) {
+                        return h.getScore(); //if we've already searched this position to a greater/equal depth just use that
+                    } //only if it's a full (non-cutoff) search or it's outside curent bounds though
+                    if (!h.isQuiescence()) { //if not but we've already generated full movelist we can use those rather than re-generating to save time
                         moves = new ArrayList<>(h.getMoves());
                     } else {
                         moves = getWhiteMoves();
@@ -1446,20 +1446,20 @@ public class FinalMiyoshiProject {
                 } else {
                     moves = getWhiteMoves();
                 }
-                int length = moves.size(); //timesave b/ we don't have to look up move size every time
+                int length = moves.size(); //timesave b/ we don't have to look up move size every time through the for
                 for (int i = 0; i < length; i++) {
                     int m = moves.get(i);
                     if (makeMove(m)) { //checkmates (found by capturing king)
-                        moves.add(0,moves.remove(i)); //puts this move first because it's best so far
+                        moves.add(0,moves.remove(i)); //we order it so best moves are first because in future searches we want to search best first
                         transpositionTable.put(hash,new HashEntry(99,true,TAKEKING,searchNumber));
                         return TAKEKING;
                     }
                     int score = search(depth - 1, false, alpha, beta,endTime);
-                    if (score == OUTOFTIME) {
+                    if (score == OUTOFTIME) { //if we're out of time we cutoff searching immediately and get inconclusive results for this branch
                         unMakeMove(m);
                         return OUTOFTIME;
                     }
-                    if (score >= beta) {
+                    if (score >= beta) { //this means opponent had better moves they could have made previously so this is not PV
                         unMakeMove(m);
                         moves.add(0,moves.remove(i));
                         if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
@@ -1467,10 +1467,10 @@ public class FinalMiyoshiProject {
                         }
                         return score;
                     }
-                    if (score > alpha) {
+                    if (score > alpha) { //represents best score so far
                         moves.add(0,moves.remove(i));
                         alpha = score;
-                        foundGoodMove = true;
+                        foundGoodMove = true; //used to store whether we failed low or not in transposition table
                     } else if (score == -TAKEKING) { //if not a legal move, we can remove it. non-legal moves have no chance of raising alpha because losing your king sucks
                         moves.remove(i);
                         i--;
@@ -1483,14 +1483,14 @@ public class FinalMiyoshiProject {
                         transpositionTable.put(hash, new HashEntry(99,true,-WIN,searchNumber));
                         return -WIN - depth;
                     }
-                    transpositionTable.put(hash, new HashEntry(99,true,0,searchNumber));
-                    return 0;
+                    transpositionTable.put(hash, new HashEntry(99,true,DRAW,searchNumber));
+                    return DRAW;
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                     transpositionTable.put(hash,new HashEntry(moves,depth,foundGoodMove,alpha,searchNumber));
                 }
                 return alpha;
-            } else {
+            } else { //same but for black, swap alpha and beta because black is trying to get a lower score (not higher like white)
                 ArrayList<Integer> moves;
                 if(transpositionTable.containsKey(hash)) {
                     HashEntry h = transpositionTable.get(hash);
@@ -1530,20 +1530,20 @@ public class FinalMiyoshiProject {
                         beta = score;
                         foundGoodMove = true;
                         moves.add(0,moves.remove(i));
-                    } else if (score == TAKEKING) { //if not a legal move, we can remove it. non-legal moves have no chance of raising alpha because losing your king sucks
+                    } else if (score == TAKEKING) {
                         moves.remove(i);
                         i--;
                         length--;
                     }
                     unMakeMove(m);
                 }
-                if (moves.isEmpty()) { //no legal moves - either checkmate or stalemate
+                if (moves.isEmpty()) {
                     if (isAttacked(kingPositions[1],true)) {
                         transpositionTable.put(hash, new HashEntry(99,true,WIN,searchNumber));
                         return WIN + depth;
                     }
-                    transpositionTable.put(hash, new HashEntry(99,true,0,searchNumber));
-                    return 0;
+                    transpositionTable.put(hash, new HashEntry(99,true,DRAW,searchNumber));
+                    return DRAW;
                 }
                 if (!transpositionTable.containsKey(hash) || transpositionTable.get(hash).getDepth() < depth) {
                     transpositionTable.put(hash,new HashEntry(moves,depth,foundGoodMove,beta,searchNumber));
@@ -1557,7 +1557,7 @@ public class FinalMiyoshiProject {
         long startTime = System.currentTimeMillis();
         long endTime = startTime + timeAllocated;
         long midCutoffTime = startTime + timeAllocated / 2; //only goes to next depth if over half our time is left
-        for (int n = 2; System.currentTimeMillis() < midCutoffTime && n <= depth; n++) {
+        for (int n = 2; System.currentTimeMillis() < midCutoffTime && n <= depth; n++) { //depth cutoff is so we don't have to waste time going to infinite depth if we have an opening book/only one move
             nodeCount = 0;
             move = startSearch(n,whiteMove,-WIDEALPHABETA,WIDEALPHABETA,endTime);
         }
