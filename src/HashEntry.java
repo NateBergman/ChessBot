@@ -53,4 +53,8 @@ public class HashEntry {
     public int getOrderIn() {
         return orderIn;
     }
+
+    public void setEntry (ArrayList<Integer> moves, int depth, boolean fullSearch, int score) {
+
+    }
 }
